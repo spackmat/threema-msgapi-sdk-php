@@ -18,7 +18,7 @@ Why build another one?
 
 Versioning
 
-The official .zip is 1.1.7 as at time of writing (August 2018). Rugk version is 1.2.0 (August 2018). This repo is a clone of the 1.2.0 master. To reduce potential for confusion, this repo is named `threema-gateway` instead of `threema-msgapi-sdk` and starts from v1.0 because it has a lot of breaking changes from its predecessors. 
+The official .zip is 1.1.7 as at time of writing (August 2018). Rugk version is 1.2.0 (August 2018). This repo is a clone of the 1.2.0 master. To reduce potential for confusion, this repo is named `threema-gateway` instead of `threema-msgapi-sdk`. It starts from 2.0.0 because of breaking changes. See [CHANGELOG.md](CHANGELOG.md) for details 
 
 The contributors of this repository are not affiliated with Threema or the Threema GmbH.
 
