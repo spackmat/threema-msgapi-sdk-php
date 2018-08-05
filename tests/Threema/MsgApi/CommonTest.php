@@ -11,7 +11,7 @@ namespace Threema\MsgApi;
 use PHPUnit\Framework\TestCase;
 use Threema\Console\Common;
 
-class CommonTests extends TestCase {
+class CommonTest extends TestCase {
 
 	public function testGetPrivateKey() {
 		$realPrivateKey = Common::getPrivateKey(TestConstants::myPrivateKey);

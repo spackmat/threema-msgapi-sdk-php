@@ -30,7 +30,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Threema\\": "source/Threema"
+            "Threema\\": "src/Threema"
         }
     },
     "autoload-dev": {

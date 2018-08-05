@@ -13,7 +13,7 @@ use Threema\Console\Common;
 use Threema\MsgApi\Messages\TextMessage;
 use Threema\MsgApi\Tools\CryptTool;
 
-class CryptToolTests extends TestCase {
+class CryptToolTest extends TestCase {
 
 	/**
 	 * test generating key pair

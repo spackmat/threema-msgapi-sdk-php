@@ -6,12 +6,12 @@
 >
     <testsuites>
         <testsuite name="All Tests">
-            <directory>./test</directory>
+            <directory>./tests</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./test</directory>
+            <directory suffix=".php">./tests</directory>
         </whitelist>
     </filter>
     <php>
