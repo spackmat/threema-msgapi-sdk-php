@@ -186,24 +186,6 @@ class CryptToolTest extends TestCase {
 		});
 	}
 
-	/**
-	 * test variable deletion
-	 */
-	public function testRemoveVar() {
-		$this->doTest(function(CryptTool $cryptTool, $prefix) {
-			foreach(array(
-                        'hex' => TestConstants::myPrivateKeyExtract,
-                        'bin' => $cryptTool->hex2bin(TestConstants::myPrivateKeyExtract)
-					) as $key => $testVar) {
-				// let it remove
-				$cryptTool->removeVar($testVar);
-
-				$this->assertEmpty($testVar, $prefix.': variable is not empty (test: '.$key.')');
-				$this->assertNull($testVar, $prefix.': variable is not null (test: '.$key.')');
-			}
-		});
-	}
-
 	private function doTest(\Closure $c) {
 		foreach(array(
 					'Sodium' => CryptTool::createInstance(CryptTool::TYPE_SODIUM)

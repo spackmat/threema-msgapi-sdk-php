@@ -515,23 +515,6 @@ abstract class CryptTool {
 	}
 
 	/**
-	 * Unsets/removes a variable.
-	 *
-	 * Note: the PHP implementation here provides no security, but if you use
-	 * Libsodium, the variable will be deleted in a better way.
-	 *
-	 * @param  string $var A variable, passed by reference
-	 */
-	public function removeVar(&$var)
-	{
-		// overwrite var (128x0), quite certainly not secure at all
-		$var = '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
-		$var = null;
-		// actually this does not erase the content of the variable
-		unset($var);
-	}
-
-	/**
 	 * Name of the CryptTool
 	 * @return string
 	 */
