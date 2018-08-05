@@ -1,9 +1,8 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
-
 
 namespace Threema\MsgApi\Tools;
 
@@ -12,215 +11,138 @@ use Threema\Core\KeyPair;
 
 /**
  * Contains static methods to do various Threema cryptography related tasks.
- * Support libsodium >= 0.2.0 (Namespaces)
+ * Support sodium >= 1.0 for php 7.2+
+ * @see     https://paragonie.com/book/pecl-libsodium/read/05-publickey-crypto.md
  *
  * @package Threema\Core
  */
-class CryptToolSodium extends CryptTool {
-	/**
-	 * @param string $data
-	 * @param string $nonce
-	 * @param string $senderPrivateKey
-	 * @param string $recipientPublicKey
-	 * @return string encrypted box
-	 */
-	protected function makeBox($data, $nonce, $senderPrivateKey, $recipientPublicKey) {
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		$kp = \Sodium\crypto_box_keypair_from_secretkey_and_publickey($senderPrivateKey, $recipientPublicKey);
+class CryptToolSodium extends CryptTool
+{
+    /**
+     * Generate a new key pair.
+     *
+     * @return KeyPair the new key pair
+     */
+    final public function generateKeyPair()
+    {
+        $kp = \sodium_crypto_box_keypair();
+        return new KeyPair(\sodium_crypto_box_secretkey($kp), \sodium_crypto_box_publickey($kp));
+    }
 
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return \Sodium\crypto_box($data, $nonce, $kp);
-	}
+    /**
+     * Derive the public key
+     *
+     * @param string $privateKey in binary
+     * @return string public key as binary
+     */
+    final public function derivePublicKey($privateKey)
+    {
+        return \sodium_crypto_box_publickey_from_secretkey($privateKey);
+    }
 
-	/**
-	 * make a secret box
-	 *
-	 * @param $data
-	 * @param $nonce
-	 * @param $key
-	 * @return mixed
-	 */
-	protected function makeSecretBox($data, $nonce, $key) {
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return \Sodium\crypto_secretbox($data, $nonce, $key);
-	}
+    /**
+     * Check if implementation supported
+     * @return bool
+     */
+    public function isSupported()
+    {
+        if (!extension_loaded("sodium")) {
+            return false;
+        }
+        // check any function from new libsodium without namespaces
+        return function_exists('sodium_crypto_box');
+    }
 
+    /**
+     * Validate crypt tool
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function validate()
+    {
+        if (false === $this->isSupported()) {
+            throw new Exception('Sodium implementation not supported');
+        }
+        return true;
+    }
 
-	/**
-	 * @param string $box
-	 * @param string $recipientPrivateKey
-	 * @param string $senderPublicKey
-	 * @param string $nonce
-	 * @return null|string
-	 */
-	protected function openBox($box, $recipientPrivateKey, $senderPublicKey, $nonce) {
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		$kp = \Sodium\crypto_box_keypair_from_secretkey_and_publickey($recipientPrivateKey, $senderPublicKey);
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return \Sodium\crypto_box_open($box, $nonce, $kp);
-	}
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'sodium';
+    }
 
-	/**
-	 * decrypt a secret box
-	 *
-	 * @param string $box as binary
-	 * @param string $nonce as binary
-	 * @param string $key as binary
-	 * @return string as binary
-	 */
-	protected function openSecretBox($box, $nonce, $key) {
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return \Sodium\crypto_secretbox_open($box, $nonce, $key);
-	}
+    /**
+     * Description of the CryptTool
+     * @return string
+     */
+    public function getDescription()
+    {
+        return 'Sodium implementation ' . SODIUM_LIBRARY_VERSION;
+    }
 
-	/**
-	 * Generate a new key pair.
-	 *
-	 * @return KeyPair the new key pair
-	 */
-	final public function generateKeyPair() {
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		$kp = \Sodium\crypto_box_keypair();
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return new KeyPair(\Sodium\crypto_box_secretkey($kp), \Sodium\crypto_box_publickey($kp));
-	}
+    /**
+     * @param string $data
+     * @param string $nonce
+     * @param string $senderPrivateKey
+     * @param string $recipientPublicKey
+     * @return string encrypted box
+     */
+    protected function makeBox($data, $nonce, $senderPrivateKey, $recipientPublicKey)
+    {
+        $kp = \sodium_crypto_box_keypair_from_secretkey_and_publickey($senderPrivateKey, $recipientPublicKey);
 
-	/**
-	 * @param int $size
-	 * @return string
-	 */
-	protected function createRandom($size) {
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return \Sodium\randombytes_buf($size);
-	}
+        return \sodium_crypto_box($data, $nonce, $kp);
+    }
 
-	/**
-	 * Derive the public key
-	 *
-	 * @param string $privateKey in binary
-	 * @return string public key as binary
-	 */
-	final public function derivePublicKey($privateKey) {
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return \Sodium\crypto_box_publickey_from_secretkey($privateKey);
-	}
+    /**
+     * make a secret box
+     *
+     * @param $data
+     * @param $nonce
+     * @param $key
+     * @return mixed
+     */
+    protected function makeSecretBox($data, $nonce, $key)
+    {
+        return \sodium_crypto_secretbox($data, $nonce, $key);
+    }
 
-	/**
-	 * Converts a binary string to an hexdecimal string.
-	 *
-	 * This is the same as PHP's bin2hex() implementation, but it is resistant to
-	 * timing attacks.
-	 *
-	 * @link https://paragonie.com/book/pecl-libsodium/read/03-utilities-helpers.md#bin2hex
-	 * @param  string $binaryString The binary string to convert
-	 * @return string
-	 */
-	public function bin2hex($binaryString)
-	{
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return \Sodium\bin2hex($binaryString);
-	}
+    /**
+     * @param string $box
+     * @param string $recipientPrivateKey
+     * @param string $senderPublicKey
+     * @param string $nonce
+     * @return null|string
+     */
+    protected function openBox($box, $recipientPrivateKey, $senderPublicKey, $nonce)
+    {
+        $kp = \sodium_crypto_box_keypair_from_secretkey_and_publickey($recipientPrivateKey, $senderPublicKey);
+        return \sodium_crypto_box_open($box, $nonce, $kp);
+    }
 
-	/**
-	 * Converts an hexdecimal string to a binary string.
-	 *
-	 * This is the same as PHP's hex2bin() implementation, but it is resistant to
-	 * timing attacks.
-	 *
-	 * @link https://paragonie.com/book/pecl-libsodium/read/03-utilities-helpers.md#hex2bin
-	 * @param  string $hexString The hex string to convert
-	 * @param  string|null $ignore	(optional) Characters to ignore
-	 * @throws \Threema\Core\Exception
-	 * @return string
-	 */
-	public function hex2bin($hexString, $ignore = null)
-	{
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return \Sodium\hex2bin($hexString, $ignore);
-	}
+    /**
+     * decrypt a secret box
+     *
+     * @param string $box   as binary
+     * @param string $nonce as binary
+     * @param string $key   as binary
+     * @return string as binary
+     */
+    protected function openSecretBox($box, $nonce, $key)
+    {
+        return \sodium_crypto_secretbox_open($box, $nonce, $key);
+    }
 
-
-	/**
-	 * Compares two strings in a secure way.
-	 *
-	 * This is the same as PHP's strcmp() implementation, but it is resistant to
-	 * timing attacks.
-	 *
-	 * @link https://paragonie.com/book/pecl-libsodium/read/03-utilities-helpers.md#compare
-	 * @param  string $str1 The first string
-	 * @param  string $str2 The second string
-	 * @return bool
-	 */
-	public function stringCompare($str1, $str2)
-	{
-		// check variable type manually
-		if (!is_string($str1) || !is_string($str2)) {
-			return false;
-		}
-
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return \Sodium\memcmp($str1, $str2) === 0;
-	}
-
-	/**
-	 * Unsets/removes a variable.
-	 *
-	 * Important: When using PHPv7, make sure to have at least version 1.0.1 of
-	 * the Libsodium PECL (libsodium-php) installed. Otherwise this falls back to
-	 * the (insecure) PHP method of removing a variable.
-	 *
-	 * @link https://paragonie.com/book/pecl-libsodium/read/03-utilities-helpers.md#memzero
-	 * @param  string $var A variable, passed by reference
-	 */
-	public function removeVar(&$var)
-	{
-		// check if version is compatible
-		if (version_compare(PHP_VERSION, '7.0', '>=') &&
-			version_compare(phpversion('libsodium'), '1.0.1', '<')
-		) {
-			// if not, fall back to PHP implementation
-			return parent::removeVar($var);
-		}
-
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return \Sodium\memzero($var);
-	}
-
-	/**
-	 * Check if implementation supported
-	 * @return bool
-	 */
-	public function isSupported() {
-		return true === extension_loaded('libsodium')
-			&& false === method_exists('Sodium', 'sodium_version_string');
-	}
-
-	/**
-	 * Validate crypt tool
-	 *
-	 * @return bool
-	 * @throws Exception
-	 */
-	public function validate() {
-		if(false === $this->isSupported()) {
-			throw new Exception('Sodium implementation not supported');
-		}
-		return true;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return 'sodium';
-	}
-
-	/**
-	 * Description of the CryptTool
-	 * @return string
-	 */
-	public function getDescription() {
-		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
-		return 'Sodium implementation '.\Sodium\version_string().' with PHP binding '.phpversion('libsodium');
-	}
+    /**
+     * @param int $size
+     * @return string
+     */
+    protected function createRandom($size)
+    {
+        return \random_bytes(SODIUM_CRYPTO_BOX_NONCEBYTES);
+    }
 }

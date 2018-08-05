@@ -1,47 +1,43 @@
 # [Threema Gateway](https://gateway.threema.ch/) PHP SDK
 
-Version: [1.2.0](https://github.com/rugk/threema-msgapi-sdk-php/releases/tag/v1.2.0)
+This is an unofficial wrapper for the Threema API.
 
-[![Build Status](https://travis-ci.org/rugk/threema-msgapi-sdk-php.svg?branch=master)](https://travis-ci.org/rugk/threema-msgapi-sdk-php)
-[![Code Climate](https://codeclimate.com/github/rugk/threema-msgapi-sdk-php/badges/gpa.svg)](https://codeclimate.com/github/rugk/threema-msgapi-sdk-php)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/rugk/threema-msgapi-sdk-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/rugk/threema-msgapi-sdk-php/?branch=master)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/b2d332ae-4100-42e0-abda-9cc96a79b18a/mini.png)](https://insight.sensiolabs.com/projects/b2d332ae-4100-42e0-abda-9cc96a79b18a)
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/28a86de2f74a421b98ecb2dddd4355f6)](https://www.codacy.com/app/rugk/threema-msgapi-sdk-php)  
+You have three other alternatives
 
-## Notes about this version
-This is a fork of the [original repo](https://github.com/threema-ch/threema-msgapi-sdk-php) after it was announced that the GitHub-version is no longer maintained by Threema.
-As this is the community version of the Threema Gateway PHP SDK it may contain additional changes which are not yet included in the official downloadable version on the Threema website. If you are looking for a simple mirror of the downloadable Threema version you can switch to the branch [`official`](https://github.com/rugk/threema-msgapi-sdk-php/tree/official).  
-More information is avaliable in [the wiki](https://github.com/rugk/threema-msgapi-sdk-php/wiki/Branches-and-releases).
+* Use the official Threema github repo https://github.com/threema-ch/threema-msgapi-sdk-php. No longer maintained (Oct 2015)
+* Download the .zip file version from https://gateway.threema.ch/
+* Use an unofficial version which stays close to the official version, occasionally has patches accepted by Threema https://github.com/rugk/threema-msgapi-sdk-php. It has an [`official`](https://github.com/rugk/threema-msgapi-sdk-php/tree/official) branch which mirrors the official version. Rugk has done a ton of great work to move the package forward into the modern ecosystem while maintaining as much backwards compatibility as possible.  
 
-An automatically created documentation of this SDK can be found [on GitHub Pages](https://rugk.github.io/threema-msgapi-sdk-php/).
+Why build another one?
+
+* PHP7.2 has libsodium compiled in. If we target 7.2 as the minimum version, a whole lot of complicated code from the official version is no longer needed. We can delete the older PECL sodium drivers and the driver selection code. The Salt git submodule is no longer needed.
+* Composer means that we can delete the phar command line runner, delete the two autoloaders that `require` a lot of files and do static initialisation for every page load (even if Threema is not being used) 
+* Fix some of the problems caused by the above, plus some broken type hints (for phpStorm), and split the (small number of) unit tests out to a separate `/test` directory so they do not clutter an authoritative classmap
+* Add the missing bulk lookup function (not implemented in PHP)
+* In general, try to adhere to modern php package standards so that it is more comfortable to use this in other projects. For example, a [botman](https://github.com/botman/botman) integration 
+
+Versioning
+
+The official .zip is 1.1.7 as at time of writing (August 2018). Rugk version is 1.2.0 (August 2018). This repo is a clone of the 1.2.0 master. To reduce potential for confusion, this repo is named `threema-gateway` instead of `threema-msgapi-sdk` and starts from v1.0 because it has a lot of breaking changes from its predecessors. 
+It could be considered a new project, but it doesn't warrant a 2.0 label which would imply it is "better than" the others. It isn't, its just adapted to a different purpose.
 
 The contributors of this repository are not affiliated with Threema or the Threema GmbH.
 
 ## Installation
-- Install PHP 5.4 or later: [https://secure.php.net/manual/en/install.php](https://secure.php.net/manual/en/install.php)
-- For better encryption performance, install the [libsodium PHP extension](https://github.com/jedisct1/libsodium-php).
 
-  This step is optional; if the libsodium PHP extension is not available, the SDK will automatically fall back to (slower) pure PHP code for ECC encryption (file and image sending not supported).
+```
+composer install LSS\threema-gateway
+```
 
-  A 64bit version of PHP is required for pure PHP encryption.
-
-  To install the libsodium PHP extension:
-
-  ```ShellSession
-  pecl install libsodium
-  ```
-
-  Then add the following line to your php.ini file:
-
-  ```ini
-  extension=libsodium.so
-  ```
-
-If you want to check whether your server meets the requirements and everything is configured properly you can execute `threema-msgapi-tool.php` without any parameters on the console or point your browser to the location where it is saved on your server.
-
-If you want to use this library in your own product it is recommend to use [Composer](https://getcomposer.org/) and require  [`rugk/threema-msgapi-sdk-php`](https://packagist.org/packages/rugk/threema-msgapi-sdk-php).
+If you want to check whether your server meets the requirements and everything is configured properly, run `vendor/bin/threema` without any parameters on the console.
 
 ## SDK usage
+
+* Go to https://gateway.threema.ch/ and create an account.
+* Follow the documentation there to create a new key pair. Save these carefully and keep them secret. Do not make them accessible via the web.
+* You will choose your Threema ID, which starts with a * and is a total of 8 characters long eg *MYKEY12
+* Your API Secret is shown by your account name: a 16 character alphanumeric string.
+
 ### Creating a connection
 
 ```php
@@ -53,39 +49,38 @@ require_once('lib/bootstrap.php');
 
 //define your connection settings
 $settings = new ConnectionSettings(
-    '*THREEMA',
-    'THISISMYSECRET'
+    '*MYKEY12',
+    'MYAPISECRET'
 );
 
 //simple php file to store the public keys (this file must already exist)
 $publicKeyStore = new Threema\MsgApi\PublicKeyStores\PhpFile('/path/to/my/keystore.php');
 
 //create a connection
-$connector = new Connection($settings, $publicKeyStore);
+$connection = new Connection($settings, $publicKeyStore);
 ```
 
 ### Creating a connection with advanced options
+
 **Attention:** These settings change internal values of the TLS connection. Choosing wrong settings can weaken the TLS connection or prevent a successful connection to the server. Use them with care!
 
-Each of the additional options shown below is optional. You can leave it out or use `null` to use the default value determinated by cURL for this option.
+Each of the additional options shown below is optional. You can leave it out or use `null` to use the default value determined by cURL for this option.
 
 ```php
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
 use Threema\MsgApi\Receiver;
 
-require_once('lib/bootstrap.php');
-
 //define your connection settings
 $settings = new ConnectionSettings(
-    '*THREEMA',
-    'THISISMYSECRET',
+    '*MYKEY12',
+    'MYAPISECRET',
     null, //the host to be used, set to null to use the default (recommend)
     [
-        'forceHttps' => true, //set to true to force HTTPS, default: false
-        'tlsVersion' => '1.2', //set the version of TLS to be used, default: null
+        'forceHttps' => true, //set to true to force HTTPS, default: true
+        'tlsVersion' => '1.2', //set the version of TLS to be used, default: '1.2'
         'tlsCipher' => 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384' //choose a cipher or a list of ciphers, default: null
-        'pinnedKey' => 'sha256//8SLubAXo6MrrGziVya6HjCS/Cuc7eqtzw1v6AfIW57c=;sha256//8kTK9HP1KHIP0sn6T2AFH3Bq+qq3wn2i/OJSMjewpFw=' // the hashes to pin, the default is shown here, it is NOT recommend to change this value!
+        'pinnedKey' => MsgApi\Constants::DEFAULT_PINNED_KEY // the hashes to pin, it is NOT recommend to change this value!
     ]
 );
 
@@ -93,13 +88,10 @@ $settings = new ConnectionSettings(
 $publicKeyStore = new Threema\MsgApi\PublicKeyStores\PhpFile('/path/to/my/keystore.php');
 
 //create a connection
-$connector = new Connection($settings, $publicKeyStore);
+$connection = new Connection($settings, $publicKeyStore);
 ```
 
-If you want to get a list of all ciphers you can use have a look at the [SSLLabs scan](https://www.ssllabs.com/ssltest/analyze.html?d=msgapi.threema.ch&latest), at the list of all available [OpenSSL ciphers](https://www.openssl.org/docs/manmaster/apps/ciphers.html) and the [comparison table by Mozilla](https://wiki.mozilla.org/Security/Server_Side_TLS#Cipher_names_correspondence_table) which also has some suggestions for good ciphers you should use.
-
-**Note:** For `pinnedKey` to work you must install cURL 7.39 or higher. It is also recommend to use PHP 7.0.7 or higher if you want to support this feature, but it is not required.
-You can test whether it works by specifying an invalid pin.
+**Note:** For `pinnedKey` to work you must install cURL 7.39 or higher. You can test whether it works by specifying an invalid pin.
 
 ### Sending a text message to a Threema ID (Simple Mode)
 
@@ -156,143 +148,23 @@ else {
 ```
 
 ## Console client usage
-### Local operations (no network communication)
-#### Encrypt
 
-```ShellSession
-threema-msgapi-tool.php -e <privateKey> <publicKey>
+Run 
 ```
+vendor\bin\threema-gateway
+``` 
+for a list of commands and their options
 
-Encrypt standard input using the given sender private key and recipient public key. Two lines to standard output: first the nonce (hex), and then the box (hex).
-
-#### Decrypt
-
-```ShellSession
-threema-msgapi-tool.php -D <privateKey> <publicKey> <nonce>
+A good smoke test to see if everything is working right is 
 ```
-
-Decrypt standard input using the given recipient private key and sender public key. The nonce must be given on the command line, and the box (hex) on standard input. Prints the decrypted message to standard output.
-
-#### Hash Email Address
-
-```ShellSession
-threema-msgapi-tool.php -h -e <email>
+vendor\bin\threema-gateway -C *MYKEY12 MYAPISECRET
 ```
-
-Hash an email address for identity lookup. Prints the hash in hex.
-
-#### Hash Phone Number
-
-```ShellSession
-threema-msgapi-tool.php -h -p <phoneNo>
-```
-
-Hash a phone number for identity lookup. Prints the hash in hex.
-
-#### Generate Key Pair
-
-```ShellSession
-threema-msgapi-tool.php -g <privateKeyFile> <publicKeyFile>
-```
-
-Generate a new key pair and write the private and public keys to the respective files (in hex).
-
-#### Derive Public Key
-
-```ShellSession
-threema-msgapi-tool.php -d <privateKey>
-```
-
-Derive the public key that corresponds with the given private key.
-
-### Network operations
-#### Send Simple Message
-
-```ShellSession
-threema-msgapi-tool.php -s <threemaId> <from> <secret>
-```
-
-Send a message from standard input with server-side encryption to the given ID. `<from>` is the API identity and `<secret>` is the API secret. the message ID on success.
-
-#### Send End-to-End Encrypted Text Message
-
-```ShellSession
-threema-msgapi-tool.php -S <threemaId> <from> <secret> <privateKey>
-```
-
-Encrypt standard input and send the text message to the given ID. `<from>` is the API identity and `<secret>` is the API secret. Prints the message ID on success.
-
-#### Send a End-to-End Encrypted Image Message
-
-```ShellSession
-threema-msgapi-tool.php -S -i <threemaId> <from> <secret> <privateKey> <imageFile>
-```
-
-Encrypt the image file and send the message to the given ID. `<from>` is the API identity and `<secret>` is the API secret. Prints the message ID on success.
-
-#### Send a End-to-End Encrypted File Message
-
-```ShellSession
-threema-msgapi-tool.php -S -f <threemaId> <from> <secret> <privateKey> <file> <thumbnailFile>
-```
-
-Encrypt the file (and thumbnail if given) and send the message to the given ID. `<from>` is the API identity and `<secret>` is the API secret. Prints the message ID on success.
-
-#### ID-Lookup By Email Address
-
-```ShellSession
-threema-msgapi-tool.php -l -e <email> <from> <secret>
-```
-
-Lookup the ID linked to the given email address (will be hashed locally).
-
-#### ID-Lookup By Phone Number
-
-```ShellSession
-threema-msgapi-tool.php -l -p <phoneNo> <from> <secret>
-```
-
-Lookup the ID linked to the given phone number (will be hashed locally).
-
-#### Fetch Public Key
-
-```ShellSession
-threema-msgapi-tool.php -l -k <threemaId> <from> <secret>
-```
-
-Lookup the public key for the given ID.
-
-#### Fetch Capability
-
-```ShellSession
-threema-msgapi-tool.php -c <threemaId> <from> <secret>
-```
-
-Fetch the capabilities of a Threema ID.
-
-#### Decrypt a Message and download the Files
-
-```ShellSession
-threema-msgapi-tool.php -r <threemaId> <from> <secret> <privateKey> <messageId> <nonce> <outputFolder>
-```
-
-Decrypt a box (must be provided on stdin) message and download (if the message is an image or file message) the file(s) to the given `<outputFolder>` folder.
-
-#### Remaining credits
-
-```ShellSession
-threema-msgapi-tool.php -C <from> <secret>
-```
-
-Fetch remaining credits.
+which should show you the number of credits remaining in your account or an error message on failure.
 
 ## Contributing
-Nice to see you want to contribute. We may periodically send patches to Threema to make it possible for them to implement them in the official SDK version.  
-You can find more information [in our wiki](https://github.com/rugk/threema-msgapi-sdk-php/wiki/Contributing).
 
-## Implementations
-
-Looking for some implementations? Have a look at [the wiki](https://github.com/rugk/threema-msgapi-sdk-php/wiki/Implementations).
+Your pull requests are welcome here. Please follow the informal coding style that already exists (which tries to stay close to Threema's original). 
+See the notes at the top of this readme for caveats: this is a fork of an unofficial fork of an unsupported api. The goals of this fork are quite different to the others, so maybe think about where your contribution will be most useful.
 
 ## Other platforms (Java and Python)
 All repositories on GitHub are no longer maintained by the Threema GmbH. However, the community has forked the repositories of all platforms and they are now maintained unofficially.

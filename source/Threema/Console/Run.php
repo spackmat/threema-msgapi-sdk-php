@@ -26,6 +26,7 @@ use Threema\Console\Command\SendSimple;
 use Threema\Console\Command\Credits;
 use Threema\Console\Command\FeatureLevel;
 use Threema\Core\Exception;
+use Threema\MsgApi\Constants;
 use Threema\MsgApi\PublicKeyStore;
 use Threema\MsgApi\Tools\CryptTool;
 
@@ -159,10 +160,10 @@ class Run {
 	private function help() {
 		$defaultCryptTool = CryptTool::getInstance();
 
-		Common::l();
+//		Common::l();
 		Common::l('Threema PHP MsgApi Tool');
-		Common::l('Version: '.MSGAPI_SDK_VERSION);
-		Common::l('Feature level: '.MSGAPI_SDK_FEATURE_LEVEL);
+		Common::l('Version: '.Constants::MSGAPI_SDK_VERSION);
+		Common::l('Feature level: '.Constants::MSGAPI_SDK_FEATURE_LEVEL);
 		Common::l('CryptTool: '.$defaultCryptTool->getName().' ('.$defaultCryptTool->getDescription().')');
 		Common::l(str_repeat('.', 40));
 		Common::l();

@@ -1,0 +1,24 @@
+<phpunit
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        beStrictAboutTestsThatDoNotTestAnything="true"
+>
+    <testsuites>
+        <testsuite name="All Tests">
+            <directory>./test</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./test</directory>
+        </whitelist>
+    </filter>
+    <php>
+        <ini name="zend.assertions" value="1"/>
+        <ini name="assert.exception" value="1"/>
+        <ini name="display_errors" value="1"/>
+        <ini name="display_startup_errors" value="1"/>
+        <const name="UNIT_TEST" value="true"/>
+    </php>
+</phpunit>

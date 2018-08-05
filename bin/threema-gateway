@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @author    Threema GmbH
+ * @copyright Copyright (c) 2015, Threema GmbH
+ */
+
+use Threema\Console\Run;
+
+$autoloaderInWorkingDirectory = getcwd() . '/vendor/autoload.php';
+if (is_file($autoloaderInWorkingDirectory)) {
+    require_once $autoloaderInWorkingDirectory;
+}
+
+if (!class_exists(Run::class, true)) {
+    $composerAutoloadFile = __DIR__ . '/../vendor/autoload.php';
+    if (!is_file($composerAutoloadFile)) {
+        $composerAutoloadFile = __DIR__ . '/../../../autoload.php';
+    }
+    require_once $composerAutoloadFile;
+}
+
+try {
+    //create a phpfile public keystore
+    $keyStore = Threema\MsgApi\PublicKeyStores\PhpFile::create('keystore.php');
+    $tool     = new Run($argv, $keyStore);
+    $tool->run();
+} catch (\Threema\Core\Exception $exception) {
+    echo "ERROR: " . $exception->getMessage() . "\n";
+    exit(1);
+}

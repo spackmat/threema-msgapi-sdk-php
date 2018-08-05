@@ -3,8 +3,7 @@
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
 
-//include_project
-require_once 'bootstrap.php';
+require_once '../vendor/autoload.php';
 
 //define your connection settings
 $settings = new ConnectionSettings(

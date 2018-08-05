@@ -18,6 +18,7 @@ use Threema\MsgApi\Commands\LookupEmail;
 use Threema\MsgApi\Commands\LookupPhone;
 use Threema\MsgApi\Commands\MultiPartCommandInterface;
 use Threema\MsgApi\Commands\Results\CapabilityResult;
+use Threema\MsgApi\Commands\Results\CreditsResult;
 use Threema\MsgApi\Commands\Results\DownloadFileResult;
 use Threema\MsgApi\Commands\Results\FetchPublicKeyResult;
 use Threema\MsgApi\Commands\Results\LookupIdResult;
@@ -28,7 +29,6 @@ use Threema\MsgApi\Commands\Results\UploadFileResult;
 use Threema\MsgApi\Commands\SendSimple;
 use Threema\MsgApi\Commands\SendE2E;
 use Threema\MsgApi\Commands\UploadFile;
-use Threema\MsgApi\Constants;
 
 /**
  * Class Connection
@@ -36,6 +36,9 @@ use Threema\MsgApi\Constants;
  */
 class Connection
 {
+    const DEFAULT_USE_HTTPS = true;
+    const DEFAULT_TLS_VERSION = '1.2';
+
 	/**
 	 * @var ConnectionSettings
 	 */
@@ -175,11 +178,11 @@ class Connection
 
 		//tls settings
 
-		if (true === $this->setting->getTlsOption(ConnectionSettings::tlsOptionForceHttps, false)) {
+		if (true === $this->setting->getTlsOption(ConnectionSettings::tlsOptionForceHttps, self::DEFAULT_USE_HTTPS)) {
 			//limit allowed protocols to HTTPS
 			$options[CURLOPT_PROTOCOLS] = CURLPROTO_HTTPS;
 		}
-		if ($tlsVersion = $this->setting->getTlsOption(ConnectionSettings::tlsOptionVersion)) {
+		if ($tlsVersion = $this->setting->getTlsOption(ConnectionSettings::tlsOptionVersion, self::DEFAULT_TLS_VERSION)) {
 			if (is_int($tlsVersion)) {
 				//if number is given use it
 				$options[CURLOPT_SSLVERSION] = $tlsVersion;

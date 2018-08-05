@@ -6,20 +6,21 @@
 
 
 
-namespace Threema\MsgApi\Tests;
+namespace Threema\MsgApi;
 
+use PHPUnit\Framework\TestCase;
 use Threema\Console\Common;
 
-class CommonTests extends \PHPUnit_Framework_TestCase {
+class CommonTests extends TestCase {
 
 	public function testGetPrivateKey() {
-		$realPrivateKey = Common::getPrivateKey(Constants::myPrivateKey);
-		$this->assertEquals($realPrivateKey, Constants::myPrivateKeyExtract, 'getPrivateKey failed');
+		$realPrivateKey = Common::getPrivateKey(TestConstants::myPrivateKey);
+		$this->assertEquals($realPrivateKey, TestConstants::myPrivateKeyExtract, 'getPrivateKey failed');
 	}
 
 	public function testGetPublicKey() {
-		$realPublicKey = Common::getPublicKey(Constants::myPublicKey);
-		$this->assertEquals($realPublicKey, Constants::myPublicKeyExtract, 'myPublicKey failed');
+		$realPublicKey = Common::getPublicKey(TestConstants::myPublicKey);
+		$this->assertEquals($realPublicKey, TestConstants::myPublicKeyExtract, 'myPublicKey failed');
 	}
 
 	public function testConvertPrivateKey() {

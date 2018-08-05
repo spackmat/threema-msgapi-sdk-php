@@ -37,25 +37,11 @@ abstract class CryptTool {
 	private static $instance = null;
 
 	/**
-	 * Prior libsodium
-	 *
 	 * @return CryptTool
 	 */
 	public static function getInstance() {
 		if(null === self::$instance) {
-			foreach(array(
-				function() {
-					return self::createInstance(self::TYPE_SODIUM);
-				},
-				function() {
-					return self::createInstance(self::TYPE_SALT);
-				}) as $instanceGenerator) {
-				$i = $instanceGenerator->__invoke();
-				if(null !== $i) {
-					self::$instance = $i;
-					break;
-				}
-			}
+		    self::$instance = new CryptToolSodium();
 		}
 
 		return self::$instance;
@@ -69,18 +55,11 @@ abstract class CryptTool {
 		switch($type) {
 			case self::TYPE_SODIUM:
 				$instance = new CryptToolSodium();
-				if(false === $instance->isSupported()) {
-					//try to instance old version of sodium wrapper
-					/** @noinspection PhpDeprecationInspection */
-					$instance = new CryptToolSodiumDep();
-				}
-				return $instance->isSupported() ? $instance :null;
-			case self::TYPE_SALT:
-				$instance = new CryptToolSalt();
-				return $instance->isSupported() ? $instance :null;
+				break;
 			default:
 				return null;
 		}
+        return $instance->isSupported() ? $instance :null;
 	}
 
 	const MESSAGE_ID_LEN = 8;
@@ -343,7 +322,7 @@ abstract class CryptTool {
 	 * @return string random nonce
 	 */
 	final public function randomNonce() {
-		return $this->createRandom(\Salt::box_NONCE);
+		return $this->createRandom(24);
 	}
 
 	/**

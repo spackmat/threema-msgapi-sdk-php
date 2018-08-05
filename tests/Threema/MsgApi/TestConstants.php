@@ -5,9 +5,9 @@
  */
 
 
-namespace Threema\MsgApi\Tests;
+namespace Threema\MsgApi;
 
-abstract class Constants {
+abstract class TestConstants {
 	const myPrivateKey = 'private:94af3260fa2a19adc8e82e82be598be15bc6ad6f47c8ee303cb185ef860e16d2';
 	const myPrivateKeyExtract = '94af3260fa2a19adc8e82e82be598be15bc6ad6f47c8ee303cb185ef860e16d2';
 
