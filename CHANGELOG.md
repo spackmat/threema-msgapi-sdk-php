@@ -2,6 +2,10 @@
 
 See README.md for info about version numbering. Follows https://keepachangelog.com/en/1.0.0/
 
+## 2.1.1 - 2018-08-07
+### Added
+- bulk lookup result carries through the original array key (user.id or person.id etc) for email and phone number
+
 ## 2.1.0 - 2018-08-06
 ### Added
 - bulk lookup for phone numbers and emails
