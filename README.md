@@ -1,11 +1,11 @@
 # [Threema Gateway](https://gateway.threema.ch/) PHP SDK
 
-This is an unofficial wrapper for the Threema API.
+This is an unofficial wrapper for the Threema Gateway API.
 
 You have three other alternatives
 
 * Use the official Threema github repo https://github.com/threema-ch/threema-msgapi-sdk-php. No longer maintained (Oct 2015)
-* Download the .zip file version from https://gateway.threema.ch/
+* Download the .zip file version from https://gateway.threema.ch/. Currently v1.1.7 Oct 2016. Missing the Bulk Lookup api.
 * Use an unofficial version which stays close to the official version, occasionally has patches accepted by Threema https://github.com/rugk/threema-msgapi-sdk-php. It has an [`official`](https://github.com/rugk/threema-msgapi-sdk-php/tree/official) branch which mirrors the official version. Rugk has done a ton of great work to move the package forward into the modern ecosystem while maintaining as much backwards compatibility as possible.  
 
 Why build another one?
@@ -13,8 +13,8 @@ Why build another one?
 * PHP7.2 has libsodium compiled in. If we target 7.2 as the minimum version, a whole lot of complicated code from the official version is no longer needed. We can delete the older PECL sodium drivers and the driver selection code. The Salt git submodule is no longer needed.
 * Composer means that we can delete the phar command line runner, delete the two autoloaders that `require` a lot of files and do static initialisation for every page load (even if Threema is not being used) 
 * Fix some of the problems caused by the above, plus some broken type hints (for phpStorm), and split the (small number of) unit tests out to a separate `/test` directory so they do not clutter an authoritative classmap
-* Add the missing bulk lookup function (not implemented in PHP)
-* In general, try to adhere to modern php package standards so that it is more comfortable to use this in other projects. For example, a [botman](https://github.com/botman/botman) integration 
+* Add the missing bulk lookup function (not implemented in PHP, hard to add by subclassing one of the alternatives because some important methods on the Connection class are private)
+* In general, try to adhere to modern php package standards so that it is more comfortable to use this in other projects. For example, make a [botman](https://github.com/botman/botman) integration possible 
 
 Versioning
 
@@ -25,10 +25,10 @@ The contributors of this repository are not affiliated with Threema or the Three
 ## Installation
 
 ```
-composer install LSS\threema-gateway
+composer install lss\threema-gateway
 ```
 
-If you want to check whether your server meets the requirements and everything is configured properly, run `vendor/bin/threema` without any parameters on the console.
+If you want to check whether your server meets the requirements and everything is configured properly, run `vendor/bin/threema-gateway` without any parameters on the console. It should show a list of commands if it is working, or an error message if not. 
 
 ## SDK usage
 
@@ -166,6 +166,7 @@ Your pull requests are welcome here. Please follow the informal coding style tha
 See the notes at the top of this readme for caveats: this is a fork of an unofficial fork of an unsupported api. The goals of this fork are quite different to the others, so maybe think about where your contribution will be most useful.
 
 ## Other platforms (Java and Python)
+
 All repositories on GitHub are no longer maintained by the Threema GmbH. However, the community has forked the repositories of all platforms and they are now maintained unofficially.
 
 You can find the Java repository at [simmac/threema-msgapi-sdk-java](https://github.com/simmac/threema-msgapi-sdk-java)  
