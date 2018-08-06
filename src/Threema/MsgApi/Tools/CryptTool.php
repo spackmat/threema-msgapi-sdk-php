@@ -124,7 +124,7 @@ abstract class CryptTool {
 
 	final public function encryptFileMessage(UploadFileResult $uploadFileResult,
 											 EncryptResult $encryptResult,
-											 UploadFileResult $thumbnailUploadFileResult = null,
+											 UploadFileResult $thumbnailUploadFileResult,
 											 FileAnalysisResult $fileAnalysisResult,
 											 $senderPrivateKey,
 											 $recipientPublicKey,

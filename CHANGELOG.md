@@ -2,6 +2,10 @@
 
 See README.md for info about version numbering. Follows https://keepachangelog.com/en/1.0.0/
 
+## 2.1.0 - 2018-08-06
+### Added
+- bulk lookup for phone numbers and emails
+
 ## 2.0.0 - 2018-08-06
 ### Added
 - bin/threema-gateway

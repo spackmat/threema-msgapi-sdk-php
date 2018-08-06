@@ -9,7 +9,7 @@ namespace Threema\Console\Command;
 
 use Threema\Console\Common;
 use Threema\Core\Exception;
-use Threema\Console\Command\CryptTool;
+use Threema\MsgApi\Tools\CryptTool;
 
 abstract class Base {
 	const argThreemaId = 'threemaId';

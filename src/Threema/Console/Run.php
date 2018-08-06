@@ -15,6 +15,7 @@ use Threema\Console\Command\Encrypt;
 use Threema\Console\Command\GenerateKeyPair;
 use Threema\Console\Command\HashEmail;
 use Threema\Console\Command\HashPhone;
+use Threema\Console\Command\LookupBulk;
 use Threema\Console\Command\LookupIdByEmail;
 use Threema\Console\Command\LookupIdByPhoneNo;
 use Threema\Console\Command\LookupPublicKeyById;
@@ -83,6 +84,7 @@ class Run {
 		$this->register(array('-l', '-e'), new LookupIdByEmail($this->publicKeyStore));
 		$this->register(array('-l', '-p'), new LookupIdByPhoneNo($this->publicKeyStore));
 		$this->register(array('-l', '-k'), new LookupPublicKeyById($this->publicKeyStore));
+		$this->register(array('-l', '-b'), new LookupBulk($this->publicKeyStore));
 		$this->register(array('-c'), new Capability($this->publicKeyStore));
 		$this->register(array('-r'), new ReceiveMessage($this->publicKeyStore));
 		$this->register(array('-C'), new Credits($this->publicKeyStore));

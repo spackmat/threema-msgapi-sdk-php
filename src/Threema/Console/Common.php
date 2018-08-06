@@ -53,7 +53,7 @@ class Common {
 		for($n = 0; $n < $argCount; $n++) {
 			$o = func_get_arg($n);
 			if(null === $o || (is_scalar($o) && strlen($o) == 0)) {
-				throw new Exception('invalid data');
+				throw new Exception('invalid data for argument ' . $n);
 			}
 		}
 	}

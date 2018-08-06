@@ -1,12 +1,12 @@
 {
     "name": "lss/threema-gateway",
     "type": "library",
-    "description": "Threema PHP-SDK to integrate Threema Gateway in your environment. This SDK allows you to send end-to-end-encrypted messages to Threema users using the Threema Gateway.",
+    "description": "Send end-to-end-encrypted messages to Threema users using the Threema Gateway.",
     "keywords": [
         "threema",
         "gateway"
     ],
-    "homepage": "https://gateway.threema.ch/en/developer/sdk-php",
+    "homepage": "https://github.com/pavarnos/threema-msgapi-sdk-php",
     "license": "MIT",
     "authors": [
         {
@@ -51,7 +51,7 @@
     "bin": [
         "src/threema"
     ],
-        "scripts": {
+    "scripts": {
         "test": "./vendor/bin/phpunit"
     }
 }

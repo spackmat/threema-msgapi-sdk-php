@@ -14,6 +14,8 @@ use Threema\MsgApi\Commands\CommandInterface;
 use Threema\MsgApi\Commands\Credits;
 use Threema\MsgApi\Commands\DownloadFile;
 use Threema\MsgApi\Commands\FetchPublicKey;
+use Threema\MsgApi\Commands\JsonCommandInterface;
+use Threema\MsgApi\Commands\LookupBulk;
 use Threema\MsgApi\Commands\LookupEmail;
 use Threema\MsgApi\Commands\LookupPhone;
 use Threema\MsgApi\Commands\MultiPartCommandInterface;
@@ -21,6 +23,7 @@ use Threema\MsgApi\Commands\Results\CapabilityResult;
 use Threema\MsgApi\Commands\Results\CreditsResult;
 use Threema\MsgApi\Commands\Results\DownloadFileResult;
 use Threema\MsgApi\Commands\Results\FetchPublicKeyResult;
+use Threema\MsgApi\Commands\Results\LookupBulkResult;
 use Threema\MsgApi\Commands\Results\LookupIdResult;
 use Threema\MsgApi\Commands\Results\Result;
 use Threema\MsgApi\Commands\Results\SendSimpleResult;
@@ -115,6 +118,16 @@ class Connection
 	public function keyLookupByEmail($email) {
 		$command = new LookupEmail($email);
 		return $this->get($command);
+	}
+
+    /**
+     * @param string[] $emailAddresses
+     * @param string[] $phoneNumbers
+     * @return LookupBulkResult
+     */
+	public function bulkLookup(array $emailAddresses, array $phoneNumbers) {
+		$command = new LookupBulk($emailAddresses, $phoneNumbers);
+		return $this->postJson($command);
 	}
 
 	/**
@@ -279,6 +292,24 @@ class Connection
 		$options[CURLOPT_POSTFIELDS] = array(
 			'blob' => $command->getData()
 		);
+
+		return $this->call($command->getPath(), $options, $params, function ($httpCode, $response) use ($command) {
+			return $command->parseResult($httpCode, $response);
+		});
+	}
+
+	/**
+	 * @param JsonCommandInterface $command
+	 * @return Result
+	 */
+	protected function postJson(JsonCommandInterface $command) {
+		$options = $this->createDefaultOptions();
+		$params = $this->processRequestParams($command->getParams());
+
+		$options[CURLOPT_POST] = true;
+		$options[CURLOPT_HTTPHEADER] = array('Content-Type: application/json');
+		$options[CURLOPT_SAFE_UPLOAD] = true;
+		$options[CURLOPT_POSTFIELDS] = $command->getJson();
 
 		return $this->call($command->getPath(), $options, $params, function ($httpCode, $response) use ($command) {
 			return $command->parseResult($httpCode, $response);
