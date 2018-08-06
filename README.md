@@ -165,6 +165,22 @@ which should show you the number of credits remaining in your account or an erro
 Your pull requests are welcome here. Please follow the informal coding style that already exists (which tries to stay close to Threema's original). 
 See the notes at the top of this readme for caveats: this is a fork of an unofficial fork of an unsupported api. The goals of this fork are quite different to the others, so maybe think about where your contribution will be most useful.
 
+The original code did not come with a lot of tests. All new code should be covered by phpUnit tests. To run the tests,
+```
+composer test
+``` 
+or
+```
+vendor/bin/phpunit
+```
+
+## To Do
+
+* Refactor the Connection to split out the cUrl calls to a separate driver class. Then add a Guzzle Driver. This will also make the Connection testable because it is trivial to create a Mock Driver. 
+* ReceiveMessageResult assumes you want to store file attachments on the local filesystem. This may not be true eg if using Amazon infrastructure. Refactor to allow for FileAcceptors(?) which can be overloaded to use Flysystem, local file system, or a null object pattern that ignores the file
+* There are some useful Exception classes defined but they are not used in some places.
+* apply consistent coding standards
+
 ## Other platforms (Java and Python)
 
 All repositories on GitHub are no longer maintained by the Threema GmbH. However, the community has forked the repositories of all platforms and they are now maintained unofficially.
