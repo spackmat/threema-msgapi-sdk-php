@@ -45,7 +45,7 @@ class BulkLookupIdentity
     }
 
     /**
-     * @return string[]
+     * @return string[] id => email address
      */
     public function getEmails(): array
     {
@@ -53,7 +53,7 @@ class BulkLookupIdentity
     }
 
     /**
-     * @return string[]
+     * @return string[] id => phone number
      */
     public function getPhones(): array
     {
@@ -62,11 +62,11 @@ class BulkLookupIdentity
 
     public function getFirstEmail(): string
     {
-        return $this->emails[0] ?? '';
+        return array_values($this->emails)[0] ?? '';
     }
 
     public function getFirstPhone(): string
     {
-        return $this->phones[0] ?? '';
+        return array_values($this->phones)[0] ?? '';
     }
 }

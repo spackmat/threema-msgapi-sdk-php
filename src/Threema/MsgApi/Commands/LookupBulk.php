@@ -13,16 +13,18 @@ use Threema\MsgApi\Tools\CryptTool;
  * It is possible (though very unlikely) that two different phone numbers or emails will hash to the same value.
  * This is a run time error that depends on user provided data so we can't just throw an exception or assert: we need
  * to smoothly handle the issue.
+ *
  * Threema never sees the original emails or phone numbers: just hashes of them. So when it returns the hashes that
  * match an ID and public key, we connect them back to the original email address and phone numbers in a
- * BulkLookupIdentity helper class
+ * BulkLookupIdentity helper class. The original key of the email or phone is returned to you in the match result, which
+ * is helpful if it is linked to a user.id or person.id for example.
  */
 class LookupBulk implements JsonCommandInterface
 {
     /** @var string[] */
     private $email = [];
 
-    /** @var string[] must be digits only with no leading + sign and include international country code prefix */
+    /** @var string[] should include international country code prefix */
     private $phone = [];
 
     /** @var string[][] phone hash => phone numbers that match the hash */
@@ -59,15 +61,15 @@ class LookupBulk implements JsonCommandInterface
     {
         $cryptTool = CryptTool::getInstance();
         $request   = [];
-        foreach ($this->phone as $phoneNumber) {
-            $hashedPhoneNumber                       = $cryptTool->hashPhoneNo($phoneNumber);
-            $request['phoneHashes'][]                = $hashedPhoneNumber;
-            $this->hashedPhone[$hashedPhoneNumber][] = $phoneNumber;
+        foreach ($this->phone as $id => $phoneNumber) {
+            $hashedPhoneNumber                          = $cryptTool->hashPhoneNo($phoneNumber);
+            $request['phoneHashes'][]                   = $hashedPhoneNumber;
+            $this->hashedPhone[$hashedPhoneNumber][$id] = $phoneNumber;
         }
-        foreach ($this->email as $emailAddress) {
-            $hashedEmail                       = $cryptTool->hashEmail($emailAddress);
-            $request['emailHashes'][]          = $hashedEmail;
-            $this->hashedEmail[$hashedEmail][] = $emailAddress;
+        foreach ($this->email as $id => $emailAddress) {
+            $hashedEmail                          = $cryptTool->hashEmail($emailAddress);
+            $request['emailHashes'][]             = $hashedEmail;
+            $this->hashedEmail[$hashedEmail][$id] = $emailAddress;
         }
         return json_encode($request);
     }
