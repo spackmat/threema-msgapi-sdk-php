@@ -1,21 +1,21 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
-
 
 namespace Threema\MsgApi\Messages;
 
 /**
  * Abstract base class of messages that can be sent with end-to-end encryption via Threema.
  */
-abstract class ThreemaMessage {
+abstract class ThreemaMessage
+{
 
-	/**
-	 * Get the message type code of this message.
-	 *
-	 * @return int message type code
-	 */
-	abstract public function getTypeCode();
+    /**
+     * Get the message type code of this message.
+     *
+     * @return int message type code
+     */
+    abstract public function getTypeCode();
 }

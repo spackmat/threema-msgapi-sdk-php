@@ -1,9 +1,8 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
-
 
 namespace Threema\Console\Command;
 
@@ -12,41 +11,43 @@ use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
 use Threema\MsgApi\PublicKeyStore;
 
-class LookupPublicKeyById extends Base {
-	/**
-	 * @var PublicKeyStore
-	 */
-	private $publicKeyStore;
+class LookupPublicKeyById extends Base
+{
+    /**
+     * @var PublicKeyStore
+     */
+    private $publicKeyStore;
 
-	/**
-	 * @param PublicKeyStore $publicKeyStore
-	 */
-	public function __construct(PublicKeyStore $publicKeyStore) {
-		parent::__construct('Fetch Public Key',
-			array(self::argThreemaId, self::argFrom, self::argSecret),
-			'Lookup the public key for the given ID.');
-		$this->publicKeyStore = $publicKeyStore;
-	}
+    /**
+     * @param PublicKeyStore $publicKeyStore
+     */
+    public function __construct(PublicKeyStore $publicKeyStore)
+    {
+        parent::__construct('Fetch Public Key',
+            [self::argThreemaId, self::argFrom, self::argSecret],
+            'Lookup the public key for the given ID.');
+        $this->publicKeyStore = $publicKeyStore;
+    }
 
-	protected function doRun() {
-		$id = $this->getArgumentThreemaId(self::argThreemaId);
-		$from = $this->getArgumentThreemaId(self::argFrom);
-		$secret = $this->getArgument(self::argSecret);
+    protected function doRun()
+    {
+        $id     = $this->getArgumentThreemaId(self::argThreemaId);
+        $from   = $this->getArgumentThreemaId(self::argFrom);
+        $secret = $this->getArgument(self::argSecret);
 
-		Common::required($id, $from, $secret);
+        Common::required($id, $from, $secret);
 
-		//define connection settings
-		$settings = new ConnectionSettings($from, $secret);
+        //define connection settings
+        $settings = new ConnectionSettings($from, $secret);
 
-		//create a connection
-		$connector = new Connection($settings, $this->publicKeyStore);
+        //create a connection
+        $connector = new Connection($settings, $this->publicKeyStore);
 
-		$result = $connector->fetchPublicKey($id);
-		if($result->isSuccess()) {
-			Common::l(Common::convertPublicKey($result->getPublicKey()));
-		}
-		else {
-			Common::e($result->getErrorMessage());
-		}
-	}
+        $result = $connector->fetchPublicKey($id);
+        if ($result->isSuccess()) {
+            Common::l(Common::convertPublicKey($result->getPublicKey()));
+        } else {
+            Common::e($result->getErrorMessage());
+        }
+    }
 }

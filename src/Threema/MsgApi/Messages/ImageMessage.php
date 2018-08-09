@@ -1,75 +1,81 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
-
 namespace Threema\MsgApi\Messages;
 
-class ImageMessage extends ThreemaMessage {
-	const TYPE_CODE = 0x02;
+class ImageMessage extends ThreemaMessage
+{
+    const TYPE_CODE = 0x02;
 
-	/**
-	 * @var string
-	 */
-	private $blobId;
+    /**
+     * @var string
+     */
+    private $blobId;
 
-	/**
-	 * @var string
-	 */
-	private $length;
+    /**
+     * @var string
+     */
+    private $length;
 
-	/**
-	 * @var int
-	 */
-	private $nonce;
+    /**
+     * @var int
+     */
+    private $nonce;
 
-	/**
-	 * @param string $blobId
-	 * @param int $length
-	 * @param string $nonce
-	 */
-	public function __construct($blobId, $length, $nonce) {
-		$this->blobId = $blobId;
-		$this->length = $length;
-		$this->nonce = $nonce;
-	}
+    /**
+     * @param string $blobId
+     * @param int    $length
+     * @param string $nonce
+     */
+    public function __construct($blobId, $length, $nonce)
+    {
+        $this->blobId = $blobId;
+        $this->length = $length;
+        $this->nonce  = $nonce;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getBlobId() {
-		return $this->blobId;
-	}
+    /**
+     * @return string
+     */
+    public function getBlobId()
+    {
+        return $this->blobId;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getLength() {
-		return $this->length;
-	}
+    /**
+     * @return string
+     */
+    public function getLength()
+    {
+        return $this->length;
+    }
 
-	/**
-	 * @return int
-	 */
-	public function getNonce() {
-		return $this->nonce;
-	}
+    /**
+     * @return int
+     */
+    public function getNonce()
+    {
+        return $this->nonce;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function __toString() {
-		return 'image message';
-	}
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return 'image message';
+    }
 
-	/**
-	 * Get the message type code of this message.
-	 *
-	 * @return int message type code
-	 */
-	public final function getTypeCode() {
-		return self::TYPE_CODE;
-	}
+    /**
+     * Get the message type code of this message.
+     *
+     * @return int message type code
+     */
+    public final function getTypeCode()
+    {
+        return self::TYPE_CODE;
+    }
 }

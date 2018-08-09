@@ -1,32 +1,35 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
-
 namespace Threema\Console\Command;
 
-use Threema\Console\Common;
 use Threema\Console\Command\CryptTool;
+use Threema\Console\Common;
 
-class GenerateKeyPair extends Base {
-	public function __construct() {
-		parent::__construct('Generate Key Pair',
-			array(self::argPrivateKeyFile, self::argPublicKeyFile),
-			'Generate a new key pair and write the private and public keys to the respective files (in hex).');
-	}
+class GenerateKeyPair extends Base
+{
+    public function __construct()
+    {
+        parent::__construct('Generate Key Pair',
+            [self::argPrivateKeyFile, self::argPublicKeyFile],
+            'Generate a new key pair and write the private and public keys to the respective files (in hex).');
+    }
 
-	protected function doRun() {
-		$cryptTool = CryptTool::getInstance();
-		$keyPair = $cryptTool->generateKeyPair();
+    protected function doRun()
+    {
+        $cryptTool = CryptTool::getInstance();
+        $keyPair   = $cryptTool->generateKeyPair();
 
-		$privateKeyHex = $cryptTool->bin2hex($keyPair->privateKey);
-		$publicKeyHex = $cryptTool->bin2hex($keyPair->publicKey);
+        $privateKeyHex = $cryptTool->bin2hex($keyPair->privateKey);
+        $publicKeyHex  = $cryptTool->bin2hex($keyPair->publicKey);
 
-		file_put_contents($this->getArgument(self::argPrivateKeyFile), Common::convertPrivateKey($privateKeyHex)."\n");
-		file_put_contents($this->getArgument(self::argPublicKeyFile), Common::convertPublicKey($publicKeyHex)."\n");
+        file_put_contents($this->getArgument(self::argPrivateKeyFile),
+            Common::convertPrivateKey($privateKeyHex) . "\n");
+        file_put_contents($this->getArgument(self::argPublicKeyFile), Common::convertPublicKey($publicKeyHex) . "\n");
 
-		Common::l('key pair generated');
-	}
+        Common::l('key pair generated');
+    }
 }

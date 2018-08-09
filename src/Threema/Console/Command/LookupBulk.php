@@ -68,7 +68,7 @@ class LookupBulk extends Base
                 Common::l('email:' . $email, $indent);
             }
             foreach ($match->getPhones() as $phone) {
-                Common::l('phone:'. $phone, $indent);
+                Common::l('phone:' . $phone, $indent);
             }
         }
     }

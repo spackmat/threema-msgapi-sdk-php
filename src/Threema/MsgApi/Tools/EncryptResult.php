@@ -1,9 +1,8 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
-
 
 namespace Threema\MsgApi\Tools;
 
@@ -12,65 +11,71 @@ namespace Threema\MsgApi\Tools;
  *
  * @package Threema\MsgApi\Tool
  */
-class EncryptResult {
-	/**
-	 * @var string as binary
-	 */
-	private $data;
+class EncryptResult
+{
+    /**
+     * @var string as binary
+     */
+    private $data;
 
-	/**
-	 * @var string as binary
-	 */
-	private $key;
+    /**
+     * @var string as binary
+     */
+    private $key;
 
-	/**
-	 * @var string as binary
-	 */
-	private $nonce;
+    /**
+     * @var string as binary
+     */
+    private $nonce;
 
-	/**
-	 * @var int
-	 */
-	private $size;
+    /**
+     * @var int
+     */
+    private $size;
 
-	/**
-	 * @param string $data (binary)
-	 * @param string $key (binary)
-	 * @param string $nonce (binary)
-	 * @param int $size
-	 */
-	public function __construct($data, $key, $nonce, $size) {
-		$this->data = $data;
-		$this->key = $key;
-		$this->nonce = $nonce;
-		$this->size = $size;
-	}
+    /**
+     * @param string $data  (binary)
+     * @param string $key   (binary)
+     * @param string $nonce (binary)
+     * @param int    $size
+     */
+    public function __construct($data, $key, $nonce, $size)
+    {
+        $this->data  = $data;
+        $this->key   = $key;
+        $this->nonce = $nonce;
+        $this->size  = $size;
+    }
 
-	/**
-	 * @return int
-	 */
-	public function getSize() {
-		return $this->size;
-	}
+    /**
+     * @return int
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
 
-	/**
-	 * @return string (binary)
-	 */
-	public function getKey() {
-		return $this->key;
-	}
+    /**
+     * @return string (binary)
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
 
-	/**
-	 * @return string (binary)
-	 */
-	public function getNonce() {
-		return $this->nonce;
-	}
+    /**
+     * @return string (binary)
+     */
+    public function getNonce()
+    {
+        return $this->nonce;
+    }
 
-	/**
-	 * @return string (binary)
-	 */
-	public function getData() {
-		return $this->data;
-	}
+    /**
+     * @return string (binary)
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
 }

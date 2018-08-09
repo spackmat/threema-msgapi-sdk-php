@@ -1,365 +1,375 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
-
 namespace Threema\MsgApi\Helpers;
 
+use Threema\Core\Exception;
 use Threema\MsgApi\Commands\Results\CapabilityResult;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\Messages\FileMessage;
 use Threema\MsgApi\Messages\ImageMessage;
 use Threema\MsgApi\Messages\ThreemaMessage;
 use Threema\MsgApi\Tools\CryptTool;
-use Threema\Core\Exception;
 use Threema\MsgApi\Tools\FileAnalysisTool;
 
-class E2EHelper {
-	/**
-	 * @var Connection
-	 */
-	private $connection;
+class E2EHelper
+{
+    /**
+     * @var Connection
+     */
+    private $connection;
 
-	/**
-	 * @var CryptTool
-	 */
-	private $cryptTool;
+    /**
+     * @var CryptTool
+     */
+    private $cryptTool;
 
-	/**
-	 * @var string (bin)
-	 */
-	private $privateKey;
+    /**
+     * @var string (bin)
+     */
+    private $privateKey;
 
-	/**
-	 * @param string $privateKey (binary)
-	 * @param Connection $connection
-	 * @param CryptTool $cryptTool
-	 */
-	public function __construct($privateKey, Connection $connection, CryptTool $cryptTool = null) {
-		$this->connection = $connection;
-		$this->cryptTool = $cryptTool;
-		$this->privateKey = $privateKey;
+    /**
+     * @param string     $privateKey (binary)
+     * @param Connection $connection
+     * @param CryptTool  $cryptTool
+     */
+    public function __construct($privateKey, Connection $connection, CryptTool $cryptTool = null)
+    {
+        $this->connection = $connection;
+        $this->cryptTool  = $cryptTool;
+        $this->privateKey = $privateKey;
 
-		if(null === $this->cryptTool) {
-			$this->cryptTool = CryptTool::getInstance();
-		}
-	}
+        if (null === $this->cryptTool) {
+            $this->cryptTool = CryptTool::getInstance();
+        }
+    }
 
-	/**
-	 * Encrypt a text message and send it to the threemaId
-	 *
-	 * @param string $threemaId
-	 * @param string $text
-	 * @throws \Threema\Core\Exception
-	 * @return \Threema\MsgApi\Commands\Results\SendE2EResult
-	 */
-	public final function sendTextMessage($threemaId, $text) {
-		//random nonce first
-		$nonce = $this->cryptTool->randomNonce();
+    /**
+     * Encrypt a text message and send it to the threemaId
+     *
+     * @param string $threemaId
+     * @param string $text
+     * @throws \Threema\Core\Exception
+     * @return \Threema\MsgApi\Commands\Results\SendE2EResult
+     */
+    public final function sendTextMessage($threemaId, $text)
+    {
+        //random nonce first
+        $nonce = $this->cryptTool->randomNonce();
 
-		//fetch the public key
-		$receiverPublicKey = $this->fetchPublicKeyAndCheckCapability($threemaId, null);
+        //fetch the public key
+        $receiverPublicKey = $this->fetchPublicKeyAndCheckCapability($threemaId, null);
 
-		//create a box
-		$textMessage = $this->cryptTool->encryptMessageText(
-			$text,
-			$this->privateKey,
-			$receiverPublicKey,
-			$nonce);
+        //create a box
+        $textMessage = $this->cryptTool->encryptMessageText(
+            $text,
+            $this->privateKey,
+            $receiverPublicKey,
+            $nonce);
 
-		return $this->connection->sendE2E($threemaId, $nonce, $textMessage);
-	}
+        return $this->connection->sendE2E($threemaId, $nonce, $textMessage);
+    }
 
-	/**
-	 * Encrypt an image file, upload the blob and send the image message to the threemaId
-	 *
-	 * @param string $threemaId
-	 * @param string $imagePath
-	 * @return \Threema\MsgApi\Commands\Results\SendE2EResult
-	 * @throws \Threema\Core\Exception
-	 */
-	public final function sendImageMessage($threemaId, $imagePath) {
-		//analyse the file
-		$fileAnalyzeResult = FileAnalysisTool::analyse($imagePath);
+    /**
+     * Encrypt an image file, upload the blob and send the image message to the threemaId
+     *
+     * @param string $threemaId
+     * @param string $imagePath
+     * @return \Threema\MsgApi\Commands\Results\SendE2EResult
+     * @throws \Threema\Core\Exception
+     */
+    public final function sendImageMessage($threemaId, $imagePath)
+    {
+        //analyse the file
+        $fileAnalyzeResult = FileAnalysisTool::analyse($imagePath);
 
-		if(null === $fileAnalyzeResult) {
-			throw new Exception('could not analyze the file');
-		}
+        if (null === $fileAnalyzeResult) {
+            throw new Exception('could not analyze the file');
+        }
 
-		if(false === in_array($fileAnalyzeResult->getMimeType(), array(
-				'image/jpg',
-				'image/jpeg',
-				'image/png' ))) {
-			throw new Exception('file is not a jpg or png');
-		}
+        if (false === in_array($fileAnalyzeResult->getMimeType(), [
+                'image/jpg',
+                'image/jpeg',
+                'image/png'])) {
+            throw new Exception('file is not a jpg or png');
+        }
 
-		//fetch the public key
-		$receiverPublicKey = $this->fetchPublicKeyAndCheckCapability($threemaId, function(CapabilityResult $capabilityResult) {
-			return true === $capabilityResult->canImage();
-		});
+        //fetch the public key
+        $receiverPublicKey = $this->fetchPublicKeyAndCheckCapability($threemaId,
+            function (CapabilityResult $capabilityResult) {
+                return true === $capabilityResult->canImage();
+            });
 
-		//encrypt the image file
-		$encryptionResult = $this->cryptTool->encryptImage(file_get_contents($imagePath), $this->privateKey, $receiverPublicKey);
-		$uploadResult =  $this->connection->uploadFile($encryptionResult->getData());
+        //encrypt the image file
+        $encryptionResult = $this->cryptTool->encryptImage(file_get_contents($imagePath), $this->privateKey,
+            $receiverPublicKey);
+        $uploadResult     = $this->connection->uploadFile($encryptionResult->getData());
 
-		if($uploadResult === null || !$uploadResult->isSuccess()) {
-			throw new Exception('could not upload the image ('.$uploadResult->getErrorCode().' '.$uploadResult->getErrorMessage().') '.$uploadResult->getRawResponse());
-		}
+        if ($uploadResult === null || !$uploadResult->isSuccess()) {
+            throw new Exception('could not upload the image (' . $uploadResult->getErrorCode() . ' ' . $uploadResult->getErrorMessage() . ') ' . $uploadResult->getRawResponse());
+        }
 
-		$nonce = $this->cryptTool->randomNonce();
+        $nonce = $this->cryptTool->randomNonce();
 
-		//create a image message box
-		$imageMessage = $this->cryptTool->encryptImageMessage(
-			$uploadResult,
-			$encryptionResult,
-			$this->privateKey,
-			$receiverPublicKey,
-			$nonce);
+        //create a image message box
+        $imageMessage = $this->cryptTool->encryptImageMessage(
+            $uploadResult,
+            $encryptionResult,
+            $this->privateKey,
+            $receiverPublicKey,
+            $nonce);
 
-		return $this->connection->sendE2E($threemaId, $nonce, $imageMessage);
-	}
+        return $this->connection->sendE2E($threemaId, $nonce, $imageMessage);
+    }
 
-	/**
-	 * Encrypt a file (and thumbnail if given), upload the blob and send it to the given threemaId
-	 *
-	 * @param string $threemaId
-	 * @param string $filePath
-	 * @param null|string $thumbnailPath
-	 * @throws \Threema\Core\Exception
-	 * @return \Threema\MsgApi\Commands\Results\SendE2EResult
-	 */
-	public final function sendFileMessage($threemaId, $filePath, $thumbnailPath = null) {
-		//analyse the file
-		$fileAnalyzeResult = FileAnalysisTool::analyse($filePath);
+    /**
+     * Encrypt a file (and thumbnail if given), upload the blob and send it to the given threemaId
+     *
+     * @param string      $threemaId
+     * @param string      $filePath
+     * @param null|string $thumbnailPath
+     * @throws \Threema\Core\Exception
+     * @return \Threema\MsgApi\Commands\Results\SendE2EResult
+     */
+    public final function sendFileMessage($threemaId, $filePath, $thumbnailPath = null)
+    {
+        //analyse the file
+        $fileAnalyzeResult = FileAnalysisTool::analyse($filePath);
 
-		if(null === $fileAnalyzeResult) {
-			throw new Exception('could not analyze the file');
-		}
+        if (null === $fileAnalyzeResult) {
+            throw new Exception('could not analyze the file');
+        }
 
-		//fetch the public key
-		$receiverPublicKey = $this->fetchPublicKeyAndCheckCapability($threemaId, function(CapabilityResult $capabilityResult) {
-			return true === $capabilityResult->canFile();
-		});
+        //fetch the public key
+        $receiverPublicKey = $this->fetchPublicKeyAndCheckCapability($threemaId,
+            function (CapabilityResult $capabilityResult) {
+                return true === $capabilityResult->canFile();
+            });
 
-		//encrypt the main file
-		$encryptionResult = $this->cryptTool->encryptFile(file_get_contents($filePath));
-		$uploadResult =  $this->connection->uploadFile($encryptionResult->getData());
+        //encrypt the main file
+        $encryptionResult = $this->cryptTool->encryptFile(file_get_contents($filePath));
+        $uploadResult     = $this->connection->uploadFile($encryptionResult->getData());
 
-		if($uploadResult === null || !$uploadResult->isSuccess()) {
-			throw new Exception('could not upload the file ('.$uploadResult->getErrorCode().' '.$uploadResult->getErrorMessage().') '.$uploadResult->getRawResponse());
-		}
+        if ($uploadResult === null || !$uploadResult->isSuccess()) {
+            throw new Exception('could not upload the file (' . $uploadResult->getErrorCode() . ' ' . $uploadResult->getErrorMessage() . ') ' . $uploadResult->getRawResponse());
+        }
 
-		$thumbnailUploadResult = null;
+        $thumbnailUploadResult = null;
 
-		//encrypt the thumbnail file (if exists)
-		if(strlen($thumbnailPath) > 0 && true === file_exists($thumbnailPath)) {
-			//encrypt the main file
-			$thumbnailEncryptionResult = $this->cryptTool->encryptFileThumbnail(file_get_contents($thumbnailPath), $encryptionResult->getKey());
-			$thumbnailUploadResult = $this->connection->uploadFile($thumbnailEncryptionResult->getData());
+        //encrypt the thumbnail file (if exists)
+        if (strlen($thumbnailPath) > 0 && true === file_exists($thumbnailPath)) {
+            //encrypt the main file
+            $thumbnailEncryptionResult = $this->cryptTool->encryptFileThumbnail(file_get_contents($thumbnailPath),
+                $encryptionResult->getKey());
+            $thumbnailUploadResult     = $this->connection->uploadFile($thumbnailEncryptionResult->getData());
 
-			if($thumbnailUploadResult === null || !$thumbnailUploadResult->isSuccess()) {
-				throw new Exception('could not upload the thumbnail file ('.$thumbnailUploadResult->getErrorCode().' '.$thumbnailUploadResult->getErrorMessage().') '.$thumbnailUploadResult->getRawResponse());
-			}
-		}
+            if ($thumbnailUploadResult === null || !$thumbnailUploadResult->isSuccess()) {
+                throw new Exception('could not upload the thumbnail file (' . $thumbnailUploadResult->getErrorCode() . ' ' . $thumbnailUploadResult->getErrorMessage() . ') ' . $thumbnailUploadResult->getRawResponse());
+            }
+        }
 
-		$nonce = $this->cryptTool->randomNonce();
+        $nonce = $this->cryptTool->randomNonce();
 
-		//create a file message box
-		$fileMessage = $this->cryptTool->encryptFileMessage(
-			$uploadResult,
-			$encryptionResult,
-			$thumbnailUploadResult,
-			$fileAnalyzeResult,
-			$this->privateKey,
-			$receiverPublicKey,
-			$nonce);
+        //create a file message box
+        $fileMessage = $this->cryptTool->encryptFileMessage(
+            $uploadResult,
+            $encryptionResult,
+            $thumbnailUploadResult,
+            $fileAnalyzeResult,
+            $this->privateKey,
+            $receiverPublicKey,
+            $nonce);
 
-		return $this->connection->sendE2E($threemaId, $nonce, $fileMessage);
-	}
+        return $this->connection->sendE2E($threemaId, $nonce, $fileMessage);
+    }
 
+    /**
+     * Decrypt a message and download the files of the message to the $outputFolder
+     *
+     * Note: This does not check the MAC before, which you should always do when
+     * you want to use this in your own application! Use {@link checkMac()} for doing so.
+     *
+     * @param string            $threemaId    The sender ID (= the ID the message came from)
+     * @param string            $messageId
+     * @param string            $box          box as binary string
+     * @param string            $nonce        nonce as binary string
+     * @param string|null|false $outputFolder folder for storing the files,
+     *                                        null=current folder, false=do not download files
+     * @param \Closure          $downloadMessage
+     * @return ReceiveMessageResult
+     * @throws Exception
+     * @throws \Threema\MsgApi\Exceptions\BadMessageException
+     * @throws \Threema\MsgApi\Exceptions\DecryptionFailedException
+     * @throws \Threema\MsgApi\Exceptions\UnsupportedMessageTypeException
+     */
+    public final function receiveMessage($threemaId,
+        $messageId,
+        $box,
+        $nonce,
+        $outputFolder = null,
+        \Closure $downloadMessage = null)
+    {
 
-	/**
-	 * Decrypt a message and download the files of the message to the $outputFolder
-	 *
-	 * Note: This does not check the MAC before, which you should always do when
-	 * you want to use this in your own application! Use {@link checkMac()} for doing so.
-	 *
-	 * @param string $threemaId The sender ID (= the ID the message came from)
-	 * @param string $messageId
-	 * @param string $box box as binary string
-	 * @param string $nonce nonce as binary string
-	 * @param string|null|false $outputFolder folder for storing the files,
-	 * 							null=current folder, false=do not download files
-	 * @param \Closure $downloadMessage
-	 * @return ReceiveMessageResult
-	 * @throws Exception
-	 * @throws \Threema\MsgApi\Exceptions\BadMessageException
-	 * @throws \Threema\MsgApi\Exceptions\DecryptionFailedException
-	 * @throws \Threema\MsgApi\Exceptions\UnsupportedMessageTypeException
-	 */
-	public final function receiveMessage($threemaId,
-										 $messageId,
-										 $box,
-										 $nonce,
-										 $outputFolder = null,
-										 \Closure $downloadMessage = null) {
+        //fetch the public key
+        $receiverPublicKey = $this->connection->fetchPublicKey($threemaId);
 
-		//fetch the public key
-		$receiverPublicKey = $this->connection->fetchPublicKey($threemaId);
+        if (null === $receiverPublicKey || !$receiverPublicKey->isSuccess()) {
+            throw new Exception('Invalid threema id');
+        }
 
-		if(null === $receiverPublicKey || !$receiverPublicKey->isSuccess()) {
-			throw new Exception('Invalid threema id');
-		}
+        $message = $this->cryptTool->decryptMessage(
+            $box,
+            $this->privateKey,
+            $this->cryptTool->hex2bin($receiverPublicKey->getPublicKey()),
+            $nonce
+        );
 
-		$message = $this->cryptTool->decryptMessage(
-			$box,
-			$this->privateKey,
-			$this->cryptTool->hex2bin($receiverPublicKey->getPublicKey()),
-			$nonce
-		);
+        if (null === $message || false === is_object($message)) {
+            throw new Exception('Could not encrypt box');
+        }
 
-		if(null === $message || false === is_object($message)) {
-			throw new Exception('Could not encrypt box');
-		}
+        $receiveResult = new ReceiveMessageResult($messageId, $message);
 
-		$receiveResult = new ReceiveMessageResult($messageId, $message);
+        if ($outputFolder === false) {
+            return $receiveResult;
+        }
+        if ($outputFolder === null || strlen($outputFolder) == 0) {
+            $outputFolder = '.';
+        }
 
-		if($outputFolder === false) {
-			return $receiveResult;
-		}
-		if($outputFolder === null || strlen($outputFolder) == 0) {
-			$outputFolder = '.';
-		}
+        if ($message instanceof ImageMessage) {
+            $result = $this->downloadFile($message, $message->getBlobId(), $downloadMessage);
+            if (null !== $result && true === $result->isSuccess()) {
+                $image = $this->cryptTool->decryptImage(
+                    $result->getData(),
+                    $this->cryptTool->hex2bin($receiverPublicKey->getPublicKey()),
+                    $this->privateKey,
+                    $message->getNonce()
+                );
 
-		if($message instanceof ImageMessage) {
-			$result = $this->downloadFile($message, $message->getBlobId(), $downloadMessage);
-			if(null !== $result && true === $result->isSuccess()) {
-				$image = $this->cryptTool->decryptImage(
-					$result->getData(),
-					$this->cryptTool->hex2bin($receiverPublicKey->getPublicKey()),
-					$this->privateKey,
-					$message->getNonce()
-				);
+                if (null === $image) {
+                    throw new Exception('decryption of image failed');
+                }
+                //save file
+                $filePath = $outputFolder . '/' . $messageId . '.jpg';
+                $f        = fopen($filePath, 'w+');
+                fwrite($f, $image);
+                fclose($f);
 
-				if (null === $image) {
-					throw new Exception('decryption of image failed');
-				}
-				//save file
-				$filePath = $outputFolder . '/' . $messageId . '.jpg';
-				$f = fopen($filePath, 'w+');
-				fwrite($f, $image);
-				fclose($f);
+                $receiveResult->addFile('image', $filePath);
+            }
+        } else if ($message instanceof FileMessage) {
+            $result = $this->downloadFile($message, $message->getBlobId(), $downloadMessage);
 
-				$receiveResult->addFile('image', $filePath);
-			}
-		}
-		else if($message instanceof FileMessage) {
-			$result = $this->downloadFile($message, $message->getBlobId(), $downloadMessage);
+            if (null !== $result && true === $result->isSuccess()) {
+                $file = $this->cryptTool->decryptFile(
+                    $result->getData(),
+                    $this->cryptTool->hex2bin($message->getEncryptionKey()));
 
-			if(null !== $result && true === $result->isSuccess()) {
-				$file = $this->cryptTool->decryptFile(
-					$result->getData(),
-					$this->cryptTool->hex2bin($message->getEncryptionKey()));
+                if (null === $file) {
+                    throw new Exception('file decryption failed');
+                }
 
-				if (null === $file) {
-					throw new Exception('file decryption failed');
-				}
+                //save file
+                $filePath = $outputFolder . '/' . $messageId . '-' . $message->getFilename();
+                file_put_contents($filePath, $file);
 
-				//save file
-				$filePath = $outputFolder . '/' . $messageId . '-' . $message->getFilename();
-				file_put_contents($filePath, $file);
+                $receiveResult->addFile('file', $filePath);
+            }
 
-				$receiveResult->addFile('file', $filePath);
-			}
+            if (null !== $message->getThumbnailBlobId() && strlen($message->getThumbnailBlobId()) > 0) {
+                $result = $this->downloadFile($message, $message->getThumbnailBlobId(), $downloadMessage);
+                if (null !== $result && true === $result->isSuccess()) {
+                    $file = $this->cryptTool->decryptFileThumbnail(
+                        $result->getData(),
+                        $this->cryptTool->hex2bin($message->getEncryptionKey()));
 
-			if(null !== $message->getThumbnailBlobId() && strlen($message->getThumbnailBlobId()) > 0) {
-				$result = $this->downloadFile($message, $message->getThumbnailBlobId(), $downloadMessage);
-				if(null !== $result && true === $result->isSuccess()) {
-					$file = $this->cryptTool->decryptFileThumbnail(
-						$result->getData(),
-						$this->cryptTool->hex2bin($message->getEncryptionKey()));
+                    if (null === $file) {
+                        throw new Exception('thumbnail decryption failed');
+                    }
+                    //save file
+                    $filePath = $outputFolder . '/' . $messageId . '-thumbnail-' . $message->getFilename();
+                    file_put_contents($filePath, $file);
 
-					if(null === $file) {
-						throw new Exception('thumbnail decryption failed');
-					}
-					//save file
-					$filePath = $outputFolder.'/'.$messageId.'-thumbnail-'.$message->getFilename();
-					file_put_contents($filePath, $file);
+                    $receiveResult->addFile('thumbnail', $filePath);
+                }
+            }
+        }
 
-					$receiveResult->addFile('thumbnail', $filePath);
-				}
-			}
-		}
+        return $receiveResult;
+    }
 
-		return $receiveResult;
-	}
+    /**
+     * Check the HMAC of an ingoing Threema request. Always do this before de-
+     * crypting the message.
+     *
+     * @param string $threemaId
+     * @param string $gatewayId
+     * @param string $messageId
+     * @param string $date
+     * @param string $nonce nonce as hex encoded string
+     * @param string $box   box as hex encoded string
+     * @param string $mac   the original one send by the server
+     *
+     * @return bool true if check was successfull, false if not
+     */
+    public final function checkMac($threemaId, $gatewayId, $messageId, $date, $nonce, $box, $mac, $secret)
+    {
+        $calculatedMac = hash_hmac('sha256', $threemaId . $gatewayId . $messageId . $date . $nonce . $box, $secret);
+        return $this->cryptTool->stringCompare($calculatedMac, $mac) === true;
+    }
 
-	/**
-	 * Check the HMAC of an ingoing Threema request. Always do this before de-
-	 * crypting the message.
-	 *
-	 * @param string $threemaId
-	 * @param string $gatewayId
-	 * @param string $messageId
-	 * @param string $date
-	 * @param string $nonce nonce as hex encoded string
-	 * @param string $box box as hex encoded string
-	 * @param string $mac the original one send by the server
-	 *
-	 * @return bool true if check was successfull, false if not
-	 */
-	public final function checkMac($threemaId, $gatewayId, $messageId, $date, $nonce, $box, $mac, $secret) {
-		$calculatedMac = hash_hmac('sha256', $threemaId.$gatewayId.$messageId.$date.$nonce.$box, $secret);
-		return $this->cryptTool->stringCompare($calculatedMac, $mac) === true;
-	}
+    /**
+     * Fetch a public key and check the capability of the threemaId
+     *
+     * @param string   $threemaId
+     * @param \Closure $capabilityCheck
+     * @return string Public key as binary
+     * @throws Exception
+     */
+    private final function fetchPublicKeyAndCheckCapability($threemaId, \Closure $capabilityCheck = null)
+    {
+        //fetch the public key
+        $receiverPublicKey = $this->connection->fetchPublicKey($threemaId);
 
-	/**
-	 * Fetch a public key and check the capability of the threemaId
-	 *
-	 * @param string $threemaId
-	 * @param \Closure $capabilityCheck
-	 * @return string Public key as binary
-	 * @throws Exception
-	 */
-	private final function fetchPublicKeyAndCheckCapability($threemaId, \Closure $capabilityCheck = null) {
-		//fetch the public key
-		$receiverPublicKey = $this->connection->fetchPublicKey($threemaId);
+        if (null === $receiverPublicKey || !$receiverPublicKey->isSuccess()) {
+            throw new Exception('Invalid threema id');
+        }
 
-		if(null === $receiverPublicKey || !$receiverPublicKey->isSuccess()) {
-			throw new Exception('Invalid threema id');
-		}
+        if (null !== $capabilityCheck) {
+            //check capability
+            $capability = $this->connection->keyCapability($threemaId);
+            if (null === $capability || false === $capabilityCheck->__invoke($capability)) {
+                throw new Exception('threema id does not have the capability');
+            }
+        }
 
-		if(null !== $capabilityCheck) {
-			//check capability
-			$capability = $this->connection->keyCapability($threemaId);
-			if(null === $capability || false === $capabilityCheck->__invoke($capability)) {
-				throw new Exception('threema id does not have the capability');
-			}
-		}
+        return $this->cryptTool->hex2bin($receiverPublicKey->getPublicKey());
+    }
 
-		return $this->cryptTool->hex2bin($receiverPublicKey->getPublicKey());
-	}
+    /**
+     * @param ThreemaMessage $message
+     * @param string         $blobId blob id as hex
+     * @param \Closure|null  $downloadMessage
+     * @return null|\Threema\MsgApi\Commands\Results\DownloadFileResult
+     * @throws Exception
+     */
+    private final function downloadFile(ThreemaMessage $message, $blobId, \Closure $downloadMessage = null)
+    {
+        if (null === $downloadMessage
+            || true === $downloadMessage->__invoke($message, $blobId)) {
+            //make a download
+            $result = $this->connection->downloadFile($blobId);
+            if (null === $result || false === $result->isSuccess()) {
+                throw new Exception('could not download the file with blob id ' . $blobId);
+            }
 
-	/**
-	 * @param ThreemaMessage $message
-	 * @param string $blobId blob id as hex
-	 * @param \Closure|null $downloadMessage
-	 * @return null|\Threema\MsgApi\Commands\Results\DownloadFileResult
-	 * @throws Exception
-	 */
-	private final function downloadFile(ThreemaMessage $message, $blobId, \Closure $downloadMessage = null) {
-		if(null === $downloadMessage
-			|| true === $downloadMessage->__invoke($message, $blobId)) {
-			//make a download
-			$result = $this->connection->downloadFile($blobId);
-			if(null === $result || false === $result->isSuccess()) {
-				throw new Exception('could not download the file with blob id '.$blobId);
-			}
-
-			return $result;
-		}
-		return null;
-	}
+            return $result;
+        }
+        return null;
+    }
 }

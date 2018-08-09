@@ -1,9 +1,8 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
-
 
 namespace Threema\Console\Command;
 
@@ -14,69 +13,76 @@ use Threema\MsgApi\Helpers\E2EHelper;
 use Threema\MsgApi\PublicKeyStore;
 use Threema\MsgApi\Tools\CryptTool;
 
-class ReceiveMessage extends Base {
-	const argOutputFolder = 'outputFolder';
-	const argMessageId = 'messageId';
+class ReceiveMessage extends Base
+{
+    const argOutputFolder = 'outputFolder';
+    const argMessageId    = 'messageId';
 
-	/**
-	 * @var PublicKeyStore
-	 */
-	private $publicKeyStore;
+    /**
+     * @var PublicKeyStore
+     */
+    private $publicKeyStore;
 
-	/**
-	 * @param PublicKeyStore $publicKeyStore
-	 */
-	public function __construct(PublicKeyStore $publicKeyStore) {
-		parent::__construct('Decrypt a Message and download the Files',
-			array(self::argThreemaId, self::argFrom, self::argSecret, self::argPrivateKey, self::argMessageId, self::argNonce),
-			'Decrypt a box (must be provided on stdin) message and download (if the message is an image or file message) the file(s) to the given <'.self::argOutputFolder.'> folder',
-			array(self::argOutputFolder));
-		$this->publicKeyStore = $publicKeyStore;
-	}
+    /**
+     * @param PublicKeyStore $publicKeyStore
+     */
+    public function __construct(PublicKeyStore $publicKeyStore)
+    {
+        parent::__construct('Decrypt a Message and download the Files',
+            [self::argThreemaId,
+             self::argFrom,
+             self::argSecret,
+             self::argPrivateKey,
+             self::argMessageId,
+             self::argNonce],
+            'Decrypt a box (must be provided on stdin) message and download (if the message is an image or file message) the file(s) to the given <' . self::argOutputFolder . '> folder',
+            [self::argOutputFolder]);
+        $this->publicKeyStore = $publicKeyStore;
+    }
 
-	protected function doRun() {
-		$cryptTool = CryptTool::getInstance();
+    protected function doRun()
+    {
+        $cryptTool = CryptTool::getInstance();
 
-		$sendersThreemaId = $this->getArgumentThreemaId(self::argThreemaId);
-		$id = $this->getArgumentThreemaId(self::argFrom);
-		$secret = $this->getArgument(self::argSecret);
-		$privateKey = $this->getArgumentPrivateKey(self::argPrivateKey);
-		$nonce = $cryptTool->hex2bin($this->getArgument(self::argNonce));
-		$messageId = $this->getArgument(self::argMessageId);
-		$outputFolder = $this->getArgument(self::argOutputFolder);
+        $sendersThreemaId = $this->getArgumentThreemaId(self::argThreemaId);
+        $id               = $this->getArgumentThreemaId(self::argFrom);
+        $secret           = $this->getArgument(self::argSecret);
+        $privateKey       = $this->getArgumentPrivateKey(self::argPrivateKey);
+        $nonce            = $cryptTool->hex2bin($this->getArgument(self::argNonce));
+        $messageId        = $this->getArgument(self::argMessageId);
+        $outputFolder     = $this->getArgument(self::argOutputFolder);
 
-		$box = $cryptTool->hex2bin($this->readStdIn());
+        $box = $cryptTool->hex2bin($this->readStdIn());
 
-		Common::required($box, $id, $secret, $privateKey, $nonce);
+        Common::required($box, $id, $secret, $privateKey, $nonce);
 
-		$settings = new ConnectionSettings(
-			$id,
-			$secret
-		);
+        $settings = new ConnectionSettings(
+            $id,
+            $secret
+        );
 
-		$connector = new Connection($settings, $this->publicKeyStore);
-		$helper = new E2EHelper($privateKey, $connector);
-		$message = $helper->receiveMessage(
-			$sendersThreemaId,
-			$messageId,
-			$box,
-			$nonce,
-			$outputFolder
-		);
+        $connector = new Connection($settings, $this->publicKeyStore);
+        $helper    = new E2EHelper($privateKey, $connector);
+        $message   = $helper->receiveMessage(
+            $sendersThreemaId,
+            $messageId,
+            $box,
+            $nonce,
+            $outputFolder
+        );
 
-		if(null === $message) {
-			Common::e('invalid message');
-			return;
-		}
+        if (null === $message) {
+            Common::e('invalid message');
+            return;
+        }
 
-		if($message->isSuccess()) {
-			Common::l($message->getMessageId().' - '.$message->getThreemaMessage());
-			foreach($message->getFiles() as $fileName => $filePath) {
-				Common::l('   received file '.$fileName.' in '.$filePath);
-			}
-		}
-		else {
-			Common::e('Error: '.implode("\n", $message->getErrors()));
-		}
-	}
+        if ($message->isSuccess()) {
+            Common::l($message->getMessageId() . ' - ' . $message->getThreemaMessage());
+            foreach ($message->getFiles() as $fileName => $filePath) {
+                Common::l('   received file ' . $fileName . ' in ' . $filePath);
+            }
+        } else {
+            Common::e('Error: ' . implode("\n", $message->getErrors()));
+        }
+    }
 }

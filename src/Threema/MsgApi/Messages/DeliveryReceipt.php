@@ -1,101 +1,107 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
-
 
 namespace Threema\MsgApi\Messages;
 
 use Threema\MsgApi\Tools\CryptTool;
 
-class DeliveryReceipt extends ThreemaMessage {
-	const TYPE_CODE = 0x80;
+class DeliveryReceipt extends ThreemaMessage
+{
+    const TYPE_CODE = 0x80;
 
-	/**
-	 * map type => text
-	 *
-	 * @var array
-	 */
-	private static $receiptTypesToNames = array(
-		1 => 'received',
-		2 => 'read',
-		3 => 'userack',
-		4 => 'userdec');
+    /**
+     * map type => text
+     *
+     * @var array
+     */
+    private static $receiptTypesToNames = [
+        1 => 'received',
+        2 => 'read',
+        3 => 'userack',
+        4 => 'userdec'];
 
-	/**
-	 * the type of this receipt
-	 * @var int
-	 */
-	private $receiptType;
+    /**
+     * the type of this receipt
+     * @var int
+     */
+    private $receiptType;
 
-	/**
-	 * list of message IDs acknowledged by this delivery receipt
-	 * @var string[]
-	 */
-	private $ackedMessageIds;
+    /**
+     * list of message IDs acknowledged by this delivery receipt
+     * @var string[]
+     */
+    private $ackedMessageIds;
 
-	/**
-	 * create instance
-	 * @param int $receiptType the type of this receipt
-	 * @param array $ackedMessageIds list of message IDs acknowledged by this delivery receipt
-	 */
-	public function __construct($receiptType, array $ackedMessageIds) {
-		$this->receiptType = $receiptType;
-		$this->ackedMessageIds = $ackedMessageIds;
-	}
+    /**
+     * create instance
+     * @param int   $receiptType     the type of this receipt
+     * @param array $ackedMessageIds list of message IDs acknowledged by this delivery receipt
+     */
+    public function __construct($receiptType, array $ackedMessageIds)
+    {
+        $this->receiptType     = $receiptType;
+        $this->ackedMessageIds = $ackedMessageIds;
+    }
 
-	/**
-	 * Get the type of this delivery receipt as a numeric code (e.g. 1, 2, 3).
-	 *
-	 * @return int
-	 */
-	public function getReceiptType() {
-		return $this->receiptType;
-	}
+    /**
+     * Get the type of this delivery receipt as a numeric code (e.g. 1, 2, 3).
+     *
+     * @return int
+     */
+    public function getReceiptType()
+    {
+        return $this->receiptType;
+    }
 
-	/**
-	 * Get the type of this delivery receipt as a string (e.g. 'received', 'read', 'userack').
-	 *
-	 * @return string
-	 */
-	public function getReceiptTypeName() {
-		if(true === array_key_exists($this->receiptType, self::$receiptTypesToNames)) {
-			return self::$receiptTypesToNames[$this->receiptType];
-		}
-		return null;
-	}
+    /**
+     * Get the type of this delivery receipt as a string (e.g. 'received', 'read', 'userack').
+     *
+     * @return string
+     */
+    public function getReceiptTypeName()
+    {
+        if (true === array_key_exists($this->receiptType, self::$receiptTypesToNames)) {
+            return self::$receiptTypesToNames[$this->receiptType];
+        }
+        return null;
+    }
 
-	/**
-	 * Get the acknowledged message ids
-	 * @return array
-	 */
-	public function getAckedMessageIds() {
-		return $this->ackedMessageIds;
-	}
+    /**
+     * Get the acknowledged message ids
+     * @return array
+     */
+    public function getAckedMessageIds()
+    {
+        return $this->ackedMessageIds;
+    }
 
-	/**
-	 * Convert to string
-	 *
-	 * @return string
-	 */
-	public function __toString() {
-		$cryptTool = CryptTool::getInstance();
-		$str = "Delivery receipt (" . $this->getReceiptTypeName() . "): ";
-		$hexMessageIds = array();
-		foreach ($this->ackedMessageIds as $messageId) {
-			$hexMessageIds[] = $cryptTool->bin2hex($messageId);
-		}
-		$str .= join(", ", $hexMessageIds);
-		return $str;
-	}
+    /**
+     * Convert to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $cryptTool     = CryptTool::getInstance();
+        $str           = "Delivery receipt (" . $this->getReceiptTypeName() . "): ";
+        $hexMessageIds = [];
+        foreach ($this->ackedMessageIds as $messageId) {
+            $hexMessageIds[] = $cryptTool->bin2hex($messageId);
+        }
+        $str .= join(", ", $hexMessageIds);
+        return $str;
+    }
 
-	/**
-	 * Get the message type code of this message.
-	 *
-	 * @return int message type code
-	 */
-	public final function getTypeCode() {
-		return self::TYPE_CODE;
-	}
+    /**
+     * Get the message type code of this message.
+     *
+     * @return int message type code
+     */
+    public final function getTypeCode()
+    {
+        return self::TYPE_CODE;
+    }
 }

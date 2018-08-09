@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
@@ -14,71 +14,75 @@ use Threema\MsgApi\PublicKeyStore;
  *
  * @package Threema\MsgApi\PublicKeyStores
  */
-class File extends PublicKeyStore {
-	/**
-	 * @var string
-	 */
-	private $file;
+class File extends PublicKeyStore
+{
+    /**
+     * @var string
+     */
+    private $file;
 
-	/**
-	 * @param string $file Valid, read and writable file
-	 * @throws Exception if the file does not exist or not writable
-	 */
-	public function __construct($file) {
-		if(false === is_writable($file)) {
-			throw new Exception('file '.$file.' does not exist or is not writable');
-		}
-		$this->file = $file;
-	}
+    /**
+     * @param string $file Valid, read and writable file
+     * @throws Exception if the file does not exist or not writable
+     */
+    public function __construct($file)
+    {
+        if (false === is_writable($file)) {
+            throw new Exception('file ' . $file . ' does not exist or is not writable');
+        }
+        $this->file = $file;
+    }
 
-	/**
-	 * return null if the public key not found in the store
-	 * @param string $threemaId
-	 * @return null|string
-	 * @throws Exception
-	 */
-	public function findPublicKey($threemaId) {
-		$storeHandle = fopen($this->file, 'r');
-		if(false === $storeHandle) {
-			throw new Exception('could not open file '.$this->file);
-		}
-		else {
-			$threemaId = strtoupper($threemaId);
-			$publicKey = null;
-			while (!feof($storeHandle)) {
-				$buffer = fgets($storeHandle, 4096);
-				if(substr($buffer, 0, 8) == $threemaId) {
-					$publicKey = str_replace("\n", '', substr($buffer, 8));
-					continue;
-				}
-				// Process buffer here..
-			}
-			fclose($storeHandle);
-			return $publicKey;
-		}
-	}
+    /**
+     * Initialize a new File Public Key Store
+     * @param string $path the file will be created if it does not exist
+     * @return File
+     */
+    public static function create($path)
+    {
+        if (false === file_exists($path)) {
+            //touch
+            touch($path);
+        }
 
-	/**
-	 * save a public key
-	 * @param string $threemaId
-	 * @param string $publicKey
-	 * @return bool
-	 */
-	public function savePublicKey($threemaId, $publicKey) {
-		return file_put_contents($this->file, $threemaId.$publicKey."\n", FILE_APPEND) !== false;
-	}
+        return new File($path);
+    }
 
-	/**
-	 * Initialize a new File Public Key Store
-	 * @param string $path the file will be created if it does not exist
-	 * @return File
-	 */
-	public static function create($path) {
-		if(false === file_exists($path)) {
-			//touch
-			touch($path);
-		}
+    /**
+     * return null if the public key not found in the store
+     * @param string $threemaId
+     * @return null|string
+     * @throws Exception
+     */
+    public function findPublicKey($threemaId)
+    {
+        $storeHandle = fopen($this->file, 'r');
+        if (false === $storeHandle) {
+            throw new Exception('could not open file ' . $this->file);
+        } else {
+            $threemaId = strtoupper($threemaId);
+            $publicKey = null;
+            while (!feof($storeHandle)) {
+                $buffer = fgets($storeHandle, 4096);
+                if (substr($buffer, 0, 8) == $threemaId) {
+                    $publicKey = str_replace("\n", '', substr($buffer, 8));
+                    continue;
+                }
+                // Process buffer here..
+            }
+            fclose($storeHandle);
+            return $publicKey;
+        }
+    }
 
-		return new File($path);
-	}
+    /**
+     * save a public key
+     * @param string $threemaId
+     * @param string $publicKey
+     * @return bool
+     */
+    public function savePublicKey($threemaId, $publicKey)
+    {
+        return file_put_contents($this->file, $threemaId . $publicKey . "\n", FILE_APPEND) !== false;
+    }
 }

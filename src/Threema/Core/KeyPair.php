@@ -1,18 +1,20 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
-
 namespace Threema\Core;
 
-class KeyPair {
-	public $privateKey;
-	public $publicKey;
+class KeyPair
+{
+    public $privateKey;
 
-	public function __construct($privateKey, $publicKey) {
-		$this->privateKey = $privateKey;
-		$this->publicKey = $publicKey;
-	}
+    public $publicKey;
+
+    public function __construct($privateKey, $publicKey)
+    {
+        $this->privateKey = $privateKey;
+        $this->publicKey  = $publicKey;
+    }
 }

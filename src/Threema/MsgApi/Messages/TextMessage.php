@@ -1,47 +1,51 @@
 <?php
 /**
- * @author Threema GmbH
+ * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
-
 namespace Threema\MsgApi\Messages;
 
-class TextMessage extends ThreemaMessage {
-	const TYPE_CODE = 0x01;
+class TextMessage extends ThreemaMessage
+{
+    const TYPE_CODE = 0x01;
 
-	/**
-	 * @var string
-	 */
-	private $text;
+    /**
+     * @var string
+     */
+    private $text;
 
-	/**
-	 * @param string $text
-	 */
-	public function __construct($text) {
-		$this->text = $text;
-	}
+    /**
+     * @param string $text
+     */
+    public function __construct($text)
+    {
+        $this->text = $text;
+    }
 
-	/**
-	 * @return string text
-	 */
-	public function getText() {
-		return $this->text;
-	}
+    /**
+     * @return string text
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function __toString() {
-		return 'text message';
-	}
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return 'text message';
+    }
 
-	/**
-	 * Get the message type code of this message.
-	 *
-	 * @return int message type code
-	 */
-	public function getTypeCode() {
-		return self::TYPE_CODE;
-	}
+    /**
+     * Get the message type code of this message.
+     *
+     * @return int message type code
+     */
+    public function getTypeCode()
+    {
+        return self::TYPE_CODE;
+    }
 }
