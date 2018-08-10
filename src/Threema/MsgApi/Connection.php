@@ -47,18 +47,11 @@ class Connection
     private $setting;
 
     /**
-     * @var PublicKeyStore
-     */
-    private $publicKeyStore;
-
-    /**
      * @param ConnectionSettings $setting
-     * @param PublicKeyStore     $publicKeyStore stores the public keys locally to save network traffic
      */
-    public function __construct(ConnectionSettings $setting, PublicKeyStore $publicKeyStore = null)
+    public function __construct(ConnectionSettings $setting)
     {
-        $this->setting        = $setting;
-        $this->publicKeyStore = $publicKeyStore;
+        $this->setting = $setting;
     }
 
     /**
@@ -66,7 +59,7 @@ class Connection
      * @param          $text
      * @return SendSimpleResult
      */
-    public function sendSimple(Receiver $receiver, $text)
+    public function sendSimple(Receiver $receiver, $text): SendSimpleResult
     {
         $command = new SendSimple($receiver, $text);
         return $this->post($command);
@@ -78,7 +71,7 @@ class Connection
      * @param string $box
      * @return SendE2EResult
      */
-    public function sendE2E($threemaId, $nonce, $box)
+    public function sendE2E($threemaId, $nonce, $box): SendE2EResult
     {
         $command = new SendE2E($threemaId, $nonce, $box);
         return $this->post($command);
@@ -88,7 +81,7 @@ class Connection
      * @param $encryptedFileData (binary string)
      * @return UploadFileResult
      */
-    public function uploadFile($encryptedFileData)
+    public function uploadFile($encryptedFileData): UploadFileResult
     {
         $command = new UploadFile($encryptedFileData);
         return $this->postMultiPart($command);
@@ -96,10 +89,10 @@ class Connection
 
     /**
      * @param          $blobId
-     * @param callable $progress
+     * @param \Closure $progress
      * @return DownloadFileResult
      */
-    public function downloadFile($blobId, \Closure $progress = null)
+    public function downloadFile($blobId, \Closure $progress = null): DownloadFileResult
     {
         $command = new DownloadFile($blobId);
         return $this->get($command, $progress);
@@ -109,7 +102,7 @@ class Connection
      * @param $phoneNumber
      * @return LookupIdResult
      */
-    public function keyLookupByPhoneNumber($phoneNumber)
+    public function keyLookupByPhoneNumber($phoneNumber): LookupIdResult
     {
         $command = new LookupPhone($phoneNumber);
         return $this->get($command);
@@ -119,7 +112,7 @@ class Connection
      * @param string $email
      * @return LookupIdResult
      */
-    public function keyLookupByEmail($email)
+    public function keyLookupByEmail(string $email): LookupIdResult
     {
         $command = new LookupEmail($email);
         return $this->get($command);
@@ -130,7 +123,7 @@ class Connection
      * @param string[] $phoneNumbers
      * @return LookupBulkResult
      */
-    public function bulkLookup(array $emailAddresses, array $phoneNumbers)
+    public function bulkLookup(array $emailAddresses, array $phoneNumbers): LookupBulkResult
     {
         $command = new LookupBulk($emailAddresses, $phoneNumbers);
         return $this->postJson($command);
@@ -140,7 +133,7 @@ class Connection
      * @param string $threemaId valid threema id (8 Chars)
      * @return CapabilityResult
      */
-    public function keyCapability($threemaId)
+    public function keyCapability(string $threemaId): CapabilityResult
     {
         return $this->get(new Capability($threemaId));
     }
@@ -148,7 +141,7 @@ class Connection
     /**
      * @return CreditsResult
      */
-    public function credits()
+    public function credits(): CreditsResult
     {
         return $this->get(new Credits());
     }
@@ -157,35 +150,16 @@ class Connection
      * @param $threemaId
      * @return FetchPublicKeyResult
      */
-    public function fetchPublicKey($threemaId)
+    public function fetchPublicKey(string $threemaId): FetchPublicKeyResult
     {
-        $publicKey = null;
-
-        if (null !== $this->publicKeyStore) {
-            $publicKey = $this->publicKeyStore->getPublicKey($threemaId);
-        }
-
-        if (null === $publicKey) {
-            $command = new FetchPublicKey($threemaId);
-            $result  = $this->get($command);
-            if (false === $result->isSuccess()) {
-                return $result;
-            }
-            $publicKey = $result->getRawResponse();
-
-            if (null !== $this->publicKeyStore) {
-                $this->publicKeyStore->setPublicKey($threemaId, $publicKey);
-            }
-        }
-
-        //create a key result
-        return new FetchPublicKeyResult(200, $publicKey);
+        return $this->get(new FetchPublicKey($threemaId));
     }
 
     /**
      * @param CommandInterface $command
-     * @param callable         $progress
+     * @param \Closure         $progress
      * @return Result
+     * @throws \Threema\Core\Exception
      */
     protected function get(CommandInterface $command, \Closure $progress = null)
     {
@@ -209,8 +183,7 @@ class Connection
 
         $options[CURLOPT_POST]       = true;
         $options[CURLOPT_POSTFIELDS] = http_build_query($params);
-        $options[CURLOPT_HTTPHEADER] = [
-            'Content-Type: application/x-www-form-urlencoded'];
+        $options[CURLOPT_HTTPHEADER] = ['Content-Type: application/x-www-form-urlencoded'];
 
         return $this->call($command->getPath(), $options, null, function ($httpCode, $response) use ($command) {
             return $command->parseResult($httpCode, $response);
@@ -229,9 +202,7 @@ class Connection
         $options[CURLOPT_POST]        = true;
         $options[CURLOPT_HTTPHEADER]  = ['Content-Type: multipart/form-data'];
         $options[CURLOPT_SAFE_UPLOAD] = true;
-        $options[CURLOPT_POSTFIELDS]  = [
-            'blob' => $command->getData(),
-        ];
+        $options[CURLOPT_POSTFIELDS]  = ['blob' => $command->getData()];
 
         return $this->call($command->getPath(), $options, $params, function ($httpCode, $response) use ($command) {
             return $command->parseResult($httpCode, $response);
@@ -258,7 +229,7 @@ class Connection
     }
 
     /**
-     * @param callable $progress
+     * @param \Closure $progress
      * @return array
      */
     private function createDefaultOptions(\Closure $progress = null)
@@ -320,7 +291,7 @@ class Connection
      * @param array $params
      * @return array
      */
-    private function processRequestParams(array $params)
+    private function processRequestParams(array $params): array
     {
         if (null === $params) {
             $params = [];
@@ -336,7 +307,7 @@ class Connection
      * @param string   $path
      * @param array    $curlOptions
      * @param array    $parameters
-     * @param callable $result
+     * @param \Closure $result
      * @return mixed
      * @throws \Threema\Core\Exception
      */

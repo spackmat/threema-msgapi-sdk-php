@@ -2,19 +2,22 @@
 
 This is an unofficial wrapper for the Threema Gateway API.
 
-You have three other alternatives
+You have four other alternatives
 
 * Use the official Threema github repo https://github.com/threema-ch/threema-msgapi-sdk-php. No longer maintained (Oct 2015)
 * Download the .zip file version from https://gateway.threema.ch/. Currently v1.1.7 Oct 2016. Missing the Bulk Lookup api.
-* Use an unofficial version which stays close to the official version, occasionally has patches accepted by Threema https://github.com/rugk/threema-msgapi-sdk-php. It has an [`official`](https://github.com/rugk/threema-msgapi-sdk-php/tree/official) branch which mirrors the official version. Rugk has done a ton of great work to move the package forward into the modern ecosystem while maintaining as much backwards compatibility as possible.  
+* Use an unofficial version which stays close to the official version, occasionally has patches accepted by Threema https://github.com/rugk/threema-msgapi-sdk-php. It has an [`official`](https://github.com/rugk/threema-msgapi-sdk-php/tree/official) branch which mirrors the official version. Rugk has done a ton of great work to move the package forward into the modern ecosystem while maintaining as much backwards compatibility as possible.
+* Use https://github.com/chillerlan/php-threema which is a separate implementation (Jun 2017) and missing some functionality. The API is cleaner / more logical in some places  
 
 Why build another one?
 
 * PHP7.2 has libsodium compiled in. If we target 7.2 as the minimum version, a whole lot of complicated code from the official version is no longer needed. We can delete the older PECL sodium drivers and the driver selection code. The Salt git submodule is no longer needed.
 * Composer means that we can delete the phar command line runner, delete the two autoloaders that `require` a lot of files and do static initialisation for every page load (even if Threema is not being used) 
-* Fix some of the problems caused by the above, plus some broken type hints (for phpStorm), and split the (small number of) unit tests out to a separate `/test` directory so they do not clutter an authoritative classmap
+* Fix some of the problems caused by the above, plus some broken type hints (for phpStorm), and split the (small number of) unit tests out to a separate `/tests` directory so they do not clutter an authoritative classmap
 * Add the missing bulk lookup function (not implemented in PHP, hard to add by subclassing one of the alternatives because some important methods on the Connection class are private)
-* In general, try to adhere to modern php package standards so that it is more comfortable to use this in other projects. For example, make a [botman](https://github.com/botman/botman) integration possible 
+* In general, try to adhere to modern php package standards so that it is more comfortable to use this in other projects. 
+* Fix some of the architectural issues so it is easier to test and allows for dependency injection. 
+* Working towards a [botman](https://github.com/botman/botman) integration / plugin 
 
 Versioning
 
@@ -52,11 +55,7 @@ $settings = new ConnectionSettings(
     'MYAPISECRET'
 );
 
-//simple php file to store the public keys (this file must already exist)
-$publicKeyStore = new Threema\MsgApi\PublicKeyStores\PhpFile('/path/to/my/keystore.php');
-
-//create a connection
-$connection = new Connection($settings, $publicKeyStore);
+$connection = new Connection($settings);
 ```
 
 ### Creating a connection with advanced options
@@ -83,11 +82,7 @@ $settings = new ConnectionSettings(
     ]
 );
 
-//simple php file to store the public keys (this file must already exist)
-$publicKeyStore = new Threema\MsgApi\PublicKeyStores\PhpFile('/path/to/my/keystore.php');
-
-//create a connection
-$connection = new Connection($settings, $publicKeyStore);
+$connection = new Connection($settings);
 ```
 
 **Note:** For `pinnedKey` to work you must install cURL 7.39 or higher. You can test whether it works by specifying an invalid pin.
@@ -95,12 +90,9 @@ $connection = new Connection($settings, $publicKeyStore);
 ### Sending a text message to a Threema ID (Simple Mode)
 
 ```php
-//create the connection
-//(...)
-//create a receiver
 $receiver = new Receiver('ABCD1234', Receiver::TYPE_ID);
 
-$result = $connector->sendSimple($receiver, "This is a Test Message");
+$result = $connection->sendSimple($receiver, "This is a Test Message");
 if($result->isSuccess()) {
     echo 'new id created '.$result->getMessageId();
 }
@@ -112,11 +104,8 @@ else {
 ### Sending a text message to a Threema ID (E2E Mode)
 
 ```php
-//create the connection
-//(...)
-
-$e2eHelper = new \Threema\MsgApi\Helpers\E2EHelper($senderPrivateKey,$connector);
-$result = $e2eHelper->sendTextMessage("TEST1234", "This is an end-to-end encrypted message");
+$e2eHelper = new \Threema\MsgApi\Helpers\E2EHelper($senderPrivateKey,$connection);
+$result = $e2eHelper->sendTextMessage("TEST1234", "thePublicKeyAsHex", "This is an end-to-end encrypted message");
 
 if(true === $result->isSuccess()) {
     echo 'Message ID: '.$result->getMessageId() . "\n";
@@ -129,14 +118,11 @@ else {
 ### Sending a file message to a Threema ID (E2E Mode)
 
 ```php
-//create the connection
-//(...)
-
 $senderPrivateKey = "MY_PUBLIC_KEY_IN_BIN";
 $filePath = "/path/to/my/file.pdf";
 
-$e2eHelper = new \Threema\MsgApi\Helpers\E2EHelper($senderPrivateKey,$connector);
-$result = $e2eHelper->sendFileMessage("TEST1234", $filePath);
+$e2eHelper = new \Threema\MsgApi\Helpers\E2EHelper($senderPrivateKey,$connection);
+$result = $e2eHelper->sendFileMessage("TEST1234", "thePublicKeyAsHex", $filePath);
 
 if(true === $result->isSuccess()) {
     echo 'File Message ID: '.$result->getMessageId() . "\n";
@@ -179,7 +165,6 @@ vendor/bin/phpunit
 * Refactor the Connection to split out the cUrl calls to a separate driver class. Then add a Guzzle Driver. This will also make the Connection testable because it is trivial to create a Mock Driver. 
 * ReceiveMessageResult assumes you want to store file attachments on the local filesystem. This may not be true eg if using Amazon infrastructure. Refactor to allow for FileAcceptors(?) which can be overloaded to use Flysystem, local file system, or a null object pattern that ignores the file
 * There are some useful Exception classes defined but they are not used in some places.
-* apply consistent coding standards
 
 ## Other platforms (Java and Python)
 

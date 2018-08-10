@@ -7,6 +7,7 @@
 namespace Threema\Console\Command;
 
 use Threema\Console\Common;
+use Threema\MsgApi\Constants;
 use Threema\MsgApi\Tools\CryptTool;
 
 class FeatureLevel extends Base
@@ -22,8 +23,8 @@ class FeatureLevel extends Base
     {
         $cryptTool = CryptTool::getInstance();
 
-        Common::l('Version: ' . MSGAPI_SDK_VERSION);
-        Common::l('Feature level: ' . MSGAPI_SDK_FEATURE_LEVEL);
+        Common::l('Version: ' . Constants::MSGAPI_SDK_VERSION);
+        Common::l('Feature level: ' . Constants::MSGAPI_SDK_FEATURE_LEVEL);
         Common::l('CryptTool: ' . $cryptTool->getName() . ' (' . $cryptTool->getDescription() . ')');
 
         Common::l(' ╔═══════╤══════╤══════════════╤═══════╤══════╤═════════╗');

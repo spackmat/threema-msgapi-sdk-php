@@ -9,26 +9,16 @@ namespace Threema\Console\Command;
 use Threema\Console\Common;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
-use Threema\MsgApi\PublicKeyStore;
 
 class LookupBulk extends Base
 {
     const argEmail = 'emailOrPhone';
 
-    /**
-     * @var PublicKeyStore
-     */
-    private $publicKeyStore;
-
-    /**
-     * @param PublicKeyStore $publicKeyStore
-     */
-    public function __construct(PublicKeyStore $publicKeyStore)
+    public function __construct()
     {
         parent::__construct('Bulk ID lookup',
             [self::argEmail, self::argFrom, self::argSecret],
             'Lookup the id and public key for the given list of comma separated phone numbers or emails.');
-        $this->publicKeyStore = $publicKeyStore;
     }
 
     protected function doRun()
@@ -43,7 +33,7 @@ class LookupBulk extends Base
         $settings = new ConnectionSettings($from, $secret);
 
         //create a connection
-        $connector = new Connection($settings, $this->publicKeyStore);
+        $connector = new Connection($settings);
 
         $emailAddresses = $phoneNumbers = [];
         foreach (explode(',', $wanted) as $item) {
@@ -61,7 +51,6 @@ class LookupBulk extends Base
         }
         $indent = 4;
         foreach ($result->getMatches() as $match) {
-            $this->publicKeyStore->setPublicKey($match->getIdentity(), $match->getPublicKey());
             Common::l($match->getIdentity());
             Common::l(Common::convertPublicKey($match->getPublicKey()), $indent);
             foreach ($match->getEmails() as $email) {

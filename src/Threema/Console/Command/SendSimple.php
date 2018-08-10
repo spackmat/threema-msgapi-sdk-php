@@ -9,25 +9,15 @@ namespace Threema\Console\Command;
 use Threema\Console\Common;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
-use Threema\MsgApi\PublicKeyStore;
 use Threema\MsgApi\Receiver;
 
 class SendSimple extends Base
 {
-    /**
-     * @var PublicKeyStore
-     */
-    private $publicKeyStore;
-
-    /**
-     * @param PublicKeyStore $publicKeyStore
-     */
-    public function __construct(PublicKeyStore $publicKeyStore)
+    public function __construct()
     {
         parent::__construct('Send Simple Message',
             [self::argThreemaId, self::argFrom, self::argSecret],
             'Send a message from standard input with server-side encryption to the given ID. is the API identity and \'secret\' is the API secret. the message ID on success.');
-        $this->publicKeyStore = $publicKeyStore;
     }
 
     protected function doRun()
@@ -47,7 +37,7 @@ class SendSimple extends Base
             $secret
         );
 
-        $connector = new Connection($settings, $this->publicKeyStore);
+        $connector = new Connection($settings);
         $receiver  = new Receiver($to, Receiver::TYPE_ID);
 
         $result = $connector->sendSimple($receiver, $message);

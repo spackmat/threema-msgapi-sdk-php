@@ -112,6 +112,7 @@ abstract class CryptTool
      * @param string           $recipientPublicKey the public key of the receiving ID (as binary)
      * @param string           $nonce              the nonce to be used for the encryption (usually 24 random bytes)
      * @return string
+     * @throws \Threema\Core\Exception
      */
     final public function encryptImageMessage(
         UploadFileResult $uploadFileResult,
@@ -175,6 +176,7 @@ abstract class CryptTool
      * @throws BadMessageException
      * @throws DecryptionFailedException
      * @throws UnsupportedMessageTypeException
+     * @throws \Threema\Core\Exception
      */
     final public function decryptMessage($box, $recipientPrivateKey, $senderPublicKey, $nonce)
     {

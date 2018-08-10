@@ -2,6 +2,13 @@
 
 See README.md for info about version numbering. Follows https://keepachangelog.com/en/1.0.0/
 
+## 2.2.0 - 2018-08-10
+- Temporarily ignoring semver because no one else is using htis library at the moment. Will add a note to the changelog when we follow semver again
+### Changed
+- Coding style fixes
+- Stricter types on some classes. Gradually migrating to strict_types=1
+- Removed the Public Key Store: it was horrible to use on the Connection class making it hard to use dependency injection. Storage is a separate concern. The API assumes you also store the threema id separately as well, so this is no extra burden on the caller (though it will hurt a bit for the command line)
+
 ## 2.1.1 - 2018-08-07
 ### Added
 - bulk lookup result carries through the original array key (user.id or person.id etc) for email and phone number

@@ -49,7 +49,7 @@
         "pds/skeleton": "^1.0"
     },
     "bin": [
-        "src/threema"
+        "src/threema-gateway"
     ],
     "scripts": {
         "test": "./vendor/bin/phpunit"

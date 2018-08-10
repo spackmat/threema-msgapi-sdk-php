@@ -1,13 +1,6 @@
-# Ignore public keystore files
-keystore.*
-
 # Ignore key files
 *.key
 privatekey.txt
 
-# Ignore builds
-*.phar
-*.phar.asc
-
-# no, composer…
+# no, composer
 vendor/

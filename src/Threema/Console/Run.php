@@ -27,7 +27,6 @@ use Threema\Console\Command\SendE2EText;
 use Threema\Console\Command\SendSimple;
 use Threema\Core\Exception;
 use Threema\MsgApi\Constants;
-use Threema\MsgApi\PublicKeyStore;
 use Threema\MsgApi\Tools\CryptTool;
 
 /**
@@ -53,19 +52,13 @@ class Run
     private $scriptName;
 
     /**
-     * @var PublicKeyStore
+     * @param array $arguments
+     * @throws \Threema\Core\Exception
      */
-    private $publicKeyStore;
-
-    /**
-     * @param array          $arguments
-     * @param PublicKeyStore $publicKeyStore
-     */
-    public function __construct(array $arguments, PublicKeyStore $publicKeyStore)
+    public function __construct(array $arguments)
     {
         $this->arguments      = $arguments;
         $this->scriptName     = basename(array_shift($this->arguments));
-        $this->publicKeyStore = $publicKeyStore;
 
         $this->registerSubject('Local operations (no network communication)');
         $this->register('-e', new Encrypt());
@@ -78,17 +71,17 @@ class Run
 
         $this->registerSubject('Network operations');
         //network operations
-        $this->register('-s', new SendSimple($this->publicKeyStore));
-        $this->register('-S', new SendE2EText($this->publicKeyStore));
-        $this->register(['-S', '-i'], new SendE2EImage($this->publicKeyStore));
-        $this->register(['-S', '-f'], new SendE2EFile($this->publicKeyStore));
-        $this->register(['-l', '-e'], new LookupIdByEmail($this->publicKeyStore));
-        $this->register(['-l', '-p'], new LookupIdByPhoneNo($this->publicKeyStore));
-        $this->register(['-l', '-k'], new LookupPublicKeyById($this->publicKeyStore));
-        $this->register(['-l', '-b'], new LookupBulk($this->publicKeyStore));
-        $this->register(['-c'], new Capability($this->publicKeyStore));
-        $this->register(['-r'], new ReceiveMessage($this->publicKeyStore));
-        $this->register(['-C'], new Credits($this->publicKeyStore));
+        $this->register('-s', new SendSimple());
+        $this->register('-S', new SendE2EText());
+        $this->register(['-S', '-i'], new SendE2EImage());
+        $this->register(['-S', '-f'], new SendE2EFile());
+        $this->register(['-l', '-e'], new LookupIdByEmail());
+        $this->register(['-l', '-p'], new LookupIdByPhoneNo());
+        $this->register(['-l', '-k'], new LookupPublicKeyById());
+        $this->register(['-l', '-b'], new LookupBulk());
+        $this->register(['-c'], new Capability());
+        $this->register(['-r'], new ReceiveMessage());
+        $this->register(['-C'], new Credits());
     }
 
     public function run()

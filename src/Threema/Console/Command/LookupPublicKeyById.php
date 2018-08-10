@@ -9,24 +9,14 @@ namespace Threema\Console\Command;
 use Threema\Console\Common;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
-use Threema\MsgApi\PublicKeyStore;
 
 class LookupPublicKeyById extends Base
 {
-    /**
-     * @var PublicKeyStore
-     */
-    private $publicKeyStore;
-
-    /**
-     * @param PublicKeyStore $publicKeyStore
-     */
-    public function __construct(PublicKeyStore $publicKeyStore)
+    public function __construct()
     {
         parent::__construct('Fetch Public Key',
             [self::argThreemaId, self::argFrom, self::argSecret],
             'Lookup the public key for the given ID.');
-        $this->publicKeyStore = $publicKeyStore;
     }
 
     protected function doRun()
@@ -41,7 +31,7 @@ class LookupPublicKeyById extends Base
         $settings = new ConnectionSettings($from, $secret);
 
         //create a connection
-        $connector = new Connection($settings, $this->publicKeyStore);
+        $connector = new Connection($settings);
 
         $result = $connector->fetchPublicKey($id);
         if ($result->isSuccess()) {

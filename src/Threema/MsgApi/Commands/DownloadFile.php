@@ -7,7 +7,6 @@
 namespace Threema\MsgApi\Commands;
 
 use Threema\MsgApi\Commands\Results\DownloadFileResult;
-use Threema\MsgApi\Commands\Results\UploadFileResult;
 
 class DownloadFile implements CommandInterface
 {
@@ -43,7 +42,7 @@ class DownloadFile implements CommandInterface
     /**
      * @param int    $httpCode
      * @param object $res
-     * @return UploadFileResult
+     * @return DownloadFileResult
      */
     public function parseResult($httpCode, $res)
     {

@@ -10,7 +10,6 @@ use Threema\Console\Common;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
 use Threema\MsgApi\Helpers\E2EHelper;
-use Threema\MsgApi\PublicKeyStore;
 use Threema\MsgApi\Tools\CryptTool;
 
 class ReceiveMessage extends Base
@@ -18,18 +17,11 @@ class ReceiveMessage extends Base
     const argOutputFolder = 'outputFolder';
     const argMessageId    = 'messageId';
 
-    /**
-     * @var PublicKeyStore
-     */
-    private $publicKeyStore;
-
-    /**
-     * @param PublicKeyStore $publicKeyStore
-     */
-    public function __construct(PublicKeyStore $publicKeyStore)
+    public function __construct()
     {
         parent::__construct('Decrypt a Message and download the Files',
             [self::argThreemaId,
+             self::argPublicKey,
              self::argFrom,
              self::argSecret,
              self::argPrivateKey,
@@ -37,7 +29,6 @@ class ReceiveMessage extends Base
              self::argNonce],
             'Decrypt a box (must be provided on stdin) message and download (if the message is an image or file message) the file(s) to the given <' . self::argOutputFolder . '> folder',
             [self::argOutputFolder]);
-        $this->publicKeyStore = $publicKeyStore;
     }
 
     protected function doRun()
@@ -45,6 +36,7 @@ class ReceiveMessage extends Base
         $cryptTool = CryptTool::getInstance();
 
         $sendersThreemaId = $this->getArgumentThreemaId(self::argThreemaId);
+        $sendersPublicKey = $this->getArgumentPublicKey(self::argPublicKey);
         $id               = $this->getArgumentThreemaId(self::argFrom);
         $secret           = $this->getArgument(self::argSecret);
         $privateKey       = $this->getArgumentPrivateKey(self::argPrivateKey);
@@ -61,10 +53,11 @@ class ReceiveMessage extends Base
             $secret
         );
 
-        $connector = new Connection($settings, $this->publicKeyStore);
+        $connector = new Connection($settings);
         $helper    = new E2EHelper($privateKey, $connector);
         $message   = $helper->receiveMessage(
             $sendersThreemaId,
+            $sendersPublicKey,
             $messageId,
             $box,
             $nonce,

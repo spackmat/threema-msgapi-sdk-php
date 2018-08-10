@@ -140,6 +140,7 @@ class CryptToolSodium extends CryptTool
     /**
      * @param int $size
      * @return string
+     * @throws \Exception
      */
     protected function createRandom($size)
     {

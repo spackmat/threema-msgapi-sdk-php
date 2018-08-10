@@ -12,7 +12,7 @@ final class FileAnalysisTool
      * @param string $file
      * @return FileAnalysisResult
      */
-    public static function analyse($file)
+    public static function analyse(string $file): FileAnalysisResult
     {
         //check if file exists
         if (false === file_exists($file)) {

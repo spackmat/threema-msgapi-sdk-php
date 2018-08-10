@@ -9,26 +9,16 @@ namespace Threema\Console\Command;
 use Threema\Console\Common;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
-use Threema\MsgApi\PublicKeyStore;
 
 class LookupIdByPhoneNo extends Base
 {
     const argPhoneNo = 'phoneNo';
 
-    /**
-     * @var PublicKeyStore
-     */
-    private $publicKeyStore;
-
-    /**
-     * @param PublicKeyStore $publicKeyStore
-     */
-    public function __construct(PublicKeyStore $publicKeyStore)
+    public function __construct()
     {
         parent::__construct('ID-Lookup By Phone Number',
             [self::argPhoneNo, self::argFrom, self::argSecret],
             'Lookup the ID linked to the given phone number (will be hashed locally).');
-        $this->publicKeyStore = $publicKeyStore;
     }
 
     protected function doRun()
@@ -43,7 +33,7 @@ class LookupIdByPhoneNo extends Base
         $settings = new ConnectionSettings($from, $secret);
 
         //create a connection
-        $connector = new Connection($settings, $this->publicKeyStore);
+        $connector = new Connection($settings);
 
         $result = $connector->keyLookupByPhoneNumber($phoneNo);;
         Common::required($result);

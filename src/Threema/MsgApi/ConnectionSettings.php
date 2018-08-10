@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi;
 
 class ConnectionSettings
@@ -39,14 +41,11 @@ class ConnectionSettings
      * @param string|null $host       server url
      * @param array|null  $tlsOptions advanced TLS options
      */
-    public function __construct($threemaId, $secret, $host = null, array $tlsOptions = null)
+    public function __construct(string $threemaId, string $secret, ?string $host = null, array $tlsOptions = null)
     {
         $this->threemaId = $threemaId;
         $this->secret    = $secret;
-        if ($host === null) {
-            $host = 'https://msgapi.threema.ch';
-        }
-        $this->host = $host;
+        $this->host      = $host ?? 'https://msgapi.threema.ch';
 
         // TLS options
         if (null !== $tlsOptions && is_array($tlsOptions)) {
@@ -71,7 +70,7 @@ class ConnectionSettings
     /**
      * @return string
      */
-    public function getThreemaId()
+    public function getThreemaId(): string
     {
         return $this->threemaId;
     }
@@ -79,7 +78,7 @@ class ConnectionSettings
     /**
      * @return string
      */
-    public function getSecret()
+    public function getSecret(): string
     {
         return $this->secret;
     }
@@ -87,7 +86,7 @@ class ConnectionSettings
     /**
      * @return string
      */
-    public function getHost()
+    public function getHost(): string
     {
         return $this->host;
     }
@@ -95,15 +94,17 @@ class ConnectionSettings
     /**
      * @return array
      */
-    public function getTlsOptions()
+    public function getTlsOptions(): array
     {
         return $this->tlsOptions;
     }
 
     /**
-     * @return string
+     * @param string           $option
+     * @param string|bool|null $default
+     * @return string|bool
      */
-    public function getTlsOption($option, $default = null)
+    public function getTlsOption(string $option, $default = null)
     {
         return true === array_key_exists($option, $this->tlsOptions) ? $this->tlsOptions[$option] : $default;
     }

@@ -37,7 +37,7 @@ class E2EHelper
      * @param Connection $connection
      * @param CryptTool  $cryptTool
      */
-    public function __construct($privateKey, Connection $connection, CryptTool $cryptTool = null)
+    public function __construct(string $privateKey, Connection $connection, CryptTool $cryptTool = null)
     {
         $this->connection = $connection;
         $this->cryptTool  = $cryptTool;
@@ -52,17 +52,15 @@ class E2EHelper
      * Encrypt a text message and send it to the threemaId
      *
      * @param string $threemaId
+     * @param string $receiverPublicKey binary format
      * @param string $text
-     * @throws \Threema\Core\Exception
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
+     * @throws \Threema\Core\Exception
      */
-    public final function sendTextMessage($threemaId, $text)
+    public final function sendTextMessage(string $threemaId, string $receiverPublicKey, string $text)
     {
         //random nonce first
         $nonce = $this->cryptTool->randomNonce();
-
-        //fetch the public key
-        $receiverPublicKey = $this->fetchPublicKeyAndCheckCapability($threemaId, null);
 
         //create a box
         $textMessage = $this->cryptTool->encryptMessageText(
@@ -78,11 +76,12 @@ class E2EHelper
      * Encrypt an image file, upload the blob and send the image message to the threemaId
      *
      * @param string $threemaId
+     * @param string $receiverPublicKey binary format
      * @param string $imagePath
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
      * @throws \Threema\Core\Exception
      */
-    public final function sendImageMessage($threemaId, $imagePath)
+    public final function sendImageMessage(string $threemaId, string $receiverPublicKey, string $imagePath)
     {
         //analyse the file
         $fileAnalyzeResult = FileAnalysisTool::analyse($imagePath);
@@ -98,18 +97,13 @@ class E2EHelper
             throw new Exception('file is not a jpg or png');
         }
 
-        //fetch the public key
-        $receiverPublicKey = $this->fetchPublicKeyAndCheckCapability($threemaId,
-            function (CapabilityResult $capabilityResult) {
-                return true === $capabilityResult->canImage();
-            });
+        $this->assertIsCapable($threemaId, CapabilityResult::IMAGE);
 
         //encrypt the image file
         $encryptionResult = $this->cryptTool->encryptImage(file_get_contents($imagePath), $this->privateKey,
             $receiverPublicKey);
         $uploadResult     = $this->connection->uploadFile($encryptionResult->getData());
-
-        if ($uploadResult === null || !$uploadResult->isSuccess()) {
+        if (!$uploadResult->isSuccess()) {
             throw new Exception('could not upload the image (' . $uploadResult->getErrorCode() . ' ' . $uploadResult->getErrorMessage() . ') ' . $uploadResult->getRawResponse());
         }
 
@@ -130,12 +124,14 @@ class E2EHelper
      * Encrypt a file (and thumbnail if given), upload the blob and send it to the given threemaId
      *
      * @param string      $threemaId
+     * @param string      $receiverPublicKey binary format
      * @param string      $filePath
      * @param null|string $thumbnailPath
-     * @throws \Threema\Core\Exception
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
+     * @throws \Threema\Core\Exception
      */
-    public final function sendFileMessage($threemaId, $filePath, $thumbnailPath = null)
+    public final function sendFileMessage(string $threemaId, string $receiverPublicKey, string $filePath,
+        ?string $thumbnailPath = null)
     {
         //analyse the file
         $fileAnalyzeResult = FileAnalysisTool::analyse($filePath);
@@ -144,17 +140,13 @@ class E2EHelper
             throw new Exception('could not analyze the file');
         }
 
-        //fetch the public key
-        $receiverPublicKey = $this->fetchPublicKeyAndCheckCapability($threemaId,
-            function (CapabilityResult $capabilityResult) {
-                return true === $capabilityResult->canFile();
-            });
+        $this->assertIsCapable($threemaId, CapabilityResult::FILE);
 
         //encrypt the main file
         $encryptionResult = $this->cryptTool->encryptFile(file_get_contents($filePath));
         $uploadResult     = $this->connection->uploadFile($encryptionResult->getData());
 
-        if ($uploadResult === null || !$uploadResult->isSuccess()) {
+        if (!$uploadResult->isSuccess()) {
             throw new Exception('could not upload the file (' . $uploadResult->getErrorCode() . ' ' . $uploadResult->getErrorMessage() . ') ' . $uploadResult->getRawResponse());
         }
 
@@ -167,7 +159,7 @@ class E2EHelper
                 $encryptionResult->getKey());
             $thumbnailUploadResult     = $this->connection->uploadFile($thumbnailEncryptionResult->getData());
 
-            if ($thumbnailUploadResult === null || !$thumbnailUploadResult->isSuccess()) {
+            if (!$thumbnailUploadResult->isSuccess()) {
                 throw new Exception('could not upload the thumbnail file (' . $thumbnailUploadResult->getErrorCode() . ' ' . $thumbnailUploadResult->getErrorMessage() . ') ' . $thumbnailUploadResult->getRawResponse());
             }
         }
@@ -193,38 +185,32 @@ class E2EHelper
      * Note: This does not check the MAC before, which you should always do when
      * you want to use this in your own application! Use {@link checkMac()} for doing so.
      *
-     * @param string            $threemaId    The sender ID (= the ID the message came from)
+     * @param string            $threemaId         The sender ID (= the ID the message came from)
+     * @param string            $senderPublicKey   binary format
      * @param string            $messageId
-     * @param string            $box          box as binary string
-     * @param string            $nonce        nonce as binary string
-     * @param string|null|false $outputFolder folder for storing the files,
-     *                                        null=current folder, false=do not download files
+     * @param string            $box               box as binary string
+     * @param string            $nonce             nonce as binary string
+     * @param string|null|false $outputFolder      folder for storing the files,
+     *                                             null=current folder, false=do not download files
      * @param \Closure          $downloadMessage
      * @return ReceiveMessageResult
-     * @throws Exception
+     * @throws \Threema\Core\Exception
      * @throws \Threema\MsgApi\Exceptions\BadMessageException
      * @throws \Threema\MsgApi\Exceptions\DecryptionFailedException
      * @throws \Threema\MsgApi\Exceptions\UnsupportedMessageTypeException
      */
-    public final function receiveMessage($threemaId,
+    public final function receiveMessage(string $threemaId,
+        string $senderPublicKey,
         $messageId,
         $box,
         $nonce,
         $outputFolder = null,
         \Closure $downloadMessage = null)
     {
-
-        //fetch the public key
-        $receiverPublicKey = $this->connection->fetchPublicKey($threemaId);
-
-        if (null === $receiverPublicKey || !$receiverPublicKey->isSuccess()) {
-            throw new Exception('Invalid threema id');
-        }
-
         $message = $this->cryptTool->decryptMessage(
             $box,
             $this->privateKey,
-            $this->cryptTool->hex2bin($receiverPublicKey->getPublicKey()),
+            $senderPublicKey,
             $nonce
         );
 
@@ -246,7 +232,7 @@ class E2EHelper
             if (null !== $result && true === $result->isSuccess()) {
                 $image = $this->cryptTool->decryptImage(
                     $result->getData(),
-                    $this->cryptTool->hex2bin($receiverPublicKey->getPublicKey()),
+                    $senderPublicKey,
                     $this->privateKey,
                     $message->getNonce()
                 );
@@ -314,7 +300,7 @@ class E2EHelper
      * @param string $nonce nonce as hex encoded string
      * @param string $box   box as hex encoded string
      * @param string $mac   the original one send by the server
-     *
+     * @param        $secret
      * @return bool true if check was successfull, false if not
      */
     public final function checkMac($threemaId, $gatewayId, $messageId, $date, $nonce, $box, $mac, $secret)
@@ -323,32 +309,12 @@ class E2EHelper
         return $this->cryptTool->stringCompare($calculatedMac, $mac) === true;
     }
 
-    /**
-     * Fetch a public key and check the capability of the threemaId
-     *
-     * @param string   $threemaId
-     * @param \Closure $capabilityCheck
-     * @return string Public key as binary
-     * @throws Exception
-     */
-    private final function fetchPublicKeyAndCheckCapability($threemaId, \Closure $capabilityCheck = null)
+    private final function assertIsCapable(string $threemaId, string $wantedCapability)
     {
-        //fetch the public key
-        $receiverPublicKey = $this->connection->fetchPublicKey($threemaId);
-
-        if (null === $receiverPublicKey || !$receiverPublicKey->isSuccess()) {
-            throw new Exception('Invalid threema id');
+        $capability = $this->connection->keyCapability($threemaId);
+        if (!$capability->can($wantedCapability)) {
+            throw new Exception('threema id does not have the capability');
         }
-
-        if (null !== $capabilityCheck) {
-            //check capability
-            $capability = $this->connection->keyCapability($threemaId);
-            if (null === $capability || false === $capabilityCheck->__invoke($capability)) {
-                throw new Exception('threema id does not have the capability');
-            }
-        }
-
-        return $this->cryptTool->hex2bin($receiverPublicKey->getPublicKey());
     }
 
     /**

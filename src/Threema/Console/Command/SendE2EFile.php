@@ -10,36 +10,32 @@ use Threema\Console\Common;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
 use Threema\MsgApi\Helpers\E2EHelper;
-use Threema\MsgApi\PublicKeyStore;
 
 class SendE2EFile extends Base
 {
     const argFile      = 'file';
     const argThumbnail = 'thumbnailFile';
 
-    /**
-     * @var PublicKeyStore
-     */
-    private $publicKeyStore;
-
-    /**
-     * @param PublicKeyStore $publicKeyStore
-     */
-    public function __construct(PublicKeyStore $publicKeyStore)
+    public function __construct()
     {
         parent::__construct('Send a End-to-End Encrypted File Message',
-            [self::argThreemaId, self::argFrom, self::argSecret, self::argPrivateKey, self::argFile],
+            [self::argThreemaId,
+             self::argPublicKey,
+             self::argFrom,
+             self::argSecret,
+             self::argPrivateKey,
+             self::argFile],
             'Encrypt the file (and thumbnail if given) and send the message to the given ID. \'from\' is the API identity and \'secret\' is the API secret. Prints the message ID on success.',
             [self::argThumbnail]);
-        $this->publicKeyStore = $publicKeyStore;
     }
 
     protected function doRun()
     {
-        $threemaId  = $this->getArgument(self::argThreemaId);
-        $from       = $this->getArgument(self::argFrom);
-        $secret     = $this->getArgument(self::argSecret);
-        $privateKey = $this->getArgumentPrivateKey(self::argPrivateKey);
+        $threemaId         = $this->getArgumentThreemaId(self::argThreemaId);
+        $receiverPublicKey = $this->getArgumentPublicKey(self::argPublicKey);
+        $from              = $this->getArgument(self::argFrom);
+        $secret            = $this->getArgument(self::argSecret);
+        $privateKey        = $this->getArgumentPrivateKey(self::argPrivateKey);
 
         $path          = $this->getArgumentFile(self::argFile);
         $thumbnailPath = $this->getArgument(self::argThumbnail);
@@ -51,9 +47,9 @@ class SendE2EFile extends Base
             $secret
         );
 
-        $connector = new Connection($settings, $this->publicKeyStore);
+        $connector = new Connection($settings);
         $helper    = new E2EHelper($privateKey, $connector);
-        $result    = $helper->sendFileMessage($threemaId, $path, $thumbnailPath);
+        $result    = $helper->sendFileMessage($threemaId, $receiverPublicKey, $path, $thumbnailPath);
 
         if ($result->isSuccess()) {
             Common::l('Message ID: ' . $result->getMessageId());

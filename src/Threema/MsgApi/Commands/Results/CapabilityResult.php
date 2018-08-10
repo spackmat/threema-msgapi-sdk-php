@@ -8,10 +8,16 @@ namespace Threema\MsgApi\Commands\Results;
 
 class CapabilityResult extends Result
 {
+    const IMAGE = 'image';
+    const TEXT  = 'text';
+    const VIDEO = 'video';
+    const AUDIO = 'audio';
+    const FILE  = 'file';
+
     /**
      * @var string[]
      */
-    private $capabilities;
+    private $capabilities = [];
 
     /**
      * @return string[]
@@ -27,7 +33,7 @@ class CapabilityResult extends Result
      */
     public function canText()
     {
-        return $this->can('text');
+        return $this->can(self::TEXT);
     }
 
     /**
@@ -36,7 +42,7 @@ class CapabilityResult extends Result
      */
     public function canImage()
     {
-        return $this->can('image');
+        return $this->can(self::IMAGE);
     }
 
     /**
@@ -45,7 +51,7 @@ class CapabilityResult extends Result
      */
     public function canVideo()
     {
-        return $this->can('video');
+        return $this->can(self::VIDEO);
     }
 
     /**
@@ -54,7 +60,7 @@ class CapabilityResult extends Result
      */
     public function canAudio()
     {
-        return $this->can('audio');
+        return $this->can(self::AUDIO);
     }
 
     /**
@@ -63,7 +69,12 @@ class CapabilityResult extends Result
      */
     public function canFile()
     {
-        return $this->can('file');
+        return $this->can(self::FILE);
+    }
+
+    public function can($key)
+    {
+        return in_array($key, $this->capabilities);
     }
 
     /**
@@ -71,8 +82,7 @@ class CapabilityResult extends Result
      */
     protected function processResponse($response)
     {
-        $this->capabilities =
-            array_unique(array_filter(explode(',', $response !== null && strlen($response) > 0 ? $response : '')));
+        $this->capabilities = array_unique(array_filter(explode(',', $response ?? '')));
     }
 
     /**
@@ -91,11 +101,5 @@ class CapabilityResult extends Result
             default:
                 return 'Unknown error';
         }
-    }
-
-    private function can($key)
-    {
-        return null !== $this->capabilities
-            && true === in_array($key, $this->capabilities);
     }
 }

@@ -21,9 +21,7 @@ if (!class_exists(Run::class, true)) {
 }
 
 try {
-    //create a phpfile public keystore
-    $keyStore = Threema\MsgApi\PublicKeyStores\PhpFile::create('keystore.php');
-    $tool     = new Run($argv, $keyStore);
+    $tool = new Run($argv);
     $tool->run();
 } catch (\Threema\Core\Exception $exception) {
     echo "ERROR: " . $exception->getMessage() . "\n";

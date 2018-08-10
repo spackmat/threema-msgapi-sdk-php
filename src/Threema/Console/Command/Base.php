@@ -117,6 +117,7 @@ abstract class Base
     /**
      * @param string $pos
      * @return null|string
+     * @throws \Threema\Core\Exception
      */
     public function getArgumentPrivateKey($pos)
     {
@@ -131,6 +132,7 @@ abstract class Base
     /**
      * @param string $pos
      * @return null|string
+     * @throws \Threema\Core\Exception
      */
     public function getArgumentPublicKey($pos)
     {
@@ -145,6 +147,7 @@ abstract class Base
     /**
      * @param string $pos
      * @return null|string
+     * @throws \Threema\Core\Exception
      */
     public function getArgumentThreemaId($pos)
     {
