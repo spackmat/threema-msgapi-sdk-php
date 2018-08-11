@@ -192,7 +192,7 @@ class E2EHelper
      * @param string            $nonce             nonce as binary string
      * @param string|null|false $outputFolder      folder for storing the files,
      *                                             null=current folder, false=do not download files
-     * @param \Closure          $downloadMessage
+     * @param \Closure          $shouldDownload
      * @return ReceiveMessageResult
      * @throws \Threema\Core\Exception
      * @throws \Threema\MsgApi\Exceptions\BadMessageException
@@ -205,7 +205,7 @@ class E2EHelper
         $box,
         $nonce,
         $outputFolder = null,
-        \Closure $downloadMessage = null)
+        \Closure $shouldDownload = null)
     {
         $message = $this->cryptTool->decryptMessage(
             $box,
@@ -226,9 +226,14 @@ class E2EHelper
         if ($outputFolder === null || strlen($outputFolder) == 0) {
             $outputFolder = '.';
         }
+        if ($shouldDownload === null) {
+            $shouldDownload = function () {
+                return true;
+            };
+        }
 
         if ($message instanceof ImageMessage) {
-            $result = $this->downloadFile($message, $message->getBlobId(), $downloadMessage);
+            $result = $this->downloadFile($message, $message->getBlobId(), $shouldDownload);
             if (null !== $result && true === $result->isSuccess()) {
                 $image = $this->cryptTool->decryptImage(
                     $result->getData(),
@@ -249,7 +254,7 @@ class E2EHelper
                 $receiveResult->addFile('image', $filePath);
             }
         } else if ($message instanceof FileMessage) {
-            $result = $this->downloadFile($message, $message->getBlobId(), $downloadMessage);
+            $result = $this->downloadFile($message, $message->getBlobId(), $shouldDownload);
 
             if (null !== $result && true === $result->isSuccess()) {
                 $file = $this->cryptTool->decryptFile(
@@ -268,7 +273,7 @@ class E2EHelper
             }
 
             if (null !== $message->getThumbnailBlobId() && strlen($message->getThumbnailBlobId()) > 0) {
-                $result = $this->downloadFile($message, $message->getThumbnailBlobId(), $downloadMessage);
+                $result = $this->downloadFile($message, $message->getThumbnailBlobId(), $shouldDownload);
                 if (null !== $result && true === $result->isSuccess()) {
                     $file = $this->cryptTool->decryptFileThumbnail(
                         $result->getData(),
@@ -320,15 +325,13 @@ class E2EHelper
     /**
      * @param ThreemaMessage $message
      * @param string         $blobId blob id as hex
-     * @param \Closure|null  $downloadMessage
+     * @param \Closure|null  $shouldDownload
      * @return null|\Threema\MsgApi\Commands\Results\DownloadFileResult
      * @throws Exception
      */
-    private final function downloadFile(ThreemaMessage $message, $blobId, \Closure $downloadMessage = null)
+    private final function downloadFile(ThreemaMessage $message, $blobId, \Closure $shouldDownload)
     {
-        if (null === $downloadMessage
-            || true === $downloadMessage->__invoke($message, $blobId)) {
-            //make a download
+        if ($shouldDownload($message, $blobId)) {
             $result = $this->connection->downloadFile($blobId);
             if (null === $result || false === $result->isSuccess()) {
                 throw new Exception('could not download the file with blob id ' . $blobId);
