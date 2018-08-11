@@ -144,6 +144,6 @@ class CryptToolSodium extends CryptTool
      */
     protected function createRandom($size)
     {
-        return \random_bytes(SODIUM_CRYPTO_BOX_NONCEBYTES);
+        return \random_bytes($size);
     }
 }
