@@ -13,7 +13,6 @@ use Threema\MsgApi\Messages\FileMessage;
 use Threema\MsgApi\Messages\ImageMessage;
 use Threema\MsgApi\Messages\ThreemaMessage;
 use Threema\MsgApi\Tools\CryptTool;
-use Threema\MsgApi\Tools\FileAnalysisTool;
 
 class E2EHelper
 {

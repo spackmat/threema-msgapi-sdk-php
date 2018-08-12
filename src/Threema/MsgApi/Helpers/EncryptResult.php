@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
-namespace Threema\MsgApi\Tools;
+namespace Threema\MsgApi\Helpers;
 
 /**
  * Result of a Data Encryption

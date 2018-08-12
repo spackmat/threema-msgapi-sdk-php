@@ -13,6 +13,8 @@ use Threema\MsgApi\Commands\Results\UploadFileResult;
 use Threema\MsgApi\Exceptions\BadMessageException;
 use Threema\MsgApi\Exceptions\DecryptionFailedException;
 use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
+use Threema\MsgApi\Helpers\EncryptResult;
+use Threema\MsgApi\Helpers\FileAnalysisResult;
 use Threema\MsgApi\Messages\DeliveryReceipt;
 use Threema\MsgApi\Messages\FileMessage;
 use Threema\MsgApi\Messages\ImageMessage;
