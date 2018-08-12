@@ -10,28 +10,30 @@ declare(strict_types=1);
 namespace Threema\Console\Symfony;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Threema\Core\KeyPair;
+use Threema\MsgApi\ConnectionFactory;
 use Threema\MsgApi\Constants;
 
 class EncryptDecryptTest extends TestCase
 {
     public function testEncryptDecryptLoop()
     {
-        $one = $this->getKeyPair();
-        $two = $this->getKeyPair();
+        $connectionFactory = new ConnectionFactory();
+
+        $one = $this->getKeyPair($connectionFactory);
+        $two = $this->getKeyPair($connectionFactory);
         $this->assertNotEquals($one, $two);
 
         $message = 'Hello world! I have been through the loop';
 
-        $encryptCommand = new CommandTester(new EncryptCommand());
+        $encryptCommand = new CommandTester(new EncryptCommand($connectionFactory));
         $encryptCommand->execute(['--private-key' => $one->getPrivateKey(),
                                   'public-key'    => $two->getPublicKey(),
                                   '--message'     => $message]);
         [$nonce, $encrypted] = explode(PHP_EOL, $encryptCommand->getDisplay());
 
-        $decryptCommand = new CommandTester(new DecryptCommand());
+        $decryptCommand = new CommandTester(new DecryptCommand($connectionFactory));
         $decryptCommand->execute(['-q',
                                   '--private-key' => $two->getPrivateKey(),
                                   'public-key'    => $one->getPublicKey(),
@@ -41,9 +43,9 @@ class EncryptDecryptTest extends TestCase
         $this->assertEquals($message, trim($decryptCommand->getDisplay()));
     }
 
-    private function getKeyPair(): KeyPair
+    private function getKeyPair(ConnectionFactory $connectionFactory): KeyPair
     {
-        $keysCommand = new CommandTester(new GenerateKeyPairCommand());
+        $keysCommand = new CommandTester(new GenerateKeyPairCommand($connectionFactory));
         $keysCommand->execute([]);
         [$private, $public] = explode(PHP_EOL, trim($keysCommand->getDisplay()));
         $this->assertContains(Constants::PRIVATE_KEY_PREFIX, $private);

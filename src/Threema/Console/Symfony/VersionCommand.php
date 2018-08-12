@@ -8,16 +8,14 @@ declare(strict_types=1);
 
 namespace Threema\Console\Symfony;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Threema\MsgApi\Constants;
-use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
-class VersionCommand extends Command
+class VersionCommand extends AbstractLocalCommand
 {
     protected function configure()
     {
@@ -28,10 +26,10 @@ class VersionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $left             = function (int $level) {
+        $left      = function (int $level) {
             return $level == Constants::MSGAPI_SDK_FEATURE_LEVEL ? '===>' : '';
         };
-        $encryptor = AbstractEncryptor::getInstance();
+        $encryptor = $this->getEncryptor();
         $output->writeln('Threema PHP MsgApi Tool');
         $output->writeln('Gateway API Version: ' . Constants::MSGAPI_SDK_VERSION);
         $output->writeln('Encryptor: ' . $encryptor->getName() . ' (' . $encryptor->getDescription() . ')');

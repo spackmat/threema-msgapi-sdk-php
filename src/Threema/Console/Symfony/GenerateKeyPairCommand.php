@@ -30,7 +30,7 @@ class GenerateKeyPairCommand extends AbstractLocalCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $encryptor = AbstractEncryptor::getInstance();
+        $encryptor = $this->getEncryptor();
         $keyPair   = $encryptor->generateKeyPair();
         $this->writeKey($input->getArgument('private-key-file'),
             KeyPrefix::addPrivate($encryptor->bin2hex($keyPair->getPrivateKey())), $output);

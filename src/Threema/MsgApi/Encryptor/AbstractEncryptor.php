@@ -50,10 +50,6 @@ abstract class AbstractEncryptor
      */
     private static $instance = null;
 
-    protected function __construct()
-    {
-    }
-
     /**
      * @return AbstractEncryptor
      */
@@ -64,22 +60,6 @@ abstract class AbstractEncryptor
         }
 
         return self::$instance;
-    }
-
-    /**
-     * @param string $type
-     * @return null|AbstractEncryptor null on unknown type
-     */
-    public static function createInstance($type)
-    {
-        switch ($type) {
-            case self::TYPE_SODIUM:
-                $instance = new SodiumEncryptor();
-                break;
-            default:
-                return null;
-        }
-        return $instance->isSupported() ? $instance : null;
     }
 
     /**

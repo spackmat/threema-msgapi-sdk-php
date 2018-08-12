@@ -9,11 +9,17 @@ namespace Threema\MsgApi\Helpers;
 use Threema\Core\Exception;
 use Threema\MsgApi\Commands\Results\CapabilityResult;
 use Threema\MsgApi\Connection;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
+use Threema\MsgApi\Exceptions\DecryptionFailedException;
+use Threema\MsgApi\Exceptions\HttpException;
+use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
 use Threema\MsgApi\Messages\FileMessage;
 use Threema\MsgApi\Messages\ImageMessage;
 use Threema\MsgApi\Messages\ThreemaMessage;
-use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
+/**
+ * Splits some of the bulky code out of the Connection class to keep the Connection small / clean
+ */
 class E2EHelper
 {
     /**
@@ -27,24 +33,20 @@ class E2EHelper
     private $encryptor;
 
     /**
-     * @var string (bin)
+     * @var string (binary)
      */
     private $privateKey;
 
     /**
-     * @param string            $privateKey (binary)
+     * @param string            $privateKeyBinary
      * @param Connection        $connection
      * @param AbstractEncryptor $encryptor
      */
-    public function __construct(string $privateKey, Connection $connection, AbstractEncryptor $encryptor = null)
+    public function __construct(string $privateKeyBinary, Connection $connection, AbstractEncryptor $encryptor)
     {
         $this->connection = $connection;
         $this->encryptor  = $encryptor;
-        $this->privateKey = $privateKey;
-
-        if (null === $this->encryptor) {
-            $this->encryptor = AbstractEncryptor::getInstance();
-        }
+        $this->privateKey = $privateKeyBinary;
     }
 
     /**
@@ -98,7 +100,7 @@ class E2EHelper
             $receiverPublicKey);
         $uploadResult     = $this->connection->uploadFile($encryptionResult->getData());
         if (!$uploadResult->isSuccess()) {
-            throw new Exception('could not upload the image (' . $uploadResult->getErrorCode() . ' ' . $uploadResult->getErrorMessage() . ') ' . $uploadResult->getRawResponse());
+            throw new HttpException('could not upload the image (' . $uploadResult->getErrorCode() . ' ' . $uploadResult->getErrorMessage() . ') ' . $uploadResult->getRawResponse());
         }
 
         $nonce = $this->encryptor->randomNonce();
@@ -136,7 +138,7 @@ class E2EHelper
         $uploadResult     = $this->connection->uploadFile($encryptionResult->getData());
 
         if (!$uploadResult->isSuccess()) {
-            throw new Exception('could not upload the file (' . $uploadResult->getErrorCode() . ' ' . $uploadResult->getErrorMessage() . ') ' . $uploadResult->getRawResponse());
+            throw new HttpException('could not upload the file (' . $uploadResult->getErrorCode() . ' ' . $uploadResult->getErrorMessage() . ') ' . $uploadResult->getRawResponse());
         }
 
         $thumbnailUploadResult = null;
@@ -149,7 +151,7 @@ class E2EHelper
             $thumbnailUploadResult     = $this->connection->uploadFile($thumbnailEncryptionResult->getData());
 
             if (!$thumbnailUploadResult->isSuccess()) {
-                throw new Exception('could not upload the thumbnail file (' . $thumbnailUploadResult->getErrorCode() . ' ' . $thumbnailUploadResult->getErrorMessage() . ') ' . $thumbnailUploadResult->getRawResponse());
+                throw new HttpException('could not upload the thumbnail file (' . $thumbnailUploadResult->getErrorCode() . ' ' . $thumbnailUploadResult->getErrorMessage() . ') ' . $thumbnailUploadResult->getRawResponse());
             }
         }
 
@@ -185,6 +187,7 @@ class E2EHelper
      * @throws \Threema\Core\Exception
      * @throws \Threema\MsgApi\Exceptions\BadMessageException
      * @throws \Threema\MsgApi\Exceptions\DecryptionFailedException
+     * @throws \Threema\MsgApi\Exceptions\HttpException
      * @throws \Threema\MsgApi\Exceptions\UnsupportedMessageTypeException
      */
     public final function receiveMessage(
@@ -203,7 +206,7 @@ class E2EHelper
         );
 
         if (null === $message || false === is_object($message)) {
-            throw new Exception('Could not encrypt box');
+            throw new DecryptionFailedException('Could not decrypt box');
         }
 
         $receiveResult = new ReceiveMessageResult($messageId, $message);
@@ -231,7 +234,7 @@ class E2EHelper
                 );
 
                 if (null === $image) {
-                    throw new Exception('decryption of image failed');
+                    throw new DecryptionFailedException('decryption of image failed');
                 }
                 //save file
                 $filePath = $outputFolder . '/' . $messageId . '.jpg';
@@ -250,7 +253,7 @@ class E2EHelper
                     $this->encryptor->hex2bin($message->getEncryptionKey()));
 
                 if (null === $file) {
-                    throw new Exception('file decryption failed');
+                    throw new DecryptionFailedException('file decryption failed');
                 }
 
                 //save file
@@ -268,7 +271,7 @@ class E2EHelper
                         $this->encryptor->hex2bin($message->getEncryptionKey()));
 
                     if (null === $file) {
-                        throw new Exception('thumbnail decryption failed');
+                        throw new DecryptionFailedException('thumbnail decryption failed');
                     }
                     //save file
                     $filePath = $outputFolder . '/' . $messageId . '-thumbnail-' . $message->getFilename();
@@ -289,23 +292,24 @@ class E2EHelper
      * @param string $gatewayId
      * @param string $messageId
      * @param string $date
-     * @param string $nonce nonce as hex encoded string
-     * @param string $box   box as hex encoded string
-     * @param string $mac   the original one send by the server
-     * @param string $secret
+     * @param string $nonce  nonce as hex encoded string
+     * @param string $box    box as hex encoded string
+     * @param string $mac    the original one send by the server
+     * @param string $secret hex
      * @return bool true if check was successful, false if not
      */
-    public final function checkMac($threemaId, $gatewayId, $messageId, $date, $nonce, $box, $mac, $secret)
+    public final function checkMac(string $threemaId, string $gatewayId, string $messageId, string $date, string $nonce,
+        string $box, string $mac, string $secret): bool
     {
         $calculatedMac = hash_hmac('sha256', $threemaId . $gatewayId . $messageId . $date . $nonce . $box, $secret);
         return hash_equals($calculatedMac, $mac);
     }
 
-    private final function assertIsCapable(string $threemaId, string $wantedCapability)
+    private function assertIsCapable(string $threemaId, string $wantedCapability)
     {
         $capability = $this->connection->keyCapability($threemaId);
         if (!$capability->can($wantedCapability)) {
-            throw new Exception('threema id does not have the capability');
+            throw new UnsupportedMessageTypeException('threema id does not have the capability');
         }
     }
 
@@ -314,14 +318,14 @@ class E2EHelper
      * @param string         $blobId blob id as hex
      * @param \Closure       $shouldDownload
      * @return null|\Threema\MsgApi\Commands\Results\DownloadFileResult
-     * @throws Exception
+     * @throws \Threema\MsgApi\Exceptions\HttpException
      */
-    private final function downloadFile(ThreemaMessage $message, $blobId, \Closure $shouldDownload)
+    private function downloadFile(ThreemaMessage $message, $blobId, \Closure $shouldDownload)
     {
         if ($shouldDownload($message, $blobId)) {
             $result = $this->connection->downloadFile($blobId);
             if (null === $result || false === $result->isSuccess()) {
-                throw new Exception('could not download the file with blob id ' . $blobId);
+                throw new HttpException('could not download the file with blob id ' . $blobId);
             }
 
             return $result;

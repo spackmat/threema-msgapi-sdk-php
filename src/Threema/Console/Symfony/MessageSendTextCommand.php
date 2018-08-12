@@ -10,7 +10,6 @@ namespace Threema\Console\Symfony;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Threema\MsgApi\Helpers\E2EHelper;
 
 class MessageSendTextCommand extends AbstractNetworkedCommand
 {
@@ -30,8 +29,10 @@ class MessageSendTextCommand extends AbstractNetworkedCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $connection = $this->getConnection($input, $output);
-        $helper     = new E2EHelper($this->getPrivateKey($input, $output), $connection);
-        $result     = $helper->sendTextMessage($this->getRecipientID($input), $this->getPublicKey($input),
+        $result     = $connection->sendTextMessage(
+            $this->getPrivateKey($input, $output),
+            $this->getRecipientID($input),
+            $this->getPublicKey($input),
             $this->getMessage($input));
         $this->assertSuccess($result);
         $output->writeln($result->getMessageId());

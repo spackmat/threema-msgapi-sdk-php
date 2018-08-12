@@ -11,7 +11,6 @@ namespace Threema\Console\Symfony;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class HashEmailCommand extends AbstractLocalCommand
 {
@@ -26,8 +25,7 @@ class HashEmailCommand extends AbstractLocalCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $encryptor = AbstractEncryptor::getInstance();
-        $output->writeln($encryptor->hashEmail($input->getArgument('email')));
+        $output->writeln($this->getEncryptor()->hashEmail($input->getArgument('email')));
         return 0;
     }
 }

@@ -11,7 +11,6 @@ namespace Threema\Console\Symfony;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class DecryptCommand extends AbstractLocalCommand
 {
@@ -30,9 +29,12 @@ class DecryptCommand extends AbstractLocalCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->loadDefaults($input, $output);
-        $encryptor = AbstractEncryptor::getInstance();
-        $message   = $encryptor->decryptMessage($encryptor->hex2bin($this->getMessage($input)),
-            $this->getPrivateKey($input, $output), $this->getPublicKey($input), $encryptor->hex2bin($input->getArgument('nonce')));
+        $encryptor = $this->getEncryptor();
+        $message   = $encryptor->decryptMessage(
+            $encryptor->hex2bin($this->getMessage($input)),
+            $encryptor->hex2bin($this->getPrivateKey($input, $output)),
+            $encryptor->hex2bin($this->getPublicKey($input)),
+            $encryptor->hex2bin($input->getArgument('nonce')));
         $output->writeln($message->__toString());
         return 0;
     }

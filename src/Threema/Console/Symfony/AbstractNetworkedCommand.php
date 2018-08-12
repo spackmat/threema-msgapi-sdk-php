@@ -17,7 +17,6 @@ use Threema\MsgApi\Commands\Results\Result;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\Constants;
 use Threema\MsgApi\Exceptions\InvalidArgumentException;
-use Threema\MsgApi\HttpDriver\CurlHttpDriver;
 
 abstract class AbstractNetworkedCommand extends AbstractLocalCommand
 {
@@ -33,7 +32,7 @@ abstract class AbstractNetworkedCommand extends AbstractLocalCommand
     protected function getConnection(InputInterface $input, OutputInterface $output): Connection
     {
         $this->loadDefaults($input, $output);
-        return new Connection(new CurlHttpDriver($this->getSenderID($input), $this->getSecret($input, $output)));
+        return $this->connectionFactory->getConnection($this->getSenderID($input), $this->getSecret($input, $output));
     }
 
     protected function assertSuccess(Result $result)

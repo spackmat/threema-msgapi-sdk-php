@@ -9,7 +9,7 @@ namespace Threema\MsgApi\Commands\Results;
 class SendE2EResult extends Result
 {
     /**
-     * @var string
+     * @var string hex
      */
     private $messageId;
 

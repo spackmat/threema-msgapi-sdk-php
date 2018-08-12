@@ -13,9 +13,10 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Threema\MsgApi\ConnectionFactory;
 use Threema\MsgApi\Constants;
-use Threema\MsgApi\Exceptions\InvalidArgumentException;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
+use Threema\MsgApi\Exceptions\InvalidArgumentException;
 
 abstract class AbstractLocalCommand extends Command
 {
@@ -23,6 +24,15 @@ abstract class AbstractLocalCommand extends Command
 
     /** @var array default option and argument values stored in self::KEY_FILE */
     private $defaults = [];
+
+    /** @var \Threema\MsgApi\ConnectionFactory */
+    protected $connectionFactory;
+
+    public function __construct(ConnectionFactory $connectionFactory)
+    {
+        parent::__construct();
+        $this->connectionFactory = $connectionFactory;
+    }
 
     protected function configure()
     {
@@ -57,6 +67,7 @@ abstract class AbstractLocalCommand extends Command
 
     protected function getPrivateKey(InputInterface $input, OutputInterface $output): string
     {
+        // returns hex version of key
         if (!empty($input->getOption('private-key'))) {
             $output->writeln('<error>Private keys on the command line may be insecure. Use --key-file file instead.</error>',
                 OutputInterface::VERBOSITY_VERBOSE);
@@ -66,6 +77,7 @@ abstract class AbstractLocalCommand extends Command
 
     protected function getPublicKey(InputInterface $input): string
     {
+        // returns hex version of key
         return $this->getKey($input->getArgument('public-key'), 'public', Constants::PUBLIC_KEY_PREFIX);
     }
 
@@ -102,6 +114,11 @@ abstract class AbstractLocalCommand extends Command
         return $this->defaults[$argumentName] ?? '';
     }
 
+    protected function getEncryptor(): AbstractEncryptor
+    {
+        return $this->connectionFactory->getEncryptor();
+    }
+
     private function readStdInput(): string
     {
         // read console standard input stream. Strip empty / blank lines
@@ -118,6 +135,6 @@ abstract class AbstractLocalCommand extends Command
         if (empty($key)) {
             throw new InvalidArgumentException(ucfirst($optionName) . ' key invalid or missing');
         }
-        return AbstractEncryptor::getInstance()->hex2bin(str_replace($keyPrefix, '', $key));
+        return str_replace($keyPrefix, '', $key);
     }
 }

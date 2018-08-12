@@ -6,6 +6,7 @@
  */
 
 use Symfony\Component\Console\Application;
+use Threema\MsgApi\ConnectionFactory;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 $autoloaderInWorkingDirectory = getcwd() . '/vendor/autoload.php';
@@ -20,6 +21,8 @@ if (!class_exists(AbstractEncryptor::class, true)) {
     }
     require_once $composerAutoloadFile;
 }
+
+$connectionFactory = new ConnectionFactory();
 
 // https://gist.github.com/sroze/3e8d45d0cdc301debfd2
 $application = new Application('Threema Gateway');
@@ -38,7 +41,7 @@ foreach (new DirectoryIterator(dirname($reflection->getFileName())) as $fileInfo
         continue;
     }
     $className = '\\' . $reflection->getNamespaceName() . '\\' . $fileInfo->getBasename('.php');
-    $application->add(new $className);
+    $application->add(new $className($connectionFactory));
 }
 
 $application->run();
