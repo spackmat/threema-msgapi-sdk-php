@@ -84,6 +84,35 @@ class SodiumEncryptor extends AbstractEncryptor
     }
 
     /**
+     * Converts a binary string to an hexadecimal string.
+     *
+     * This is the same as PHP s bin2hex() implementation, but it is resistant to
+     * timing attacks.
+     *
+     * @param  string $binaryString The binary string to convert
+     * @return string
+     */
+    public function bin2hex($binaryString)
+    {
+        return sodium_bin2hex($binaryString);
+    }
+
+    /**
+     * Converts an hexadecimal string to a binary string.
+     *
+     * This is the same as PHP s hex2bin() implementation, but it is resistant to
+     * timing attacks.
+     *
+     * @param  string      $hexString The hex string to convert
+     * @param  string|null $ignore    (optional) Characters to ignore
+     * @return string
+     */
+    public function hex2bin($hexString, $ignore = null)
+    {
+        return sodium_hex2bin($hexString, $ignore);
+    }
+
+    /**
      * @param string $data
      * @param string $nonce
      * @param string $senderPrivateKey
