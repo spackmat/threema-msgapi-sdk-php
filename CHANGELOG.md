@@ -8,6 +8,7 @@ See README.md for info about version numbering. Follows https://keepachangelog.c
 - Coding style fixes
 - Stricter types on some classes. Gradually migrating to strict_types=1
 - Removed the Public Key Store: it was horrible to use on the Connection class making it hard to use dependency injection. Storage is a separate concern. The API assumes you also store the threema id separately as well, so this is no extra burden on the caller (though it will hurt a bit for the command line)
+- Migrated command line to Symfony console: to ease dependency injection; to make the commands more self documenting / easier to use; to get private keys and api secrets off the command line (it is insecure)
 
 ## 2.1.1 - 2018-08-07
 ### Added
@@ -19,7 +20,7 @@ See README.md for info about version numbering. Follows https://keepachangelog.c
 
 ## 2.0.0 - 2018-08-06
 ### Added
-- bin/threema-gateway
+- bin/threema-gateway to replace the .phar file
 ### Changed
 - use composer autoloader
 - set default curl tls options for high security (https on, TLS 1.2)

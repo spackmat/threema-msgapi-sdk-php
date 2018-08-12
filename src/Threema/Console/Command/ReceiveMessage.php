@@ -56,7 +56,7 @@ class ReceiveMessage extends Base
         $connector = new Connection($settings);
         $helper    = new E2EHelper($privateKey, $connector);
         $message   = $helper->receiveMessage(
-            $sendersThreemaId,
+//            $sendersThreemaId,
             $sendersPublicKey,
             $messageId,
             $box,

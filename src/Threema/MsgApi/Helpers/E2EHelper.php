@@ -185,7 +185,6 @@ class E2EHelper
      * Note: This does not check the MAC before, which you should always do when
      * you want to use this in your own application! Use {@link checkMac()} for doing so.
      *
-     * @param string            $threemaId         The sender ID (= the ID the message came from)
      * @param string            $senderPublicKey   binary format
      * @param string            $messageId
      * @param string            $box               box as binary string
@@ -199,7 +198,7 @@ class E2EHelper
      * @throws \Threema\MsgApi\Exceptions\DecryptionFailedException
      * @throws \Threema\MsgApi\Exceptions\UnsupportedMessageTypeException
      */
-    public final function receiveMessage(string $threemaId,
+    public final function receiveMessage(
         string $senderPublicKey,
         $messageId,
         $box,

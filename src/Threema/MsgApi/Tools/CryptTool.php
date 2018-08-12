@@ -93,6 +93,7 @@ abstract class CryptTool
      */
     final public function encryptMessageText($text, $senderPrivateKey, $recipientPublicKey, $nonce)
     {
+        // @todo use TextMessage::TYPE_CODE
         /* prepend type byte (0x01) to message data */
         $textBytes = "\x01" . $text;
 
