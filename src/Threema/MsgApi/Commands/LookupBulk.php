@@ -52,7 +52,7 @@ class LookupBulk implements JsonCommandInterface
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return [];
     }
@@ -77,7 +77,7 @@ class LookupBulk implements JsonCommandInterface
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return 'lookup/bulk';
     }
@@ -87,7 +87,7 @@ class LookupBulk implements JsonCommandInterface
      * @param object $res
      * @return LookupBulkResult
      */
-    public function parseResult($httpCode, $res)
+    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
     {
         return new LookupBulkResult($httpCode, $res, $this);
     }

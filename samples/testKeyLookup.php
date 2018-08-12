@@ -1,18 +1,17 @@
 <?php
 
 use Threema\MsgApi\Connection;
-use Threema\MsgApi\ConnectionSettings;
 
 require_once '../vendor/autoload.php';
 
 //define your connection settings
-$settings = new ConnectionSettings(
+$driver = new \Threema\MsgApi\HttpDriver\CurlHttpDriver(
     '*YOUR_GATEWAY_THREEMA_ID',
     'YOUR_GATEWAY_THREEMA_ID_SECRET'
 );
 
 //create a connection
-$connector = new Connection($settings);
+$connector = new Connection($driver);
 
 $result = $connector->keyLookupByPhoneNumber('123456789');
 if ($result->isSuccess()) {

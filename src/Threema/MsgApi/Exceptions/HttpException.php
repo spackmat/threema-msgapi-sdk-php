@@ -10,6 +10,6 @@ namespace Threema\MsgApi\Exceptions;
 
 use Threema\Core\Exception;
 
-class BadMessageException extends Exception
+class HttpException extends Exception
 {
 }

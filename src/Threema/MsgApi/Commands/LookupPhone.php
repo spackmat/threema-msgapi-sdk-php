@@ -35,7 +35,7 @@ class LookupPhone implements CommandInterface
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return [];
     }
@@ -43,7 +43,7 @@ class LookupPhone implements CommandInterface
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return 'lookup/phone_hash/' . urlencode(AbstractEncryptor::getInstance()->hashPhoneNo($this->phoneNumber));
     }
@@ -53,7 +53,7 @@ class LookupPhone implements CommandInterface
      * @param object $res
      * @return LookupIdResult
      */
-    public function parseResult($httpCode, $res)
+    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
     {
         return new LookupIdResult($httpCode, $res);
     }

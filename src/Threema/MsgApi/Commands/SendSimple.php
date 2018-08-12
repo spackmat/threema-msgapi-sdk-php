@@ -42,7 +42,7 @@ class SendSimple implements CommandInterface
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         $p         = $this->receiver->getParams();
         $p['text'] = $this->getText();
@@ -52,7 +52,7 @@ class SendSimple implements CommandInterface
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return 'send_simple';
     }
@@ -62,7 +62,7 @@ class SendSimple implements CommandInterface
      * @param object $res
      * @return SendSimpleResult
      */
-    public function parseResult($httpCode, $res)
+    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
     {
         return new SendSimpleResult($httpCode, $res);
     }

@@ -15,9 +15,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Threema\Core\Exception;
 use Threema\MsgApi\Commands\Results\Result;
 use Threema\MsgApi\Connection;
-use Threema\MsgApi\ConnectionSettings;
 use Threema\MsgApi\Constants;
 use Threema\MsgApi\Exceptions\InvalidArgumentException;
+use Threema\MsgApi\HttpDriver\CurlHttpDriver;
 
 abstract class AbstractNetworkedCommand extends AbstractLocalCommand
 {
@@ -33,8 +33,7 @@ abstract class AbstractNetworkedCommand extends AbstractLocalCommand
     protected function getConnection(InputInterface $input, OutputInterface $output): Connection
     {
         $this->loadDefaults($input, $output);
-        $settings = new ConnectionSettings($this->getSenderID($input), $this->getSecret($input, $output));
-        return new Connection($settings);
+        return new Connection(new CurlHttpDriver($this->getSenderID($input), $this->getSecret($input, $output)));
     }
 
     protected function assertSuccess(Result $result)

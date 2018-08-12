@@ -26,7 +26,7 @@ class DownloadFile implements CommandInterface
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return [];
     }
@@ -34,7 +34,7 @@ class DownloadFile implements CommandInterface
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return 'blobs/' . $this->blobId;
     }
@@ -44,7 +44,7 @@ class DownloadFile implements CommandInterface
      * @param object $res
      * @return DownloadFileResult
      */
-    public function parseResult($httpCode, $res)
+    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
     {
         return new DownloadFileResult($httpCode, $res);
     }

@@ -57,7 +57,7 @@ class SendE2E implements CommandInterface
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         $encryptor = AbstractEncryptor::getInstance();
 
@@ -70,7 +70,7 @@ class SendE2E implements CommandInterface
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return 'send_e2e';
     }
@@ -80,7 +80,7 @@ class SendE2E implements CommandInterface
      * @param object $res
      * @return SendE2EResult
      */
-    public function parseResult($httpCode, $res)
+    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
     {
         return new SendE2EResult($httpCode, $res);
     }

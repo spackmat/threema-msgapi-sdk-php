@@ -35,7 +35,7 @@ class LookupEmail implements CommandInterface
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return [];
     }
@@ -43,7 +43,7 @@ class LookupEmail implements CommandInterface
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return 'lookup/email_hash/' . urlencode(AbstractEncryptor::getInstance()->hashEmail($this->emailAddress));
     }
@@ -53,7 +53,7 @@ class LookupEmail implements CommandInterface
      * @param object $res
      * @return LookupIdResult
      */
-    public function parseResult($httpCode, $res)
+    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
     {
         return new LookupIdResult($httpCode, $res);
     }

@@ -26,7 +26,7 @@ class UploadFile implements MultiPartCommandInterface
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return [];
     }
@@ -34,7 +34,7 @@ class UploadFile implements MultiPartCommandInterface
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return 'upload_blob';
     }
@@ -42,7 +42,7 @@ class UploadFile implements MultiPartCommandInterface
     /**
      * @return string
      */
-    public function getData()
+    public function getData(): string
     {
         return $this->encryptedFileData;
     }
@@ -52,7 +52,7 @@ class UploadFile implements MultiPartCommandInterface
      * @param object $res
      * @return UploadFileResult
      */
-    public function parseResult($httpCode, $res)
+    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
     {
         return new UploadFileResult($httpCode, $res);
     }

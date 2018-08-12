@@ -13,12 +13,12 @@ class Credits implements CommandInterface
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return [];
     }
 
-    public function getPath()
+    public function getPath(): string
     {
         return 'credits';
     }
@@ -28,7 +28,7 @@ class Credits implements CommandInterface
      * @param object $res
      * @return CreditsResult
      */
-    public function parseResult($httpCode, $res)
+    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
     {
         return new CreditsResult($httpCode, $res);
     }

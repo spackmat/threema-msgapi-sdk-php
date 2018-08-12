@@ -26,12 +26,12 @@ class Capability implements CommandInterface
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return [];
     }
 
-    public function getPath()
+    public function getPath(): string
     {
         return 'capabilities/' . $this->threemaId;
     }
@@ -41,7 +41,7 @@ class Capability implements CommandInterface
      * @param object $res
      * @return CapabilityResult
      */
-    public function parseResult($httpCode, $res)
+    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
     {
         return new CapabilityResult($httpCode, $res);
     }
