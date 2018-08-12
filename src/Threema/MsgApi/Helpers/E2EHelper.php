@@ -82,12 +82,7 @@ class E2EHelper
      */
     public final function sendImageMessage(string $threemaId, string $receiverPublicKey, string $imagePath)
     {
-        //analyse the file
-        $fileAnalyzeResult = FileAnalysisTool::analyse($imagePath);
-
-        if (null === $fileAnalyzeResult) {
-            throw new Exception('could not analyze the file');
-        }
+        $fileAnalyzeResult = FileAnalysisTool::analyseOrDie($imagePath);
 
         if (false === in_array($fileAnalyzeResult->getMimeType(), [
                 'image/jpg',
@@ -132,12 +127,7 @@ class E2EHelper
     public final function sendFileMessage(string $threemaId, string $receiverPublicKey, string $filePath,
         ?string $thumbnailPath = null)
     {
-        //analyse the file
-        $fileAnalyzeResult = FileAnalysisTool::analyse($filePath);
-
-        if (null === $fileAnalyzeResult) {
-            throw new Exception('could not analyze the file');
-        }
+        $fileAnalyzeResult = FileAnalysisTool::analyseOrDie($filePath);
 
         $this->assertIsCapable($threemaId, CapabilityResult::FILE);
 

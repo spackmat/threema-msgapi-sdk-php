@@ -6,29 +6,26 @@
 
 namespace Threema\MsgApi\Helpers;
 
+use Threema\Core\Exception;
+
 final class FileAnalysisTool
 {
     /**
      * @param string $file
      * @return FileAnalysisResult
+     * @throws \Threema\Core\Exception
      */
-    public static function analyse(string $file): FileAnalysisResult
+    public static function analyseOrDie(string $file): FileAnalysisResult
     {
-        //check if file exists
         if (false === file_exists($file)) {
-            return null;
+            throw new Exception('No such file ' . $file);
         }
 
-        //is not a file
         if (false === is_file($file)) {
-            return null;
+            throw new Exception('Not a file: ' . $file);
         }
 
-        //get file size
-        $size = filesize($file);
-
-        $mimeType = null;
-        //mime type getter
+        $mimeType = 'application/octet-stream';
         if (function_exists('finfo_open')) {
             $finfo    = finfo_open(FILEINFO_MIME_TYPE);
             $mimeType = finfo_file($finfo, $file);
@@ -36,12 +33,6 @@ final class FileAnalysisTool
             $mimeType = mime_content_type($file);
         }
 
-        //default mime type
-        if (strlen($mimeType) == 0) {
-            //default mime type
-            $mimeType = 'application/octet-stream';
-        }
-
-        return new FileAnalysisResult($mimeType, $size, $file);
+        return new FileAnalysisResult($mimeType, filesize($file), $file);
     }
 }
