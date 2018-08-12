@@ -157,47 +157,6 @@ class EncryptorTest extends TestCase
         });
     }
 
-    /**
-     * test compare functions to make sure they are resistant to timing attacks
-     */
-    public function testCompare()
-    {
-        $this->doTest(function (AbstractEncryptor $encryptor, $prefix) {
-            // make strings large enough
-            $string1 = str_repeat(TestConstants::myPrivateKey, 100000);
-            $string2 = str_repeat(TestConstants::otherPrivateKey, 100000);
-            echo PHP_EOL;
-
-            $humanDescr = [
-                'length' => 'different length',
-                'diff'   => 'same length, different content',
-                'same'   => 'same length, same content',
-            ];
-
-            // test different strings when comparing
-            $comparisonResult = [];
-            foreach ([
-                         'length' => [$string1, $string1 . 'a'],
-                         'diff'   => [$string1, $string2],
-                         'same'   => [$string1, $string1],
-                     ] as $testName => $strings) {
-                for ($i = 0; $i < 3; $i++) {
-                    // test run with delay
-                    $comparisonResult[$testName][$i] = $encryptor->stringCompare($strings[0], $strings[1]);
-
-                    // check result
-                    if ($testName == 'length' || $testName == 'diff') {
-                        $this->assertEquals(false, $comparisonResult[$testName][$i],
-                            $prefix . ': comparison of "' . $humanDescr[$testName] . ' #' . $i . '" is wrong: expected: false, got ' . $comparisonResult[$testName][$i]);
-                    } else {
-                        $this->assertEquals(true, $comparisonResult[$testName][$i],
-                            $prefix . ': comparison of "' . $humanDescr[$testName] . ' #' . $i . '" is wrong: expected: true, got ' . $comparisonResult[$testName][$i]);
-                    }
-                }
-            }
-        });
-    }
-
     private function doTest(\Closure $c)
     {
         foreach ([

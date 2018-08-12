@@ -29,20 +29,19 @@ use Threema\MsgApi\Messages\ThreemaMessage;
 abstract class AbstractEncryptor
 {
     const TYPE_SODIUM = 'sodium';
-    const TYPE_SALT   = 'salt';
 
     const FILE_NONCE           = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01";
     const FILE_THUMBNAIL_NONCE = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02";
 
-    const MESSAGE_ID_LEN      = 8;
+    const MESSAGE_ID_LEN = 8;
 
-    const BLOB_ID_LEN         = 16;
+    const BLOB_ID_LEN = 16;
 
     const IMAGE_FILE_SIZE_LEN = 4;
 
-    const IMAGE_NONCE_LEN     = 24;
+    const IMAGE_NONCE_LEN = 24;
 
-    const EMAIL_HMAC_KEY   = "\x30\xa5\x50\x0f\xed\x97\x01\xfa\x6d\xef\xdb\x61\x08\x41\x90\x0f\xeb\xb8\xe4\x30\x88\x1f\x7a\xd8\x16\x82\x62\x64\xec\x09\xba\xd7";
+    const EMAIL_HMAC_KEY = "\x30\xa5\x50\x0f\xed\x97\x01\xfa\x6d\xef\xdb\x61\x08\x41\x90\x0f\xeb\xb8\xe4\x30\x88\x1f\x7a\xd8\x16\x82\x62\x64\xec\x09\xba\xd7";
 
     const PHONENO_HMAC_KEY = "\x85\xad\xf8\x22\x69\x53\xf3\xd9\x6c\xfd\x5d\x09\xbf\x29\x55\x5e\xb9\x55\xfc\xd8\xaa\x5e\xc4\xf9\xfc\xd8\x69\xe2\x58\x37\x07\x23";
 
@@ -425,7 +424,7 @@ abstract class AbstractEncryptor
     }
 
     /**
-     * Converts an hexsdecimal string to a binary string.
+     * Converts an hexadecimal string to a binary string.
      *
      * This is the same as PHP s hex2bin() implementation, but it is resistant to
      * timing attacks.
@@ -443,46 +442,6 @@ abstract class AbstractEncryptor
             throw new Exception('$ignore parameter is not supported');
         }
         return hex2bin($hexString);
-    }
-
-    /**
-     * Compares two strings in a secure way.
-     *
-     * This is the same as PHP's strcmp() implementation, but it is resistant to
-     * timing attacks.
-     *
-     * @link https://paragonie.com/book/pecl-libsodium/read/03-utilities-helpers.md#compare
-     * @param  string $str1 The first string
-     * @param  string $str2 The second string
-     * @return bool
-     */
-    public function stringCompare($str1, $str2)
-    {
-        if (function_exists('hash_equals')) {
-            return hash_equals($str1, $str2);
-        } else {
-            // check variable type manually
-            if (!is_string($str1) || !is_string($str2)) {
-                return false;
-            }
-
-            // fast comparison: check string length
-            if (strlen($str1) != strlen($str2)) {
-                return false;
-            }
-
-            # PHP implementation of hash_equals
-            # partly taken from https://github.com/symfony/polyfill-php56/blob/master/Php56.php#L45-L51
-            #
-            # Note that this is really slow!!
-            #
-            $ret    = 0;
-            $length = strlen($str1);
-            for ($i = 0; $i < $length; ++$i) {
-                $ret |= ord($str1[$i]) ^ ord($str2[$i]);
-            }
-            return 0 === $ret;
-        }
     }
 
     /**

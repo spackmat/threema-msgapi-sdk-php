@@ -308,7 +308,7 @@ class E2EHelper
     public final function checkMac($threemaId, $gatewayId, $messageId, $date, $nonce, $box, $mac, $secret)
     {
         $calculatedMac = hash_hmac('sha256', $threemaId . $gatewayId . $messageId . $date . $nonce . $box, $secret);
-        return $this->encryptor->stringCompare($calculatedMac, $mac) === true;
+        return hash_equals($calculatedMac, $mac);
     }
 
     private final function assertIsCapable(string $threemaId, string $wantedCapability)
