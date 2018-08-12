@@ -11,23 +11,23 @@ namespace Threema\MsgApi\Commands\Results;
 
 use PHPUnit\Framework\TestCase;
 use Threema\MsgApi\Commands\LookupBulk;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class LookupBulkResultTest extends TestCase
 {
     public function testGetMatches()
     {
-        $cryptTool = CryptTool::getInstance();
+        $encryptor = AbstractEncryptor::getInstance();
         $request   = new LookupBulk(
             [$emailKey = 99 => $emailAddress = 'foo@example.com'],
             [$phoneKey = 17 => $phoneNumber = '641234567']);
         $request->getJson();
 
         $responseData = [['identity'  => $id1 = 'ABCD1234',
-                          'phoneHash' => $cryptTool->hashPhoneNo($phoneNumber),
+                          'phoneHash' => $encryptor->hashPhoneNo($phoneNumber),
                           'publicKey' => $key1 = 'f00baa'],
                          ['identity'  => $id2 = 'EFGH5678',
-                          'emailHash' => $cryptTool->hashEmail($emailAddress),
+                          'emailHash' => $encryptor->hashEmail($emailAddress),
                           'publicKey' => $key2 = 'abcd4567']];
 
         $subject = new LookupBulkResult(200, json_encode($responseData), $request);

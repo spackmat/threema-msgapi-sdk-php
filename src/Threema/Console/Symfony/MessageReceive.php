@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Threema\MsgApi\Exceptions\BadMessageException;
 use Threema\MsgApi\Helpers\E2EHelper;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class MessageReceive extends AbstractNetworkedCommand
 {
@@ -32,13 +32,13 @@ class MessageReceive extends AbstractNetworkedCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $cryptTool = CryptTool::getInstance();
+        $encryptor = AbstractEncryptor::getInstance();
         $helper    = new E2EHelper($this->getPrivateKey($input, $output), $this->getConnection($input, $output));
         $result    = $helper->receiveMessage(
-            $cryptTool->hex2bin($input->getArgument('sender-key')),
+            $encryptor->hex2bin($input->getArgument('sender-key')),
             $input->getArgument('message-id'),
-            $cryptTool->hex2bin($this->getMessage($input)),
-            $cryptTool->hex2bin($input->getArgument('nonce')),
+            $encryptor->hex2bin($this->getMessage($input)),
+            $encryptor->hex2bin($input->getArgument('nonce')),
             $input->getArgument('folder')
         );
 

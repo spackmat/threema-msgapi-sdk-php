@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
-namespace Threema\MsgApi\Tools;
+namespace Threema\MsgApi\Encryptor;
 
 use Threema\Core\Exception;
 use Threema\Core\KeyPair;
@@ -16,7 +16,7 @@ use Threema\Core\KeyPair;
  *
  * @package Threema\Core
  */
-class CryptToolSodium extends CryptTool
+class SodiumEncryptor extends AbstractEncryptor
 {
     /**
      * Generate a new key pair.
@@ -76,7 +76,6 @@ class CryptToolSodium extends CryptTool
     }
 
     /**
-     * Description of the CryptTool
      * @return string
      */
     public function getDescription()

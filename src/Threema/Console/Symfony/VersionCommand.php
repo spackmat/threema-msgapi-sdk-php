@@ -15,7 +15,7 @@ use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Threema\MsgApi\Constants;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class VersionCommand extends Command
 {
@@ -23,7 +23,7 @@ class VersionCommand extends Command
     {
         $this->setName('api:version')
              ->setAliases(['version'])
-             ->setDescription('Show API version, CryptTool version, Feature level');
+             ->setDescription('Show API version, Encryptor version, Feature level');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -31,10 +31,10 @@ class VersionCommand extends Command
         $left             = function (int $level) {
             return $level == Constants::MSGAPI_SDK_FEATURE_LEVEL ? '===>' : '';
         };
-        $defaultCryptTool = CryptTool::getInstance();
+        $encryptor = AbstractEncryptor::getInstance();
         $output->writeln('Threema PHP MsgApi Tool');
         $output->writeln('Gateway API Version: ' . Constants::MSGAPI_SDK_VERSION);
-        $output->writeln('CryptTool: ' . $defaultCryptTool->getName() . ' (' . $defaultCryptTool->getDescription() . ')');
+        $output->writeln('Encryptor: ' . $encryptor->getName() . ' (' . $encryptor->getDescription() . ')');
         $output->writeln('Feature level: ' . Constants::MSGAPI_SDK_FEATURE_LEVEL);
         $table = new Table($output);
         $table->getStyle()->setPadType(STR_PAD_LEFT);

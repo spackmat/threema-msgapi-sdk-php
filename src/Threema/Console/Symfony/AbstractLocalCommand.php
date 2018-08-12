@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection HtmlUnknownTag */
 /**
  * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Threema\MsgApi\Constants;
 use Threema\MsgApi\Exceptions\InvalidArgumentException;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 abstract class AbstractLocalCommand extends Command
 {
@@ -118,6 +118,6 @@ abstract class AbstractLocalCommand extends Command
         if (empty($key)) {
             throw new InvalidArgumentException(ucfirst($optionName) . ' key invalid or missing');
         }
-        return CryptTool::getInstance()->hex2bin(str_replace($keyPrefix, '', $key));
+        return AbstractEncryptor::getInstance()->hex2bin(str_replace($keyPrefix, '', $key));
     }
 }

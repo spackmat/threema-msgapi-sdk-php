@@ -10,7 +10,7 @@ namespace Threema\Console\Symfony;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class DerivePublicKeyCommand extends AbstractLocalCommand
 {
@@ -26,9 +26,9 @@ class DerivePublicKeyCommand extends AbstractLocalCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->loadDefaults($input, $output);
-        $cryptTool = CryptTool::getInstance();
-        $publicKey = $cryptTool->derivePublicKey($this->getPrivateKey($input, $output));
-        $output->writeln($cryptTool->bin2hex($publicKey));
+        $encryptor = AbstractEncryptor::getInstance();
+        $publicKey = $encryptor->derivePublicKey($this->getPrivateKey($input, $output));
+        $output->writeln($encryptor->bin2hex($publicKey));
         return 0;
     }
 }

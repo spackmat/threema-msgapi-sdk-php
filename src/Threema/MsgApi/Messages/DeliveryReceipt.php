@@ -6,7 +6,7 @@
 
 namespace Threema\MsgApi\Messages;
 
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class DeliveryReceipt extends ThreemaMessage
 {
@@ -85,11 +85,11 @@ class DeliveryReceipt extends ThreemaMessage
      */
     public function __toString()
     {
-        $cryptTool     = CryptTool::getInstance();
+        $encryptor     = AbstractEncryptor::getInstance();
         $str           = "Delivery receipt (" . $this->getReceiptTypeName() . "): ";
         $hexMessageIds = [];
         foreach ($this->ackedMessageIds as $messageId) {
-            $hexMessageIds[] = $cryptTool->bin2hex($messageId);
+            $hexMessageIds[] = $encryptor->bin2hex($messageId);
         }
         $str .= join(", ", $hexMessageIds);
         return $str;

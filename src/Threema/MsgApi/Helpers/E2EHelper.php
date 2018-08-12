@@ -12,7 +12,7 @@ use Threema\MsgApi\Connection;
 use Threema\MsgApi\Messages\FileMessage;
 use Threema\MsgApi\Messages\ImageMessage;
 use Threema\MsgApi\Messages\ThreemaMessage;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class E2EHelper
 {
@@ -22,9 +22,9 @@ class E2EHelper
     private $connection;
 
     /**
-     * @var CryptTool
+     * @var AbstractEncryptor
      */
-    private $cryptTool;
+    private $encryptor;
 
     /**
      * @var string (bin)
@@ -32,18 +32,18 @@ class E2EHelper
     private $privateKey;
 
     /**
-     * @param string     $privateKey (binary)
-     * @param Connection $connection
-     * @param CryptTool  $cryptTool
+     * @param string            $privateKey (binary)
+     * @param Connection        $connection
+     * @param AbstractEncryptor $encryptor
      */
-    public function __construct(string $privateKey, Connection $connection, CryptTool $cryptTool = null)
+    public function __construct(string $privateKey, Connection $connection, AbstractEncryptor $encryptor = null)
     {
         $this->connection = $connection;
-        $this->cryptTool  = $cryptTool;
+        $this->encryptor  = $encryptor;
         $this->privateKey = $privateKey;
 
-        if (null === $this->cryptTool) {
-            $this->cryptTool = CryptTool::getInstance();
+        if (null === $this->encryptor) {
+            $this->encryptor = AbstractEncryptor::getInstance();
         }
     }
 
@@ -59,10 +59,10 @@ class E2EHelper
     public final function sendTextMessage(string $threemaId, string $receiverPublicKey, string $text)
     {
         //random nonce first
-        $nonce = $this->cryptTool->randomNonce();
+        $nonce = $this->encryptor->randomNonce();
 
         //create a box
-        $textMessage = $this->cryptTool->encryptMessageText(
+        $textMessage = $this->encryptor->encryptMessageText(
             $text,
             $this->privateKey,
             $receiverPublicKey,
@@ -99,17 +99,17 @@ class E2EHelper
         $this->assertIsCapable($threemaId, CapabilityResult::IMAGE);
 
         //encrypt the image file
-        $encryptionResult = $this->cryptTool->encryptImage(file_get_contents($imagePath), $this->privateKey,
+        $encryptionResult = $this->encryptor->encryptImage(file_get_contents($imagePath), $this->privateKey,
             $receiverPublicKey);
         $uploadResult     = $this->connection->uploadFile($encryptionResult->getData());
         if (!$uploadResult->isSuccess()) {
             throw new Exception('could not upload the image (' . $uploadResult->getErrorCode() . ' ' . $uploadResult->getErrorMessage() . ') ' . $uploadResult->getRawResponse());
         }
 
-        $nonce = $this->cryptTool->randomNonce();
+        $nonce = $this->encryptor->randomNonce();
 
         //create a image message box
-        $imageMessage = $this->cryptTool->encryptImageMessage(
+        $imageMessage = $this->encryptor->encryptImageMessage(
             $uploadResult,
             $encryptionResult,
             $this->privateKey,
@@ -142,7 +142,7 @@ class E2EHelper
         $this->assertIsCapable($threemaId, CapabilityResult::FILE);
 
         //encrypt the main file
-        $encryptionResult = $this->cryptTool->encryptFile(file_get_contents($filePath));
+        $encryptionResult = $this->encryptor->encryptFile(file_get_contents($filePath));
         $uploadResult     = $this->connection->uploadFile($encryptionResult->getData());
 
         if (!$uploadResult->isSuccess()) {
@@ -154,7 +154,7 @@ class E2EHelper
         //encrypt the thumbnail file (if exists)
         if (strlen($thumbnailPath) > 0 && true === file_exists($thumbnailPath)) {
             //encrypt the main file
-            $thumbnailEncryptionResult = $this->cryptTool->encryptFileThumbnail(file_get_contents($thumbnailPath),
+            $thumbnailEncryptionResult = $this->encryptor->encryptFileThumbnail(file_get_contents($thumbnailPath),
                 $encryptionResult->getKey());
             $thumbnailUploadResult     = $this->connection->uploadFile($thumbnailEncryptionResult->getData());
 
@@ -163,10 +163,10 @@ class E2EHelper
             }
         }
 
-        $nonce = $this->cryptTool->randomNonce();
+        $nonce = $this->encryptor->randomNonce();
 
         //create a file message box
-        $fileMessage = $this->cryptTool->encryptFileMessage(
+        $fileMessage = $this->encryptor->encryptFileMessage(
             $uploadResult,
             $encryptionResult,
             $thumbnailUploadResult,
@@ -205,7 +205,7 @@ class E2EHelper
         $outputFolder = null,
         \Closure $shouldDownload = null)
     {
-        $message = $this->cryptTool->decryptMessage(
+        $message = $this->encryptor->decryptMessage(
             $box,
             $this->privateKey,
             $senderPublicKey,
@@ -233,7 +233,7 @@ class E2EHelper
         if ($message instanceof ImageMessage) {
             $result = $this->downloadFile($message, $message->getBlobId(), $shouldDownload);
             if (null !== $result && true === $result->isSuccess()) {
-                $image = $this->cryptTool->decryptImage(
+                $image = $this->encryptor->decryptImage(
                     $result->getData(),
                     $senderPublicKey,
                     $this->privateKey,
@@ -255,9 +255,9 @@ class E2EHelper
             $result = $this->downloadFile($message, $message->getBlobId(), $shouldDownload);
 
             if (null !== $result && true === $result->isSuccess()) {
-                $file = $this->cryptTool->decryptFile(
+                $file = $this->encryptor->decryptFile(
                     $result->getData(),
-                    $this->cryptTool->hex2bin($message->getEncryptionKey()));
+                    $this->encryptor->hex2bin($message->getEncryptionKey()));
 
                 if (null === $file) {
                     throw new Exception('file decryption failed');
@@ -273,9 +273,9 @@ class E2EHelper
             if (null !== $message->getThumbnailBlobId() && strlen($message->getThumbnailBlobId()) > 0) {
                 $result = $this->downloadFile($message, $message->getThumbnailBlobId(), $shouldDownload);
                 if (null !== $result && true === $result->isSuccess()) {
-                    $file = $this->cryptTool->decryptFileThumbnail(
+                    $file = $this->encryptor->decryptFileThumbnail(
                         $result->getData(),
-                        $this->cryptTool->hex2bin($message->getEncryptionKey()));
+                        $this->encryptor->hex2bin($message->getEncryptionKey()));
 
                     if (null === $file) {
                         throw new Exception('thumbnail decryption failed');
@@ -293,8 +293,7 @@ class E2EHelper
     }
 
     /**
-     * Check the HMAC of an ingoing Threema request. Always do this before de-
-     * crypting the message.
+     * Check the HMAC of an ingoing Threema request. Always do this before decrypting the message.
      *
      * @param string $threemaId
      * @param string $gatewayId
@@ -304,12 +303,12 @@ class E2EHelper
      * @param string $box   box as hex encoded string
      * @param string $mac   the original one send by the server
      * @param string $secret
-     * @return bool true if check was successfull, false if not
+     * @return bool true if check was successful, false if not
      */
     public final function checkMac($threemaId, $gatewayId, $messageId, $date, $nonce, $box, $mac, $secret)
     {
         $calculatedMac = hash_hmac('sha256', $threemaId . $gatewayId . $messageId . $date . $nonce . $box, $secret);
-        return $this->cryptTool->stringCompare($calculatedMac, $mac) === true;
+        return $this->encryptor->stringCompare($calculatedMac, $mac) === true;
     }
 
     private final function assertIsCapable(string $threemaId, string $wantedCapability)

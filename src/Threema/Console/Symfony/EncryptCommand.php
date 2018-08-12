@@ -10,7 +10,7 @@ namespace Threema\Console\Symfony;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class EncryptCommand extends AbstractLocalCommand
 {
@@ -28,16 +28,16 @@ class EncryptCommand extends AbstractLocalCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->loadDefaults($input, $output);
-        $cryptTool = CryptTool::getInstance();
-        $nonce     = $cryptTool->randomNonce();
-        $text      = $cryptTool->encryptMessageText($this->getMessage($input), $this->getPrivateKey($input, $output),
+        $encryptor = AbstractEncryptor::getInstance();
+        $nonce     = $encryptor->randomNonce();
+        $text      = $encryptor->encryptMessageText($this->getMessage($input), $this->getPrivateKey($input, $output),
             $this->getPublicKey($input), $nonce);
 
         $output->writeln('Nonce:', OutputInterface::VERBOSITY_VERBOSE);
-        $output->writeln($cryptTool->bin2hex($nonce));
+        $output->writeln($encryptor->bin2hex($nonce));
 
         $output->writeln('Encrypted Text:', OutputInterface::VERBOSITY_VERBOSE);
-        $output->writeln($cryptTool->bin2hex($text));
+        $output->writeln($encryptor->bin2hex($text));
         return 0;
     }
 }

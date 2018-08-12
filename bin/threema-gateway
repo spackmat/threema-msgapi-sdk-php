@@ -6,14 +6,14 @@
  */
 
 use Symfony\Component\Console\Application;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 $autoloaderInWorkingDirectory = getcwd() . '/vendor/autoload.php';
 if (is_file($autoloaderInWorkingDirectory)) {
     require_once $autoloaderInWorkingDirectory;
 }
 
-if (!class_exists(CryptTool::class, true)) {
+if (!class_exists(AbstractEncryptor::class, true)) {
     $composerAutoloadFile = __DIR__ . '/../vendor/autoload.php';
     if (!is_file($composerAutoloadFile)) {
         $composerAutoloadFile = __DIR__ . '/../../../autoload.php';

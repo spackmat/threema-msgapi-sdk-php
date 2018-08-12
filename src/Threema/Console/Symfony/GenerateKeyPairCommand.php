@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Threema\MsgApi\Helpers\KeyPrefix;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class GenerateKeyPairCommand extends AbstractLocalCommand
 {
@@ -30,12 +30,12 @@ class GenerateKeyPairCommand extends AbstractLocalCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $cryptTool = CryptTool::getInstance();
-        $keyPair   = $cryptTool->generateKeyPair();
+        $encryptor = AbstractEncryptor::getInstance();
+        $keyPair   = $encryptor->generateKeyPair();
         $this->writeKey($input->getArgument('private-key-file'),
-            KeyPrefix::addPrivate($cryptTool->bin2hex($keyPair->getPrivateKey())), $output);
+            KeyPrefix::addPrivate($encryptor->bin2hex($keyPair->getPrivateKey())), $output);
         $this->writeKey($input->getArgument('public-key-file'),
-            KeyPrefix::addPublic($cryptTool->bin2hex($keyPair->getPublicKey())), $output);
+            KeyPrefix::addPublic($encryptor->bin2hex($keyPair->getPublicKey())), $output);
         $output->writeln('Key pair generated', OutputInterface::VERBOSITY_VERBOSE);
         return 0;
     }

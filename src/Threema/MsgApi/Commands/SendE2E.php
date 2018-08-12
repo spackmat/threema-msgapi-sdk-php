@@ -7,7 +7,7 @@
 namespace Threema\MsgApi\Commands;
 
 use Threema\MsgApi\Commands\Results\SendE2EResult;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class SendE2E implements CommandInterface
 {
@@ -59,11 +59,11 @@ class SendE2E implements CommandInterface
      */
     public function getParams()
     {
-        $cryptTool = CryptTool::getInstance();
+        $encryptor = AbstractEncryptor::getInstance();
 
         $p['to']    = $this->threemaId;
-        $p['nonce'] = $cryptTool->bin2hex($this->getNonce());
-        $p['box']   = $cryptTool->bin2hex($this->getBox());
+        $p['nonce'] = $encryptor->bin2hex($this->getNonce());
+        $p['box']   = $encryptor->bin2hex($this->getBox());
         return $p;
     }
 

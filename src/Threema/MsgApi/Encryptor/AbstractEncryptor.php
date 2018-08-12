@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
-namespace Threema\MsgApi\Tools;
+namespace Threema\MsgApi\Encryptor;
 
 use Threema\Core\AssocArray;
 use Threema\Core\Exception;
@@ -22,12 +22,11 @@ use Threema\MsgApi\Messages\TextMessage;
 use Threema\MsgApi\Messages\ThreemaMessage;
 
 /**
- * Interface CryptTool
  * Contains static methods to do various Threema cryptography related tasks.
  *
  * @package Threema\MsgApi\Tool
  */
-abstract class CryptTool
+abstract class AbstractEncryptor
 {
     const TYPE_SODIUM = 'sodium';
     const TYPE_SALT   = 'salt';
@@ -48,7 +47,7 @@ abstract class CryptTool
     const PHONENO_HMAC_KEY = "\x85\xad\xf8\x22\x69\x53\xf3\xd9\x6c\xfd\x5d\x09\xbf\x29\x55\x5e\xb9\x55\xfc\xd8\xaa\x5e\xc4\xf9\xfc\xd8\x69\xe2\x58\x37\x07\x23";
 
     /**
-     * @var CryptTool
+     * @var AbstractEncryptor
      */
     private static $instance = null;
 
@@ -57,12 +56,12 @@ abstract class CryptTool
     }
 
     /**
-     * @return CryptTool
+     * @return AbstractEncryptor
      */
     public static function getInstance()
     {
         if (null === self::$instance) {
-            self::$instance = new CryptToolSodium();
+            self::$instance = new SodiumEncryptor();
         }
 
         return self::$instance;
@@ -70,13 +69,13 @@ abstract class CryptTool
 
     /**
      * @param string $type
-     * @return null|CryptTool null on unknown type
+     * @return null|AbstractEncryptor null on unknown type
      */
     public static function createInstance($type)
     {
         switch ($type) {
             case self::TYPE_SODIUM:
-                $instance = new CryptToolSodium();
+                $instance = new SodiumEncryptor();
                 break;
             default:
                 return null;
@@ -408,13 +407,13 @@ abstract class CryptTool
 
     public function __toString()
     {
-        return 'CryptTool ' . $this->getName();
+        return 'Encryptor ' . $this->getName();
     }
 
     /**
-     * Converts a binary string to an hexdecimal string.
+     * Converts a binary string to an hexadecimal string.
      *
-     * This is the same as PHP's bin2hex() implementation, but it is resistant to
+     * This is the same as PHP s bin2hex() implementation, but it is resistant to
      * timing attacks.
      *
      * @param  string $binaryString The binary string to convert
@@ -426,11 +425,11 @@ abstract class CryptTool
     }
 
     /**
-     * Converts an hexdecimal string to a binary string.
+     * Converts an hexsdecimal string to a binary string.
      *
-     * This is the same as PHP's hex2bin() implementation, but it is resistant to
+     * This is the same as PHP s hex2bin() implementation, but it is resistant to
      * timing attacks.
-     * Note that the default implementation does not support $ignore currrently and will
+     * Note that the default implementation does not support $ignore currently and will
      * throw an error. Only when libsodium >= 0.22 is used, this is supported.
      *
      * @param  string      $hexString The hex string to convert
@@ -487,13 +486,11 @@ abstract class CryptTool
     }
 
     /**
-     * Name of the CryptTool
      * @return string
      */
     abstract public function getName();
 
     /**
-     * Description of the CryptTool
      * @return string
      */
     abstract public function getDescription();

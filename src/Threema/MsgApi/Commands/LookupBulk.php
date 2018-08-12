@@ -7,7 +7,7 @@
 namespace Threema\MsgApi\Commands;
 
 use Threema\MsgApi\Commands\Results\LookupBulkResult;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 /**
  * It is possible (though very unlikely) that two different phone numbers or emails will hash to the same value.
@@ -59,15 +59,15 @@ class LookupBulk implements JsonCommandInterface
 
     public function getJson(): string
     {
-        $cryptTool = CryptTool::getInstance();
+        $encryptor = AbstractEncryptor::getInstance();
         $request   = [];
         foreach ($this->phone as $id => $phoneNumber) {
-            $hashedPhoneNumber                          = $cryptTool->hashPhoneNo($phoneNumber);
+            $hashedPhoneNumber                          = $encryptor->hashPhoneNo($phoneNumber);
             $request['phoneHashes'][]                   = $hashedPhoneNumber;
             $this->hashedPhone[$hashedPhoneNumber][$id] = $phoneNumber;
         }
         foreach ($this->email as $id => $emailAddress) {
-            $hashedEmail                          = $cryptTool->hashEmail($emailAddress);
+            $hashedEmail                          = $encryptor->hashEmail($emailAddress);
             $request['emailHashes'][]             = $hashedEmail;
             $this->hashedEmail[$hashedEmail][$id] = $emailAddress;
         }

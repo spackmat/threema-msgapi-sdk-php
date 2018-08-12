@@ -11,7 +11,7 @@ namespace Threema\Console\Symfony;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class HashPhoneCommand extends AbstractLocalCommand
 {
@@ -26,8 +26,8 @@ class HashPhoneCommand extends AbstractLocalCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $cryptTool = CryptTool::getInstance();
-        $output->writeln($cryptTool->hashPhoneNo($input->getArgument('phone')));
+        $encryptor = AbstractEncryptor::getInstance();
+        $output->writeln($encryptor->hashPhoneNo($input->getArgument('phone')));
         return 0;
     }
 }
