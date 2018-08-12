@@ -304,7 +304,7 @@ class E2EHelper
      * @param string $nonce nonce as hex encoded string
      * @param string $box   box as hex encoded string
      * @param string $mac   the original one send by the server
-     * @param        $secret
+     * @param string $secret
      * @return bool true if check was successfull, false if not
      */
     public final function checkMac($threemaId, $gatewayId, $messageId, $date, $nonce, $box, $mac, $secret)
@@ -324,7 +324,7 @@ class E2EHelper
     /**
      * @param ThreemaMessage $message
      * @param string         $blobId blob id as hex
-     * @param \Closure|null  $shouldDownload
+     * @param \Closure       $shouldDownload
      * @return null|\Threema\MsgApi\Commands\Results\DownloadFileResult
      * @throws Exception
      */

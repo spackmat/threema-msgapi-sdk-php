@@ -19,8 +19,8 @@ abstract class Result
     private $response;
 
     /**
-     * @param int $httpCode
-     * @param     $response
+     * @param int    $httpCode
+     * @param string $response
      */
     public function __construct($httpCode, $response)
     {

@@ -101,9 +101,9 @@ class CryptToolSodium extends CryptTool
     /**
      * make a secret box
      *
-     * @param $data
-     * @param $nonce
-     * @param $key
+     * @param string $data
+     * @param string $nonce
+     * @param string $key
      * @return mixed
      */
     protected function makeSecretBox($data, $nonce, $key)

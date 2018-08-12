@@ -24,7 +24,7 @@ class AssocArray
     }
 
     /**
-     * @param            $string
+     * @param string     $string
      * @param array|null $requiredKeys
      * @return AssocArray
      * @throws Exception

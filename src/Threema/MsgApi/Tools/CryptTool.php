@@ -331,7 +331,7 @@ abstract class CryptTool
     abstract public function validate();
 
     /**
-     * @param $data
+     * @param string $data
      * @return EncryptResult
      */
     public final function encryptFile($data)
@@ -514,9 +514,9 @@ abstract class CryptTool
     /**
      * make a secret box
      *
-     * @param $data
-     * @param $nonce
-     * @param $key
+     * @param string $data
+     * @param string $nonce
+     * @param string $key
      * @return mixed
      */
     abstract protected function makeSecretBox($data, $nonce, $key);

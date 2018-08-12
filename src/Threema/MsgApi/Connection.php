@@ -56,7 +56,7 @@ class Connection
 
     /**
      * @param Receiver $receiver
-     * @param          $text
+     * @param string   $text
      * @return SendSimpleResult
      */
     public function sendSimple(Receiver $receiver, $text): SendSimpleResult
@@ -78,7 +78,7 @@ class Connection
     }
 
     /**
-     * @param $encryptedFileData (binary string)
+     * @param string $encryptedFileData (binary string)
      * @return UploadFileResult
      */
     public function uploadFile($encryptedFileData): UploadFileResult
@@ -88,7 +88,7 @@ class Connection
     }
 
     /**
-     * @param          $blobId
+     * @param string   $blobId
      * @param \Closure $progress
      * @return DownloadFileResult
      */
@@ -99,7 +99,7 @@ class Connection
     }
 
     /**
-     * @param $phoneNumber
+     * @param string $phoneNumber
      * @return LookupIdResult
      */
     public function keyLookupByPhoneNumber($phoneNumber): LookupIdResult
@@ -147,7 +147,7 @@ class Connection
     }
 
     /**
-     * @param $threemaId
+     * @param string $threemaId
      * @return FetchPublicKeyResult
      */
     public function fetchPublicKey(string $threemaId): FetchPublicKeyResult

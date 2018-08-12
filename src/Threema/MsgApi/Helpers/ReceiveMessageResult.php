@@ -49,7 +49,7 @@ class ReceiveMessageResult
     }
 
     /**
-     * @param $message
+     * @param string $message
      * @return $this
      */
     public function addError($message)
@@ -78,7 +78,7 @@ class ReceiveMessageResult
     }
 
     /**
-     * @return \string[]
+     * @return string[]
      */
     public function getErrors()
     {
@@ -94,7 +94,7 @@ class ReceiveMessageResult
     }
 
     /**
-     * @return \string[]
+     * @return string[]
      */
     public function getFiles()
     {
