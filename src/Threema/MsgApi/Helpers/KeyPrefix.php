@@ -6,11 +6,11 @@
 
 declare(strict_types=1);
 
-namespace Threema\Console;
+namespace Threema\MsgApi\Helpers;
 
 use Threema\MsgApi\Constants;
 
-class Common
+class KeyPrefix
 {
     /**
      * Append the prefix to the the PublicKey
@@ -18,7 +18,7 @@ class Common
      * @param string $keyHex PublicKey in hex
      * @return string
      */
-    public static function convertPublicKey(string $keyHex): string
+    public static function addPublic(string $keyHex): string
     {
         return Constants::PUBLIC_KEY_PREFIX . $keyHex;
     }
@@ -29,7 +29,7 @@ class Common
      * @param string $keyHexWithPrefix PublicKey in hex with the key-prefix
      * @return string
      */
-    public static function getPublicKey(string $keyHexWithPrefix): string
+    public static function removePublic(string $keyHexWithPrefix): string
     {
         return str_replace(Constants::PUBLIC_KEY_PREFIX, '', $keyHexWithPrefix);
     }
@@ -40,7 +40,7 @@ class Common
      * @param string $keyHex PrivateKey in hex
      * @return string
      */
-    public static function convertPrivateKey(string $keyHex): string
+    public static function addPrivate(string $keyHex): string
     {
         return Constants::PRIVATE_KEY_PREFIX . $keyHex;
     }
@@ -51,7 +51,7 @@ class Common
      * @param string $keyHexWithPrefix PrivateKey in hex with the key-prefix
      * @return string
      */
-    public static function getPrivateKey(string $keyHexWithPrefix): string
+    public static function removePrivate(string $keyHexWithPrefix): string
     {
         return str_replace(Constants::PRIVATE_KEY_PREFIX, '', $keyHexWithPrefix);
     }

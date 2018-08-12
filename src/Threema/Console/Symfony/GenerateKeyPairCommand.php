@@ -11,7 +11,7 @@ namespace Threema\Console\Symfony;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Threema\Console\Common;
+use Threema\MsgApi\Helpers\KeyPrefix;
 use Threema\MsgApi\Tools\CryptTool;
 
 class GenerateKeyPairCommand extends AbstractLocalCommand
@@ -33,9 +33,9 @@ class GenerateKeyPairCommand extends AbstractLocalCommand
         $cryptTool = CryptTool::getInstance();
         $keyPair   = $cryptTool->generateKeyPair();
         $this->writeKey($input->getArgument('private-key-file'),
-            Common::convertPrivateKey($cryptTool->bin2hex($keyPair->getPrivateKey())), $output);
+            KeyPrefix::addPrivate($cryptTool->bin2hex($keyPair->getPrivateKey())), $output);
         $this->writeKey($input->getArgument('public-key-file'),
-            Common::convertPublicKey($cryptTool->bin2hex($keyPair->getPublicKey())), $output);
+            KeyPrefix::addPublic($cryptTool->bin2hex($keyPair->getPublicKey())), $output);
         $output->writeln('Key pair generated', OutputInterface::VERBOSITY_VERBOSE);
         return 0;
     }

@@ -7,32 +7,31 @@
 namespace Threema\MsgApi;
 
 use PHPUnit\Framework\TestCase;
-use Threema\Console\Common;
+use Threema\MsgApi\Helpers\KeyPrefix;
 
-class CommonTest extends TestCase
+class KeyPrefixTest extends TestCase
 {
-
     public function testGetPrivateKey()
     {
-        $realPrivateKey = Common::getPrivateKey(TestConstants::myPrivateKey);
+        $realPrivateKey = KeyPrefix::removePrivate(TestConstants::myPrivateKey);
         $this->assertEquals($realPrivateKey, TestConstants::myPrivateKeyExtract, 'getPrivateKey failed');
     }
 
     public function testGetPublicKey()
     {
-        $realPublicKey = Common::getPublicKey(TestConstants::myPublicKey);
+        $realPublicKey = KeyPrefix::removePublic(TestConstants::myPublicKey);
         $this->assertEquals($realPublicKey, TestConstants::myPublicKeyExtract, 'myPublicKey failed');
     }
 
     public function testConvertPrivateKey()
     {
-        $p = Common::convertPrivateKey('PRIVKEYSTRING');
+        $p = KeyPrefix::addPrivate('PRIVKEYSTRING');
         $this->assertEquals($p, 'private:PRIVKEYSTRING', 'convertPrivateKey failed');
     }
 
     public function testConvertPublicKey()
     {
-        $p = Common::convertPublicKey('PUBKEYSTRING');
+        $p = KeyPrefix::addPublic('PUBKEYSTRING');
         $this->assertEquals($p, 'public:PUBKEYSTRING', 'convertPublicKey failed');
     }
 }

@@ -11,7 +11,7 @@ namespace Threema\Console\Symfony;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Threema\Console\Common;
+use Threema\MsgApi\Helpers\KeyPrefix;
 
 class LookupBulkCommand extends AbstractNetworkedCommand
 {
@@ -42,7 +42,7 @@ class LookupBulkCommand extends AbstractNetworkedCommand
         $indent = '    ';
         foreach ($result->getMatches() as $match) {
             $output->writeln($match->getIdentity());
-            $output->writeln($indent . Common::convertPublicKey($match->getPublicKey()));
+            $output->writeln($indent . KeyPrefix::addPublic($match->getPublicKey()));
             foreach ($match->getEmails() as $email) {
                 $output->writeln($indent . 'email:' . $email);
             }
