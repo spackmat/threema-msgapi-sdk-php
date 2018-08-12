@@ -5,14 +5,15 @@
  * @copyright Copyright (c) 2015, Threema GmbH
  */
 
-use Threema\Console\Run;
+use Symfony\Component\Console\Application;
+use Threema\MsgApi\Tools\CryptTool;
 
 $autoloaderInWorkingDirectory = getcwd() . '/vendor/autoload.php';
 if (is_file($autoloaderInWorkingDirectory)) {
     require_once $autoloaderInWorkingDirectory;
 }
 
-if (!class_exists(Run::class, true)) {
+if (!class_exists(CryptTool::class, true)) {
     $composerAutoloadFile = __DIR__ . '/../vendor/autoload.php';
     if (!is_file($composerAutoloadFile)) {
         $composerAutoloadFile = __DIR__ . '/../../../autoload.php';
@@ -20,10 +21,24 @@ if (!class_exists(Run::class, true)) {
     require_once $composerAutoloadFile;
 }
 
-try {
-    $tool = new Run($argv);
-    $tool->run();
-} catch (\Threema\Core\Exception $exception) {
-    echo "ERROR: " . $exception->getMessage() . "\n";
-    exit(1);
+// https://gist.github.com/sroze/3e8d45d0cdc301debfd2
+$application = new Application('Threema Gateway');
+
+// dynamically load the commands
+$base        = \Threema\Console\Symfony\AbstractLocalCommand::class;
+$reflection  = new ReflectionClass($base);
+foreach (new DirectoryIterator(dirname($reflection->getFileName())) as $fileInfo) {
+    if ($fileInfo->isDot()) {
+        continue;
+    }
+    if (strpos($fileInfo->getFilename(), 'Abstract') !== false) {
+        continue;
+    }
+    if (strpos($fileInfo->getFilename(), 'Command.php') === false) {
+        continue;
+    }
+    $className = '\\' . $reflection->getNamespaceName() . '\\' . $fileInfo->getBasename('.php');
+    $application->add(new $className);
 }
+
+$application->run();

@@ -4,119 +4,55 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\Console;
 
-use Threema\Core\Exception;
 use Threema\MsgApi\Constants;
 
 class Common
 {
     /**
-     * output a string, wrap at 100 chars
+     * Append the prefix to the the PublicKey
      *
-     * @param string $string string to output
-     * @param int    $indent indent
+     * @param string $keyHex PublicKey in hex
+     * @return string
      */
-    public static function l($string = '', $indent = 0)
+    public static function convertPublicKey(string $keyHex): string
     {
-        $pad = str_repeat('  ', $indent);
-        echo $pad . wordwrap($string, 100, "\n" . $pad) . "\n";
-    }
-
-    /**
-     * output a line
-     *
-     * @param string $string string to output
-     */
-    public static function ln($string = '')
-    {
-        echo $string . "\n";
-    }
-
-    /**
-     * output a error message to the stderr
-     *
-     * @param string $msg
-     */
-    public static function e($msg)
-    {
-        $STDERR = fopen('php://stderr', 'w+');
-        fwrite($STDERR, $msg . "\n");
-
-    }
-
-    /**
-     * check arguments for null, throws an exception on null or strlen == 0
-     *
-     * @params ...$things
-     * @throws \Threema\Core\Exception
-     */
-    public static function required()
-    {
-        $argCount = func_num_args();
-        for ($n = 0; $n < $argCount; $n++) {
-            $o = func_get_arg($n);
-            if (null === $o || (is_scalar($o) && strlen($o) == 0)) {
-                throw new Exception('invalid data for argument ' . $n);
-            }
-        }
-    }
-
-    /**
-     * Append the prefix to the the PublicKey @key
-     *
-     * @param string $key PublicKey in hex
-     * @return null|string
-     */
-    public static function convertPublicKey($key)
-    {
-        if (null !== $key) {
-            return Constants::PUBLIC_KEY_PREFIX . $key;
-        }
-        return null;
+        return Constants::PUBLIC_KEY_PREFIX . $keyHex;
     }
 
     /**
      * Extract the PublicKey
      *
-     * @param string $stringWithPrefix PublicKey in hex with the key-prefix
-     * @return null|string
+     * @param string $keyHexWithPrefix PublicKey in hex with the key-prefix
+     * @return string
      */
-    public static function getPublicKey($stringWithPrefix = null)
+    public static function getPublicKey(string $keyHexWithPrefix): string
     {
-        if (null !== $stringWithPrefix && substr($stringWithPrefix, 0,
-                strlen(Constants::PUBLIC_KEY_PREFIX)) == Constants::PUBLIC_KEY_PREFIX) {
-            return substr($stringWithPrefix, strlen(Constants::PUBLIC_KEY_PREFIX));
-        }
-        return null;
+        return str_replace(Constants::PUBLIC_KEY_PREFIX, '', $keyHexWithPrefix);
     }
 
     /**
      * Append the prefix to the the PrivateKey @key
      *
-     * @param string $key PrivateKey in hex
-     * @return null|string
+     * @param string $keyHex PrivateKey in hex
+     * @return string
      */
-    public static function convertPrivateKey($key)
+    public static function convertPrivateKey(string $keyHex): string
     {
-        if (null !== $key) {
-            return Constants::PRIVATE_KEY_PREFIX . $key;
-        }
-        return null;
+        return Constants::PRIVATE_KEY_PREFIX . $keyHex;
     }
 
     /**
      * Extract the PrivateKey
      *
-     * @param string $stringWithPrefix PrivateKey in hex with the key-prefix (@Constants::PRIVATE_KEY_PREFIX)
-     * @return null|string
+     * @param string $keyHexWithPrefix PrivateKey in hex with the key-prefix
+     * @return string
      */
-    public static function getPrivateKey($stringWithPrefix = null)
+    public static function getPrivateKey(string $keyHexWithPrefix): string
     {
-        if (null !== $stringWithPrefix && substr($stringWithPrefix, 0,
-                strlen(Constants::PRIVATE_KEY_PREFIX)) == Constants::PRIVATE_KEY_PREFIX) {
-            return substr($stringWithPrefix, strlen(Constants::PRIVATE_KEY_PREFIX));
-        }
-        return null;
+        return str_replace(Constants::PRIVATE_KEY_PREFIX, '', $keyHexWithPrefix);
     }
 }
