@@ -65,9 +65,10 @@ class Connection
      * @param string $box   binary
      * @return SendE2EResult
      */
-    public function sendE2E($threemaId, $nonce, $box): SendE2EResult
+    public function sendE2E(string $threemaId, string $nonce, string $box): SendE2EResult
     {
-        $result = $this->driver->postForm(new SendE2E($threemaId, $nonce, $box));
+        $command = new SendE2E($threemaId, $this->encryptor->bin2hex($nonce), $this->encryptor->bin2hex($box));
+        $result  = $this->driver->postForm($command);
         assert($result instanceof SendE2EResult);
         return $result;
     }
@@ -99,9 +100,9 @@ class Connection
      * @param string $phoneNumber
      * @return LookupIdResult
      */
-    public function keyLookupByPhoneNumber($phoneNumber): LookupIdResult
+    public function keyLookupByPhoneNumber(string $phoneNumber): LookupIdResult
     {
-        $result = $this->driver->get(new LookupPhone($phoneNumber));
+        $result = $this->driver->get(new LookupPhone($phoneNumber, $this->encryptor->hashPhoneNo($phoneNumber)));
         assert($result instanceof LookupIdResult);
         return $result;
     }
@@ -112,7 +113,7 @@ class Connection
      */
     public function keyLookupByEmail(string $email): LookupIdResult
     {
-        $result = $this->driver->get(new LookupEmail($email));
+        $result = $this->driver->get(new LookupEmail($email, $this->encryptor->hashEmail($email)));
         assert($result instanceof LookupIdResult);
         return $result;
     }
@@ -124,7 +125,9 @@ class Connection
      */
     public function bulkLookup(array $emailAddresses, array $phoneNumbers): LookupBulkResult
     {
-        $result = $this->driver->postJson(new LookupBulk($emailAddresses, $phoneNumbers));
+        $command = new LookupBulk($emailAddresses, $phoneNumbers);
+        $command->calculateHashes($this->encryptor);
+        $result = $this->driver->postJson($command);
         assert($result instanceof LookupBulkResult);
         return $result;
     }

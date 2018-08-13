@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi;
 
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
@@ -17,17 +19,27 @@ use Threema\MsgApi\HttpDriver\HttpDriverInterface;
  */
 class ConnectionFactory
 {
-    /** @var \Threema\MsgApi\Encryptor\AbstractEncryptor */
+    /** @var AbstractEncryptor */
     private $encryptor;
 
-    /** @var \Threema\MsgApi\HttpDriver\HttpDriverInterface */
+    /** @var HttpDriverInterface */
     private $httpDriver;
 
     /** @var \Threema\MsgApi\Connection */
     private $connection;
 
+    public function __construct(AbstractEncryptor $encryptor = null, HttpDriverInterface $httpDriver = null)
+    {
+        if (!is_null($encryptor)) {
+            $this->encryptor = $encryptor;
+        }
+        if (!is_null($httpDriver)) {
+            $this->httpDriver = $httpDriver;
+        }
+    }
+
     /**
-     * @return \Threema\MsgApi\Encryptor\AbstractEncryptor
+     * @return AbstractEncryptor
      */
     public function getEncryptor(): AbstractEncryptor
     {
@@ -51,7 +63,7 @@ class ConnectionFactory
     /**
      * @param string $threemaID
      * @param string $apiSecret
-     * @return \Threema\MsgApi\HttpDriver\HttpDriverInterface
+     * @return HttpDriverInterface
      */
     protected function getHttpDriver(string $threemaID, string $apiSecret): HttpDriverInterface
     {

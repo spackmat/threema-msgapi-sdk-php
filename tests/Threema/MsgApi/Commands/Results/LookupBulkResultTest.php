@@ -11,16 +11,19 @@ namespace Threema\MsgApi\Commands\Results;
 
 use PHPUnit\Framework\TestCase;
 use Threema\MsgApi\Commands\LookupBulk;
+use Threema\MsgApi\ConnectionFactory;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class LookupBulkResultTest extends TestCase
 {
     public function testGetMatches()
     {
-        $encryptor = AbstractEncryptor::getInstance();
+        $factory = new ConnectionFactory();
+        $encryptor = $factory->getEncryptor();
         $request   = new LookupBulk(
             [$emailKey = 99 => $emailAddress = 'foo@example.com'],
             [$phoneKey = 17 => $phoneNumber = '641234567']);
+        $request->calculateHashes($encryptor);
         $request->getJson();
 
         $responseData = [['identity'  => $id1 = 'ABCD1234',

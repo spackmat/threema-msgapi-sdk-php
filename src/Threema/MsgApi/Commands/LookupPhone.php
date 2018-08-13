@@ -4,10 +4,12 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Commands;
 
 use Threema\MsgApi\Commands\Results\LookupIdResult;
-use Threema\MsgApi\Encryptor\AbstractEncryptor;
+use Threema\MsgApi\Commands\Results\Result;
 
 class LookupPhone implements CommandInterface
 {
@@ -16,20 +18,29 @@ class LookupPhone implements CommandInterface
      */
     private $phoneNumber;
 
-    /**
-     * @param string $phoneNumber
-     */
-    public function __construct($phoneNumber)
+    /** @var string */
+    private $hashedPhone;
+
+    public function __construct(string $phoneNumber, string $hashedPhone)
     {
         $this->phoneNumber = $phoneNumber;
+        $this->hashedPhone = $hashedPhone;
     }
 
     /**
      * @return string
      */
-    public function getPhoneNumber()
+    public function getPhoneNumber(): string
     {
         return $this->phoneNumber;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHashedPhone(): string
+    {
+        return $this->hashedPhone;
     }
 
     /**
@@ -45,7 +56,7 @@ class LookupPhone implements CommandInterface
      */
     public function getPath(): string
     {
-        return 'lookup/phone_hash/' . urlencode(AbstractEncryptor::getInstance()->hashPhoneNo($this->phoneNumber));
+        return 'lookup/phone_hash/' . $this->hashedPhone;
     }
 
     /**
@@ -53,7 +64,7 @@ class LookupPhone implements CommandInterface
      * @param object $res
      * @return LookupIdResult
      */
-    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
+    public function parseResult($httpCode, $res): Result
     {
         return new LookupIdResult($httpCode, $res);
     }

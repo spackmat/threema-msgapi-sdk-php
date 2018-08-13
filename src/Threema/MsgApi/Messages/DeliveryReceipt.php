@@ -6,22 +6,23 @@
 
 namespace Threema\MsgApi\Messages;
 
-use Threema\MsgApi\Encryptor\AbstractEncryptor;
-
 class DeliveryReceipt extends ThreemaMessage
 {
     const TYPE_CODE = 0x80;
 
+    public const MESSAGE_RECEIVED    = 1;
+    public const MESSAGE_READ        = 2;
+    public const MESSAGE_THUMBS_UP   = 3; // or accepted
+    public const MESSAGE_THUMBS_DOWN = 4; // or declined
+
     /**
-     * map type => text
-     *
-     * @var array
+     * @var string[]
      */
-    private static $receiptTypesToNames = [
-        1 => 'received',
-        2 => 'read',
-        3 => 'userack',
-        4 => 'userdec'];
+    private const RECEIPT_NAMES = [
+        self::MESSAGE_RECEIVED    => 'received',
+        self::MESSAGE_READ        => 'read',
+        self::MESSAGE_THUMBS_UP   => 'userack',
+        self::MESSAGE_THUMBS_DOWN => 'userdec'];
 
     /**
      * the type of this receipt
@@ -61,12 +62,9 @@ class DeliveryReceipt extends ThreemaMessage
      *
      * @return string
      */
-    public function getReceiptTypeName()
+    public function getReceiptTypeName(): string
     {
-        if (true === array_key_exists($this->receiptType, self::$receiptTypesToNames)) {
-            return self::$receiptTypesToNames[$this->receiptType];
-        }
-        return null;
+        return self::RECEIPT_NAMES[$this->receiptType] ?? '';
     }
 
     /**
@@ -85,13 +83,8 @@ class DeliveryReceipt extends ThreemaMessage
      */
     public function __toString()
     {
-        $encryptor     = AbstractEncryptor::getInstance();
-        $str           = "Delivery receipt (" . $this->getReceiptTypeName() . "): ";
-        $hexMessageIds = [];
-        foreach ($this->ackedMessageIds as $messageId) {
-            $hexMessageIds[] = $encryptor->bin2hex($messageId);
-        }
-        $str .= join(", ", $hexMessageIds);
+        $str = "Delivery receipt (" . $this->getReceiptTypeName() . "): ";
+        $str .= join(", ", $this->ackedMessageIds);
         return $str;
     }
 

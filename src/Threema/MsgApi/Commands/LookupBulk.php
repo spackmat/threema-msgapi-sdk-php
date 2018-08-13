@@ -4,9 +4,12 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Commands;
 
 use Threema\MsgApi\Commands\Results\LookupBulkResult;
+use Threema\MsgApi\Commands\Results\Result;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 /**
@@ -59,19 +62,19 @@ class LookupBulk implements JsonCommandInterface
 
     public function getJson(): string
     {
-        $encryptor = AbstractEncryptor::getInstance();
-        $request   = [];
+
+        return json_encode(['emailHashes' => array_keys($this->hashedEmail),
+                            'phoneHashes' => array_keys($this->hashedPhone)]);
+    }
+
+    public function calculateHashes(AbstractEncryptor $encryptor)
+    {
         foreach ($this->phone as $id => $phoneNumber) {
-            $hashedPhoneNumber                          = $encryptor->hashPhoneNo($phoneNumber);
-            $request['phoneHashes'][]                   = $hashedPhoneNumber;
-            $this->hashedPhone[$hashedPhoneNumber][$id] = $phoneNumber;
+            $this->hashedPhone[$encryptor->hashPhoneNo($phoneNumber)][$id] = $phoneNumber;
         }
         foreach ($this->email as $id => $emailAddress) {
-            $hashedEmail                          = $encryptor->hashEmail($emailAddress);
-            $request['emailHashes'][]             = $hashedEmail;
-            $this->hashedEmail[$hashedEmail][$id] = $emailAddress;
+            $this->hashedEmail[$encryptor->hashEmail($emailAddress)][$id] = $emailAddress;
         }
-        return json_encode($request);
     }
 
     /**
@@ -87,7 +90,7 @@ class LookupBulk implements JsonCommandInterface
      * @param object $res
      * @return LookupBulkResult
      */
-    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
+    public function parseResult($httpCode, $res): Result
     {
         return new LookupBulkResult($httpCode, $res, $this);
     }

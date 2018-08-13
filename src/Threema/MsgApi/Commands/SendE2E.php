@@ -4,10 +4,12 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Commands;
 
+use Threema\MsgApi\Commands\Results\Result;
 use Threema\MsgApi\Commands\Results\SendE2EResult;
-use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class SendE2E implements CommandInterface
 {
@@ -28,10 +30,10 @@ class SendE2E implements CommandInterface
 
     /**
      * @param string $threemaId
-     * @param string $nonce
-     * @param string $box
+     * @param string $nonce hex
+     * @param string $box   hex
      */
-    public function __construct($threemaId, $nonce, $box)
+    public function __construct(string $threemaId, string $nonce, string $box)
     {
         $this->nonce     = $nonce;
         $this->box       = $box;
@@ -41,7 +43,15 @@ class SendE2E implements CommandInterface
     /**
      * @return string
      */
-    public function getNonce()
+    public function getThreemaId(): string
+    {
+        return $this->threemaId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNonce(): string
     {
         return $this->nonce;
     }
@@ -49,7 +59,7 @@ class SendE2E implements CommandInterface
     /**
      * @return string
      */
-    public function getBox()
+    public function getBox(): string
     {
         return $this->box;
     }
@@ -59,11 +69,9 @@ class SendE2E implements CommandInterface
      */
     public function getParams(): array
     {
-        $encryptor = AbstractEncryptor::getInstance();
-
         $p['to']    = $this->threemaId;
-        $p['nonce'] = $encryptor->bin2hex($this->getNonce());
-        $p['box']   = $encryptor->bin2hex($this->getBox());
+        $p['nonce'] = $this->nonce;
+        $p['box']   = $this->box;
         return $p;
     }
 
@@ -80,7 +88,7 @@ class SendE2E implements CommandInterface
      * @param object $res
      * @return SendE2EResult
      */
-    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
+    public function parseResult($httpCode, $res): Result
     {
         return new SendE2EResult($httpCode, $res);
     }

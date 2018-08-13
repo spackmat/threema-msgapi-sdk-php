@@ -4,10 +4,12 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Commands;
 
 use Threema\MsgApi\Commands\Results\LookupIdResult;
-use Threema\MsgApi\Encryptor\AbstractEncryptor;
+use Threema\MsgApi\Commands\Results\Result;
 
 class LookupEmail implements CommandInterface
 {
@@ -16,20 +18,32 @@ class LookupEmail implements CommandInterface
      */
     private $emailAddress;
 
+    /** @var string */
+    private $hashedEmail;
+
     /**
      * @param string $emailAddress
      */
-    public function __construct($emailAddress)
+    public function __construct(string $emailAddress, string $hashedEmail)
     {
         $this->emailAddress = $emailAddress;
+        $this->hashedEmail  = $hashedEmail;
     }
 
     /**
      * @return string
      */
-    public function getEmailAddress()
+    public function getEmailAddress(): string
     {
         return $this->emailAddress;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHashedEmail(): string
+    {
+        return $this->hashedEmail;
     }
 
     /**
@@ -45,7 +59,7 @@ class LookupEmail implements CommandInterface
      */
     public function getPath(): string
     {
-        return 'lookup/email_hash/' . urlencode(AbstractEncryptor::getInstance()->hashEmail($this->emailAddress));
+        return 'lookup/email_hash/' . $this->hashedEmail;
     }
 
     /**
@@ -53,7 +67,7 @@ class LookupEmail implements CommandInterface
      * @param object $res
      * @return LookupIdResult
      */
-    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
+    public function parseResult($httpCode, $res): Result
     {
         return new LookupIdResult($httpCode, $res);
     }

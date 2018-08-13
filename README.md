@@ -43,49 +43,12 @@ If you want to check whether your server meets the requirements and everything i
 ### Creating a connection
 
 ```php
-use Threema\MsgApi\Connection;
-use Threema\MsgApi\ConnectionSettings;
-use Threema\MsgApi\Receiver;
-
-require_once('lib/bootstrap.php');
-
-//define your connection settings
-$settings = new ConnectionSettings(
-    '*MYKEY12',
-    'MYAPISECRET'
-);
-
-$connection = new Connection($settings);
+$connectionFactory = new ConnectionFactory();
+$connection = $connectionFactory->getConnection('*MYKEY12', 'MYAPISECRET');
 ```
 
-### Creating a connection with advanced options
-
-**Attention:** These settings change internal values of the TLS connection. Choosing wrong settings can weaken the TLS connection or prevent a successful connection to the server. Use them with care!
-
-Each of the additional options shown below is optional. You can leave it out or use `null` to use the default value determined by cURL for this option.
-
-```php
-use Threema\MsgApi\Connection;
-use Threema\MsgApi\ConnectionSettings;
-use Threema\MsgApi\Receiver;
-
-//define your connection settings
-$settings = new ConnectionSettings(
-    '*MYKEY12',
-    'MYAPISECRET',
-    null, //the host to be used, set to null to use the default (recommend)
-    [
-        'forceHttps' => true, //set to true to force HTTPS, default: true
-        'tlsVersion' => '1.2', //set the version of TLS to be used, default: '1.2'
-        'tlsCipher' => 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384' //choose a cipher or a list of ciphers, default: null
-        'pinnedKey' => MsgApi\Constants::DEFAULT_PINNED_KEY // the hashes to pin, it is NOT recommend to change this value!
-    ]
-);
-
-$connection = new Connection($settings);
-```
-
-**Note:** For `pinnedKey` to work you must install cURL 7.39 or higher. You can test whether it works by specifying an invalid pin.
+There is only one encryption method and one HttpDriver (currently) available. If you want to change connection settings 
+or provide alternate drivers or mock for testing, pass them in to the ConnectionFactory constructor
 
 ### Sending a text message to a Threema ID (Simple Mode)
 
@@ -104,8 +67,7 @@ else {
 ### Sending a text message to a Threema ID (E2E Mode)
 
 ```php
-$e2eHelper = new \Threema\MsgApi\Helpers\E2EHelper($senderPrivateKey,$connection);
-$result = $e2eHelper->sendTextMessage("TEST1234", "thePublicKeyAsHex", "This is an end-to-end encrypted message");
+$result = $connection->sendTextMessage($myPrivateKeyHex, "TEST1234", "thePublicKeyAsHex", "This is an end-to-end encrypted message");
 
 if(true === $result->isSuccess()) {
     echo 'Message ID: '.$result->getMessageId() . "\n";
@@ -118,11 +80,9 @@ else {
 ### Sending a file message to a Threema ID (E2E Mode)
 
 ```php
-$senderPrivateKey = "MY_PUBLIC_KEY_IN_BIN";
 $filePath = "/path/to/my/file.pdf";
 
-$e2eHelper = new \Threema\MsgApi\Helpers\E2EHelper($senderPrivateKey,$connection);
-$result = $e2eHelper->sendFileMessage("TEST1234", "thePublicKeyAsHex", $filePath);
+$result = $connection->sendFileMessage($myPrivateKeyHex, "TEST1234", "thePublicKeyAsHex", $filePath);
 
 if(true === $result->isSuccess()) {
     echo 'File Message ID: '.$result->getMessageId() . "\n";
@@ -132,19 +92,40 @@ else {
 }
 ```
 
+### Technical notes
+
+Much of the communication with the Threema Gateway server is in binary. But not all of it. Sometimes you get a hex version of the binary value back.
+The PHP wrapper attempts to hide all this from you: pass all values to `$connection` as hex encoded binary (`$encryptor->bin2hex()`).
+All values coming back are hex encoded binary.
+
+The encryptor mostly requires and returns binary strings as parameters, but for normal use of the api you will not need the 
+encryptor so will not need to worry about it. See the console commands for examples if unsure. Most parameters now have
+phpDoc comments to tell you if they are binary strings or hex strings.
+
+tl;dr: expect to see and use hex
+
 ## Console client usage
 
 Run 
 ```
 vendor\bin\threema-gateway
 ``` 
-for a list of commands and their options
+for a list of commands and their options. 
+
+Store your api secret, public and private keys in a file called `default.key` in the current working directory. See
+`default.key.sample` for a template.
 
 A good smoke test to see if everything is working right is 
 ```
-vendor\bin\threema-gateway -C *MYKEY12 MYAPISECRET
+vendor\bin\threema-gateway credits
 ```
 which should show you the number of credits remaining in your account or an error message on failure.
+
+To generate a new key pair,
+```
+vendor\bin\threema-gateway key:create-pair
+```
+which will print the keys to the console. Copy and paste those to your `default.key` file.
 
 ## Contributing
 

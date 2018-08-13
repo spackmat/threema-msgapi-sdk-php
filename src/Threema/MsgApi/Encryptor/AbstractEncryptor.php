@@ -46,23 +46,6 @@ abstract class AbstractEncryptor
     const PHONENO_HMAC_KEY = "\x85\xad\xf8\x22\x69\x53\xf3\xd9\x6c\xfd\x5d\x09\xbf\x29\x55\x5e\xb9\x55\xfc\xd8\xaa\x5e\xc4\xf9\xfc\xd8\x69\xe2\x58\x37\x07\x23";
 
     /**
-     * @var AbstractEncryptor
-     */
-    private static $instance = null;
-
-    /**
-     * @return AbstractEncryptor
-     */
-    public static function getInstance()
-    {
-        if (null === self::$instance) {
-            self::$instance = new SodiumEncryptor();
-        }
-
-        return self::$instance;
-    }
-
-    /**
      * Encrypt a text message.
      *
      * @param string $text               the text to be encrypted (max. 3500 bytes)
@@ -192,8 +175,8 @@ abstract class AbstractEncryptor
                 if ($realDataLength < 2) {
                     throw new BadMessageException();
                 }
-
                 return new TextMessage(substr($data, 1));
+
             case DeliveryReceipt::TYPE_CODE:
                 /* Delivery receipt */
                 if ($realDataLength < (self::MESSAGE_ID_LEN - 2) || (($realDataLength - 2) % self::MESSAGE_ID_LEN) != 0) {
@@ -202,8 +185,9 @@ abstract class AbstractEncryptor
 
                 $receiptType = ord($data[1]);
                 $messageIds  = str_split(substr($data, 2), self::MESSAGE_ID_LEN);
+                $messageIdHex = array_map([$this,'bin2hex'], $messageIds);
+                return new DeliveryReceipt($receiptType, $messageIdHex);
 
-                return new DeliveryReceipt($receiptType, $messageIds);
             case ImageMessage::TYPE_CODE:
                 /* Image Message */
                 if ($realDataLength != 1 + self::BLOB_ID_LEN + self::IMAGE_FILE_SIZE_LEN + self::IMAGE_NONCE_LEN) {
@@ -212,8 +196,9 @@ abstract class AbstractEncryptor
 
                 $blobId = $piece->__invoke(self::BLOB_ID_LEN);
                 $length = $piece->__invoke(self::IMAGE_FILE_SIZE_LEN);
-                $nonce  = $piece->__invoke(self::IMAGE_NONCE_LEN);
-                return new ImageMessage($this->bin2hex($blobId), $this->bin2hex($length), $nonce);
+                $nonce  = $piece->__invoke(self::IMAGE_NONCE_LEN); // is this binary or hex?
+                return new ImageMessage($this->bin2hex($blobId), $this->bin2hex($length), $this->bin2hex($nonce));
+
             case FileMessage::TYPE_CODE:
                 /* Image Message */
                 $decodeResult = json_decode(substr($data, 1), true);
