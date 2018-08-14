@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Commands\Results;
 
 class CapabilityResult extends Result
@@ -22,7 +24,7 @@ class CapabilityResult extends Result
     /**
      * @return string[]
      */
-    public function getCapabilities()
+    public function getCapabilities(): array
     {
         return $this->capabilities;
     }
@@ -31,7 +33,7 @@ class CapabilityResult extends Result
      * the threema id can receive text
      * @return bool
      */
-    public function canText()
+    public function canText(): bool
     {
         return $this->can(self::TEXT);
     }
@@ -40,7 +42,7 @@ class CapabilityResult extends Result
      * the threema id can receive images
      * @return bool
      */
-    public function canImage()
+    public function canImage(): bool
     {
         return $this->can(self::IMAGE);
     }
@@ -49,7 +51,7 @@ class CapabilityResult extends Result
      * the threema id can receive videos
      * @return bool
      */
-    public function canVideo()
+    public function canVideo(): bool
     {
         return $this->can(self::VIDEO);
     }
@@ -58,7 +60,7 @@ class CapabilityResult extends Result
      * the threema id can receive files
      * @return bool
      */
-    public function canAudio()
+    public function canAudio(): bool
     {
         return $this->can(self::AUDIO);
     }
@@ -67,12 +69,12 @@ class CapabilityResult extends Result
      * the threema id can receive files
      * @return bool
      */
-    public function canFile()
+    public function canFile(): bool
     {
         return $this->can(self::FILE);
     }
 
-    public function can($key)
+    public function can(string $key): bool
     {
         return in_array($key, $this->capabilities);
     }

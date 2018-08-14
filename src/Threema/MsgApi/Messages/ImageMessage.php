@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Messages;
 
 class ImageMessage extends ThreemaMessage
@@ -40,7 +42,7 @@ class ImageMessage extends ThreemaMessage
     /**
      * @return string
      */
-    public function getBlobId()
+    public function getBlobId(): string
     {
         return $this->blobId;
     }
@@ -48,7 +50,7 @@ class ImageMessage extends ThreemaMessage
     /**
      * @return int
      */
-    public function getLength()
+    public function getLength(): int
     {
         return $this->length;
     }
@@ -56,7 +58,7 @@ class ImageMessage extends ThreemaMessage
     /**
      * @return string
      */
-    public function getNonce()
+    public function getNonce(): string
     {
         return $this->nonce;
     }

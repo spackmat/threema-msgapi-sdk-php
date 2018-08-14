@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Commands;
 
 use Threema\MsgApi\Commands\Results\SendSimpleResult;
@@ -34,7 +36,7 @@ class SendSimple implements CommandInterface
     /**
      * @return string
      */
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }

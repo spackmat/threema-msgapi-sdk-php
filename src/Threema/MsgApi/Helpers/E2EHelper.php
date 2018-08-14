@@ -4,13 +4,16 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Helpers;
 
 use Threema\MsgApi\Commands\Results\CapabilityResult;
+use Threema\MsgApi\Commands\Results\DownloadFileResult;
+use Threema\MsgApi\Commands\Results\SendE2EResult;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 use Threema\MsgApi\Exceptions\DecryptionFailedException;
-use Threema\MsgApi\Exceptions\Exception;
 use Threema\MsgApi\Exceptions\HttpException;
 use Threema\MsgApi\Exceptions\InvalidArgumentException;
 use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
@@ -59,7 +62,7 @@ class E2EHelper
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
-    public final function sendTextMessage(string $threemaId, string $receiverPublicKey, string $text)
+    public final function sendTextMessage(string $threemaId, string $receiverPublicKey, string $text): SendE2EResult
     {
         //random nonce first
         $nonce = $this->encryptor->randomNonce();
@@ -83,7 +86,8 @@ class E2EHelper
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
-    public final function sendImageMessage(string $threemaId, string $receiverPublicKey, string $imagePath)
+    public final function sendImageMessage(string $threemaId, string $receiverPublicKey,
+        string $imagePath): SendE2EResult
     {
         $fileAnalyzeResult = FileAnalysisTool::analyseOrDie($imagePath);
 
@@ -122,15 +126,15 @@ class E2EHelper
     /**
      * Encrypt a file (and thumbnail if given), upload the blob and send it to the given threemaId
      *
-     * @param string      $threemaId
-     * @param string      $receiverPublicKey binary format
-     * @param string      $filePath
+     * @param string $threemaId
+     * @param string $receiverPublicKey binary format
+     * @param string $filePath
      * @param string $thumbnailPath
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendFileMessage(string $threemaId, string $receiverPublicKey, string $filePath,
-        string $thumbnailPath = '')
+        string $thumbnailPath = ''): SendE2EResult
     {
         $fileAnalyzeResult = FileAnalysisTool::analyseOrDie($filePath);
 
@@ -199,7 +203,7 @@ class E2EHelper
         $box,
         $nonce,
         $outputFolder = null,
-        \Closure $shouldDownload = null)
+        \Closure $shouldDownload = null): ReceiveMessageResult
     {
         $message = $this->encryptor->decryptMessage(
             $box,
@@ -321,7 +325,7 @@ class E2EHelper
      * @return null|\Threema\MsgApi\Commands\Results\DownloadFileResult
      * @throws \Threema\MsgApi\Exceptions\HttpException
      */
-    private function downloadFile(ThreemaMessage $message, $blobId, \Closure $shouldDownload)
+    private function downloadFile(ThreemaMessage $message, $blobId, \Closure $shouldDownload): ?DownloadFileResult
     {
         if ($shouldDownload($message, $blobId)) {
             $result = $this->connection->downloadFile($blobId);

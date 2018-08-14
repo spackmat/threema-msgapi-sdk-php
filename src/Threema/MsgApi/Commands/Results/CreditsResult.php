@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Commands\Results;
 
 class CreditsResult extends Result
@@ -16,7 +18,7 @@ class CreditsResult extends Result
     /**
      * @return int
      */
-    public function getCredits()
+    public function getCredits(): int
     {
         return $this->credits;
     }

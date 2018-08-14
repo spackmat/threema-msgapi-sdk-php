@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Helpers;
 
 /**
@@ -39,7 +41,7 @@ class EncryptResult
      * @param string $nonce (binary)
      * @param int    $size
      */
-    public function __construct($data, $key, $nonce, $size)
+    public function __construct(string $data, string $key, string $nonce, int $size)
     {
         $this->data  = $data;
         $this->key   = $key;
@@ -50,7 +52,7 @@ class EncryptResult
     /**
      * @return int
      */
-    public function getSize()
+    public function getSize(): int
     {
         return $this->size;
     }
@@ -58,7 +60,7 @@ class EncryptResult
     /**
      * @return string (binary)
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
@@ -66,7 +68,7 @@ class EncryptResult
     /**
      * @return string (binary)
      */
-    public function getNonce()
+    public function getNonce(): string
     {
         return $this->nonce;
     }
@@ -74,7 +76,7 @@ class EncryptResult
     /**
      * @return string (binary)
      */
-    public function getData()
+    public function getData(): string
     {
         return $this->data;
     }

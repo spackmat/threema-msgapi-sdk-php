@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Helpers;
 
 class FileAnalysisResult
@@ -28,7 +30,7 @@ class FileAnalysisResult
      * @param int    $size
      * @param string $path
      */
-    public function __construct($mimeType, $size, $path)
+    public function __construct(string $mimeType, int $size, string $path)
     {
         $this->mimeType = $mimeType;
         $this->size     = $size;
@@ -38,7 +40,7 @@ class FileAnalysisResult
     /**
      * @return string
      */
-    public function getMimeType()
+    public function getMimeType(): string
     {
         return $this->mimeType;
     }
@@ -46,7 +48,7 @@ class FileAnalysisResult
     /**
      * @return int
      */
-    public function getSize()
+    public function getSize(): int
     {
         return $this->size;
     }
@@ -54,7 +56,7 @@ class FileAnalysisResult
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -62,7 +64,7 @@ class FileAnalysisResult
     /**
      * @return string
      */
-    public function getFileName()
+    public function getFileName(): string
     {
         return basename($this->path);
     }

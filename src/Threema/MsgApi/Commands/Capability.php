@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Commands;
 
 use Threema\MsgApi\Commands\Results\CapabilityResult;
@@ -19,7 +21,7 @@ class Capability implements CommandInterface
     /**
      * @param string $threemaId
      */
-    public function __construct($threemaId)
+    public function __construct(string $threemaId)
     {
         $this->threemaId = $threemaId;
     }

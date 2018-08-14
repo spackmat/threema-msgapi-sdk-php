@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Helpers;
 
 use Threema\MsgApi\Messages\ThreemaMessage;
@@ -34,7 +36,7 @@ class ReceiveMessageResult
      * @param string         $messageId
      * @param ThreemaMessage $threemaMessage
      */
-    public function __construct($messageId, ThreemaMessage $threemaMessage)
+    public function __construct(string $messageId, ThreemaMessage $threemaMessage)
     {
         $this->threemaMessage = $threemaMessage;
         $this->messageId      = $messageId;
@@ -43,7 +45,7 @@ class ReceiveMessageResult
     /**
      * @return string
      */
-    public function getMessageId()
+    public function getMessageId(): string
     {
         return $this->messageId;
     }
@@ -52,7 +54,7 @@ class ReceiveMessageResult
      * @param string $message
      * @return $this
      */
-    public function addError($message)
+    public function addError(string $message): self
     {
         $this->errors[] = $message;
         return $this;
@@ -61,7 +63,7 @@ class ReceiveMessageResult
     /**
      * @return bool
      */
-    public function isSuccess()
+    public function isSuccess(): bool
     {
         return null === $this->errors || count($this->errors) == 0;
     }
@@ -71,7 +73,7 @@ class ReceiveMessageResult
      * @param string $file
      * @return $this
      */
-    public function addFile($key, $file)
+    public function addFile(string $key, string $file): self
     {
         $this->files[$key] = $file;
         return $this;
@@ -80,7 +82,7 @@ class ReceiveMessageResult
     /**
      * @return string[]
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
@@ -88,7 +90,7 @@ class ReceiveMessageResult
     /**
      * @return ThreemaMessage
      */
-    public function getThreemaMessage()
+    public function getThreemaMessage(): ThreemaMessage
     {
         return $this->threemaMessage;
     }
@@ -96,7 +98,7 @@ class ReceiveMessageResult
     /**
      * @return string[]
      */
-    public function getFiles()
+    public function getFiles(): array
     {
         return $this->files;
     }

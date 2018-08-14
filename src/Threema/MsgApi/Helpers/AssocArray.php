@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Helpers;
 
 use Threema\MsgApi\Exceptions\Exception;
@@ -30,7 +32,7 @@ class AssocArray
      * @return AssocArray
      * @throws Exception
      */
-    public static final function byJsonString($string, array $requiredKeys)
+    public static final function byJsonString($string, array $requiredKeys): AssocArray
     {
         $v = json_decode($string, true);
         if (null === $v || false === $v) {

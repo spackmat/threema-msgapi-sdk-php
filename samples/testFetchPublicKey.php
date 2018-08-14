@@ -1,17 +1,10 @@
 <?php
-
-use Threema\MsgApi\Connection;
+declare(strict_types=1);
 
 require_once '../vendor/autoload.php';
 
-//define your connection settings
-$driver = new \Threema\MsgApi\HttpDriver\CurlHttpDriver(
-    '*YOUR_GATEWAY_THREEMA_ID',
-    'YOUR_GATEWAY_THREEMA_ID_SECRET'
-);
-
-//create a connection
-$connector = new Connection($driver);
+$factory    = new \Threema\MsgApi\ConnectionFactory();
+$connection = $factory->getConnection('*YOUR_GATEWAY_THREEMA_ID', 'YOUR_GATEWAY_THREEMA_ID_SECRET');
 
 $result = $connector->fetchPublicKey('ECHOECHO');
 if ($result->isSuccess()) {

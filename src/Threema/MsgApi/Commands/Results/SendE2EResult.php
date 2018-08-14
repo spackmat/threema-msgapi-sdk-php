@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Commands\Results;
 
 class SendE2EResult extends Result
@@ -13,7 +15,7 @@ class SendE2EResult extends Result
      */
     private $messageId;
 
-    public function getMessageId()
+    public function getMessageId(): string
     {
         return $this->messageId;
     }

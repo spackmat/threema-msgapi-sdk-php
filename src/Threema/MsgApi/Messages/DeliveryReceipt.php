@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Messages;
 
 class DeliveryReceipt extends ThreemaMessage
@@ -41,7 +43,7 @@ class DeliveryReceipt extends ThreemaMessage
      * @param int   $receiptType     the type of this receipt
      * @param array $ackedMessageIds list of message IDs acknowledged by this delivery receipt
      */
-    public function __construct($receiptType, array $ackedMessageIds)
+    public function __construct(int $receiptType, array $ackedMessageIds)
     {
         $this->receiptType     = $receiptType;
         $this->ackedMessageIds = $ackedMessageIds;
@@ -52,7 +54,7 @@ class DeliveryReceipt extends ThreemaMessage
      *
      * @return int
      */
-    public function getReceiptType()
+    public function getReceiptType(): int
     {
         return $this->receiptType;
     }
@@ -69,9 +71,9 @@ class DeliveryReceipt extends ThreemaMessage
 
     /**
      * Get the acknowledged message ids
-     * @return array
+     * @return string[]
      */
-    public function getAckedMessageIds()
+    public function getAckedMessageIds(): array
     {
         return $this->ackedMessageIds;
     }

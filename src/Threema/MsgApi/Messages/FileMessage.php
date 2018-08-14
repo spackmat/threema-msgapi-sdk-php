@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Messages;
 
 class FileMessage extends ThreemaMessage
@@ -48,7 +50,8 @@ class FileMessage extends ThreemaMessage
      * @param string $filename
      * @param int    $size
      */
-    public function __construct($blobId, $thumbnailBlobId, $encryptionKey, $mimeType, $filename, $size)
+    public function __construct(string $blobId, string $thumbnailBlobId, string $encryptionKey, string $mimeType,
+        string $filename, int $size)
     {
         $this->blobId          = $blobId;
         $this->thumbnailBlobId = $thumbnailBlobId;
@@ -69,7 +72,7 @@ class FileMessage extends ThreemaMessage
     /**
      * @return string
      */
-    public function getEncryptionKey()
+    public function getEncryptionKey(): string
     {
         return $this->encryptionKey;
     }
@@ -77,7 +80,7 @@ class FileMessage extends ThreemaMessage
     /**
      * @return string
      */
-    public function getFilename()
+    public function getFilename(): string
     {
         return $this->filename;
     }
@@ -85,7 +88,7 @@ class FileMessage extends ThreemaMessage
     /**
      * @return string
      */
-    public function getMimeType()
+    public function getMimeType(): string
     {
         return $this->mimeType;
     }
@@ -93,7 +96,7 @@ class FileMessage extends ThreemaMessage
     /**
      * @return int
      */
-    public function getSize()
+    public function getSize(): int
     {
         return $this->size;
     }
@@ -101,7 +104,7 @@ class FileMessage extends ThreemaMessage
     /**
      * @return string
      */
-    public function getThumbnailBlobId()
+    public function getThumbnailBlobId(): string
     {
         return $this->thumbnailBlobId;
     }

@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Messages;
 
 class TextMessage extends ThreemaMessage
@@ -18,7 +20,7 @@ class TextMessage extends ThreemaMessage
     /**
      * @param string $text
      */
-    public function __construct($text)
+    public function __construct(string $text)
     {
         $this->text = $text;
     }
@@ -26,7 +28,7 @@ class TextMessage extends ThreemaMessage
     /**
      * @return string text
      */
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }

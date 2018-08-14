@@ -4,19 +4,21 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Commands\Results;
 
 class FetchPublicKeyResult extends Result
 {
     /**
-     * @var string
+     * @var string as hex
      */
     private $publicKey;
 
     /**
      * @return string
      */
-    public function getPublicKey()
+    public function getPublicKey(): string
     {
         return $this->publicKey;
     }

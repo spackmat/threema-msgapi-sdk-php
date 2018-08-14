@@ -1,23 +1,17 @@
 <?php
+declare(strict_types=1);
 
-use Threema\MsgApi\Connection;
 use Threema\MsgApi\Receiver;
 
 require_once '../vendor/autoload.php';
 
-//define your connection settings
-$driver = new \Threema\MsgApi\HttpDriver\CurlHttpDriver(
-    '*YOUR_GATEWAY_THREEMA_ID',
-    'YOUR_GATEWAY_THREEMA_ID_SECRET'
-);
-
-//create a connection
-$connector = new Connection($driver);
+$factory    = new \Threema\MsgApi\ConnectionFactory();
+$connection = $factory->getConnection('*YOUR_GATEWAY_THREEMA_ID', 'YOUR_GATEWAY_THREEMA_ID_SECRET');
 
 //create a receiver
 $receiver = new Receiver('ECHOECHO', Receiver::TYPE_ID);
 
-$result = $connector->sendSimple($receiver, "This is a Test Message");
+$result = $connection->sendSimple($receiver, "This is a Test Message");
 if ($result->isSuccess()) {
     echo 'Message ID: ' . $result->getMessageId() . "\n";
 } else {

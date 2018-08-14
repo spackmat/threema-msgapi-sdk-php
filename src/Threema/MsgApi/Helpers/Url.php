@@ -4,6 +4,8 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
+declare(strict_types=1);
+
 namespace Threema\MsgApi\Helpers;
 
 class Url
@@ -94,7 +96,7 @@ class Url
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         $p = $this->path;
         if (count($this->values) > 0) {
@@ -115,7 +117,7 @@ class Url
     /**
      * @return string
      */
-    public function getFullPath()
+    public function getFullPath(): string
     {
         return $this->host . (substr($this->getPath(), 0, 1) == '/' ? '' : '/') . $this->getPath();
     }

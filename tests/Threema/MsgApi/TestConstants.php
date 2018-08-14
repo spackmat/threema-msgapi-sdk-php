@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author    Threema GmbH
  * @copyright Copyright (c) 2015-2016 Threema GmbH
