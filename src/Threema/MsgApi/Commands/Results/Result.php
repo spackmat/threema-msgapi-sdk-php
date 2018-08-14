@@ -35,20 +35,17 @@ abstract class Result
     }
 
     /**
-     * @return null|int
+     * @return int
      */
-    final public function getErrorCode()
+    final public function getErrorCode(): int
     {
-        if (false === $this->isSuccess()) {
-            return $this->httpCode;
-        }
-        return null;
+        return $this->httpCode;
     }
 
     /**
      * @return string
      */
-    final public function getErrorMessage()
+    final public function getErrorMessage(): string
     {
         return $this->getErrorMessageByErrorCode($this->getErrorCode());
     }
@@ -65,10 +62,10 @@ abstract class Result
      * @param int $httpCode
      * @return string
      */
-    abstract protected function getErrorMessageByErrorCode($httpCode);
+    abstract protected function getErrorMessageByErrorCode(int $httpCode): string;
 
     /**
      * @param string $response
      */
-    abstract protected function processResponse($response);
+    abstract protected function processResponse(string $response);
 }

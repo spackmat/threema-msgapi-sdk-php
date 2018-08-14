@@ -80,7 +80,7 @@ class CapabilityResult extends Result
     /**
      * @param string $response
      */
-    protected function processResponse($response)
+    protected function processResponse(string $response)
     {
         $this->capabilities = array_unique(array_filter(explode(',', $response ?? '')));
     }
@@ -89,7 +89,7 @@ class CapabilityResult extends Result
      * @param int $httpCode
      * @return string
      */
-    protected function getErrorMessageByErrorCode($httpCode)
+    protected function getErrorMessageByErrorCode(int $httpCode): string
     {
         switch ($httpCode) {
             case 401:

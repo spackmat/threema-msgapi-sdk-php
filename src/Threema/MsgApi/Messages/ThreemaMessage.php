@@ -17,7 +17,7 @@ abstract class ThreemaMessage
      *
      * @return int message type code
      */
-    abstract public function getTypeCode();
+    abstract public function getTypeCode(): int;
 
     /**
      * @return string

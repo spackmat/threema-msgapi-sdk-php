@@ -32,7 +32,7 @@ class FileAnalysisResult
     {
         $this->mimeType = $mimeType;
         $this->size     = $size;
-        $this->path     = realpath($path);
+        $this->path     = realpath($path) ?: $path;
     }
 
     /**

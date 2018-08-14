@@ -25,14 +25,17 @@ final class FileAnalysisTool
             throw new Exception('Not a file: ' . $file);
         }
 
-        $mimeType = 'application/octet-stream';
+        $mimeType = '';
         if (function_exists('finfo_open')) {
             $finfo    = finfo_open(FILEINFO_MIME_TYPE);
-            $mimeType = finfo_file($finfo, $file);
+            $mimeType = finfo_file($finfo, $file) ?: '';
         } else if (function_exists('mime_content_type')) {
             $mimeType = mime_content_type($file);
         }
+        if (empty($mimeType)) {
+            $mimeType = 'application/octet-stream';
+        }
 
-        return new FileAnalysisResult($mimeType, filesize($file), $file);
+        return new FileAnalysisResult($mimeType, filesize($file) ?: 0, $file);
     }
 }

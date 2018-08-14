@@ -62,9 +62,8 @@ class LookupBulk implements JsonCommandInterface
 
     public function getJson(): string
     {
-
         return json_encode(['emailHashes' => array_keys($this->hashedEmail),
-                            'phoneHashes' => array_keys($this->hashedPhone)]);
+                            'phoneHashes' => array_keys($this->hashedPhone)]) ?: '';
     }
 
     public function calculateHashes(AbstractEncryptor $encryptor)
@@ -87,11 +86,11 @@ class LookupBulk implements JsonCommandInterface
 
     /**
      * @param int    $httpCode
-     * @param object $res
+     * @param string $response
      * @return LookupBulkResult
      */
-    public function parseResult($httpCode, $res): Result
+    public function parseResult(int $httpCode, string $response): Result
     {
-        return new LookupBulkResult($httpCode, $res, $this);
+        return new LookupBulkResult($httpCode, $response, $this);
     }
 }

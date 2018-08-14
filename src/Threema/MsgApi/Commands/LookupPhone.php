@@ -61,11 +61,11 @@ class LookupPhone implements CommandInterface
 
     /**
      * @param int    $httpCode
-     * @param object $res
+     * @param string $response
      * @return LookupIdResult
      */
-    public function parseResult($httpCode, $res): Result
+    public function parseResult(int $httpCode, string $response): Result
     {
-        return new LookupIdResult($httpCode, $res);
+        return new LookupIdResult($httpCode, $response);
     }
 }

@@ -41,11 +41,11 @@ class DownloadFile implements CommandInterface
 
     /**
      * @param int    $httpCode
-     * @param object $res
+     * @param string $response
      * @return DownloadFileResult
      */
-    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
+    public function parseResult(int $httpCode, string $response): \Threema\MsgApi\Commands\Results\Result
     {
-        return new DownloadFileResult($httpCode, $res);
+        return new DownloadFileResult($httpCode, $response);
     }
 }

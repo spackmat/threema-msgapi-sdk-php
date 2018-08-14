@@ -85,11 +85,11 @@ class SendE2E implements CommandInterface
 
     /**
      * @param int    $httpCode
-     * @param object $res
+     * @param string $response
      * @return SendE2EResult
      */
-    public function parseResult($httpCode, $res): Result
+    public function parseResult(int $httpCode, string $response): Result
     {
-        return new SendE2EResult($httpCode, $res);
+        return new SendE2EResult($httpCode, $response);
     }
 }

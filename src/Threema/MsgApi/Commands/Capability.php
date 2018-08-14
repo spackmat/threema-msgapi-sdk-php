@@ -7,6 +7,7 @@
 namespace Threema\MsgApi\Commands;
 
 use Threema\MsgApi\Commands\Results\CapabilityResult;
+use Threema\MsgApi\Commands\Results\Result;
 
 class Capability implements CommandInterface
 {
@@ -38,11 +39,11 @@ class Capability implements CommandInterface
 
     /**
      * @param int    $httpCode
-     * @param object $res
+     * @param string $response
      * @return CapabilityResult
      */
-    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
+    public function parseResult(int $httpCode, string $response): Result
     {
-        return new CapabilityResult($httpCode, $res);
+        return new CapabilityResult($httpCode, $response);
     }
 }

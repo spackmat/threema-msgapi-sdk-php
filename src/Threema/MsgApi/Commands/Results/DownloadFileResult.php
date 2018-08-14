@@ -24,18 +24,18 @@ class DownloadFileResult extends Result
     }
 
     /**
-     * @param string $data
+     * @param string $response
      */
-    protected function processResponse($data)
+    protected function processResponse(string $response)
     {
-        $this->data = $data;
+        $this->data = $response;
     }
 
     /**
      * @param int $httpCode
      * @return string
      */
-    protected function getErrorMessageByErrorCode($httpCode)
+    protected function getErrorMessageByErrorCode(int $httpCode): string
     {
         switch ($httpCode) {
             case 401:

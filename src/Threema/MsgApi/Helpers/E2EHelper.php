@@ -96,7 +96,9 @@ class E2EHelper
         $this->assertIsCapable($threemaId, CapabilityResult::IMAGE);
 
         //encrypt the image file
-        $encryptionResult = $this->encryptor->encryptImage(file_get_contents($imagePath), $this->privateKey,
+        $encryptionResult = $this->encryptor->encryptImage(
+            file_get_contents($imagePath) ?: '',
+            $this->privateKey,
             $receiverPublicKey);
         $uploadResult     = $this->connection->uploadFile($encryptionResult->getData());
         if (!$uploadResult->isSuccess()) {
@@ -122,19 +124,19 @@ class E2EHelper
      * @param string      $threemaId
      * @param string      $receiverPublicKey binary format
      * @param string      $filePath
-     * @param null|string $thumbnailPath
+     * @param string $thumbnailPath
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
      * @throws \Threema\Core\Exception
      */
     public final function sendFileMessage(string $threemaId, string $receiverPublicKey, string $filePath,
-        ?string $thumbnailPath = null)
+        string $thumbnailPath = '')
     {
         $fileAnalyzeResult = FileAnalysisTool::analyseOrDie($filePath);
 
         $this->assertIsCapable($threemaId, CapabilityResult::FILE);
 
         //encrypt the main file
-        $encryptionResult = $this->encryptor->encryptFile(file_get_contents($filePath));
+        $encryptionResult = $this->encryptor->encryptFile(file_get_contents($filePath) ?: '');
         $uploadResult     = $this->connection->uploadFile($encryptionResult->getData());
 
         if (!$uploadResult->isSuccess()) {
@@ -144,9 +146,9 @@ class E2EHelper
         $thumbnailUploadResult = null;
 
         //encrypt the thumbnail file (if exists)
-        if (strlen($thumbnailPath) > 0 && true === file_exists($thumbnailPath)) {
-            //encrypt the main file
-            $thumbnailEncryptionResult = $this->encryptor->encryptFileThumbnail(file_get_contents($thumbnailPath),
+        if (!empty($thumbnailPath) && file_exists($thumbnailPath)) {
+            $thumbnailEncryptionResult = $this->encryptor->encryptFileThumbnail(
+                file_get_contents($thumbnailPath) ?: '',
                 $encryptionResult->getKey());
             $thumbnailUploadResult     = $this->connection->uploadFile($thumbnailEncryptionResult->getData());
 
@@ -205,7 +207,7 @@ class E2EHelper
             $nonce
         );
 
-        if (null === $message || false === is_object($message)) {
+        if (empty($message)) {
             throw new DecryptionFailedException('Could not decrypt box');
         }
 
@@ -238,9 +240,7 @@ class E2EHelper
                 }
                 //save file
                 $filePath = $outputFolder . '/' . $messageId . '.jpg';
-                $f        = fopen($filePath, 'w+');
-                fwrite($f, $image);
-                fclose($f);
+                file_put_contents($filePath, $image);
 
                 $receiveResult->addFile('image', $filePath);
             }
@@ -324,7 +324,7 @@ class E2EHelper
     {
         if ($shouldDownload($message, $blobId)) {
             $result = $this->connection->downloadFile($blobId);
-            if (null === $result || false === $result->isSuccess()) {
+            if (!$result->isSuccess()) {
                 throw new HttpException('could not download the file with blob id ' . $blobId);
             }
 

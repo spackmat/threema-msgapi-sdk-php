@@ -109,7 +109,7 @@ class SodiumEncryptor extends AbstractEncryptor
      */
     public function hex2bin($hexString, $ignore = null)
     {
-        return sodium_hex2bin($hexString, $ignore);
+        return sodium_hex2bin($hexString);
     }
 
     /**
@@ -144,12 +144,12 @@ class SodiumEncryptor extends AbstractEncryptor
      * @param string $recipientPrivateKey
      * @param string $senderPublicKey
      * @param string $nonce
-     * @return null|string
+     * @return string|null
      */
     protected function openBox($box, $recipientPrivateKey, $senderPublicKey, $nonce)
     {
         $kp = \sodium_crypto_box_keypair_from_secretkey_and_publickey($recipientPrivateKey, $senderPublicKey);
-        return \sodium_crypto_box_open($box, $nonce, $kp);
+        return \sodium_crypto_box_open($box, $nonce, $kp) ?: null;
     }
 
     /**
@@ -158,11 +158,11 @@ class SodiumEncryptor extends AbstractEncryptor
      * @param string $box   as binary
      * @param string $nonce as binary
      * @param string $key   as binary
-     * @return string as binary
+     * @return string|null as binary
      */
     protected function openSecretBox($box, $nonce, $key)
     {
-        return \sodium_crypto_secretbox_open($box, $nonce, $key);
+        return \sodium_crypto_secretbox_open($box, $nonce, $key) ?: null;
     }
 
     /**

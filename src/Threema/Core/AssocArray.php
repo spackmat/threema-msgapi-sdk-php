@@ -8,7 +8,6 @@ namespace Threema\Core;
 
 class AssocArray
 {
-
     /**
      * @var array
      */
@@ -24,41 +23,34 @@ class AssocArray
     }
 
     /**
-     * @param string     $string
-     * @param array|null $requiredKeys
+     * @param string $string
+     * @param array  $requiredKeys
      * @return AssocArray
      * @throws Exception
      */
-    public static final function byJsonString($string, array $requiredKeys = null)
+    public static final function byJsonString($string, array $requiredKeys)
     {
         $v = json_decode($string, true);
         if (null === $v || false === $v) {
             throw new Exception('invalid json string');
         }
 
-        //validate first
-        if (null !== $requiredKeys) {
-            //validate array first
-            foreach ($requiredKeys as $requiredKey) {
-                if (false === [$v]) {
-                    throw new Exception('required key ' . $requiredKey . ' failed');
-                }
+        //validate array first
+        foreach ($requiredKeys as $requiredKey) {
+            if (!isset($v[$requiredKey])) {
+                throw new Exception('required key ' . $requiredKey . ' is not present');
             }
         }
         return new AssocArray($v);
     }
 
     /**
-     * @param string $key
-     * @param null   $defaultValue
+     * @param string     $key
+     * @param mixed|null $defaultValue
      * @return mixed|null return the key value or the default value
      */
     public function getValue($key, $defaultValue = null)
     {
-        if (false === array_key_exists($key, $this->data)) {
-            return $defaultValue;
-        }
-
-        return $this->data[$key];
+        return $this->data[$key] ?? $defaultValue;
     }
 }

@@ -141,11 +141,18 @@ or
 vendor/bin/phpunit
 ```
 
+Also check with phpstan, which must be green (zero errors) at maximum level.
+```
+composer phpstan
+```
+
 ## To Do
 
-* Refactor the Connection to split out the cUrl calls to a separate driver class. Then add a Guzzle Driver. This will also make the Connection testable because it is trivial to create a Mock Driver. 
+* Replace Receiver class with 3 methods on Connection
 * ReceiveMessageResult assumes you want to store file attachments on the local filesystem. This may not be true eg if using Amazon infrastructure. Refactor to allow for FileAcceptors(?) which can be overloaded to use Flysystem, local file system, or a null object pattern that ignores the file
 * There are some useful Exception classes defined but they are not used in some places.
+* Url class is probably not needed
+* AssocArray class is probably not needed 
 
 ## Other platforms (Java and Python)
 

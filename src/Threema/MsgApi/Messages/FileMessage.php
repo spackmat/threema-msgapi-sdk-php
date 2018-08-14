@@ -119,7 +119,7 @@ class FileMessage extends ThreemaMessage
      *
      * @return int message type code
      */
-    public final function getTypeCode()
+    public final function getTypeCode(): int
     {
         return self::TYPE_CODE;
     }

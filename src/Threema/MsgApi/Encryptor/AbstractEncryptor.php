@@ -100,7 +100,7 @@ abstract class AbstractEncryptor
 
     final public function encryptFileMessage(UploadFileResult $uploadFileResult,
         EncryptResult $encryptResult,
-        UploadFileResult $thumbnailUploadFileResult,
+        ?UploadFileResult $thumbnailUploadFileResult,
         FileAnalysisResult $fileAnalysisResult,
         $senderPrivateKey,
         $recipientPublicKey,
@@ -144,10 +144,9 @@ abstract class AbstractEncryptor
      */
     final public function decryptMessage($box, $recipientPrivateKey, $senderPublicKey, $nonce)
     {
-
         $data = $this->openBox($box, $recipientPrivateKey, $senderPublicKey, $nonce);
 
-        if (null === $data || strlen($data) == 0) {
+        if (empty($data)) {
             throw new DecryptionFailedException();
         }
 
@@ -164,7 +163,7 @@ abstract class AbstractEncryptor
 
         $pos   = 1;
         $piece = function ($length) use (&$pos, $data) {
-            $d   = substr($data, $pos, $length);
+            $d   = substr($data, (int) $pos, $length);
             $pos += $length;
             return $d;
         };
@@ -197,20 +196,16 @@ abstract class AbstractEncryptor
                 $blobId = $piece->__invoke(self::BLOB_ID_LEN);
                 $length = $piece->__invoke(self::IMAGE_FILE_SIZE_LEN);
                 $nonce  = $piece->__invoke(self::IMAGE_NONCE_LEN); // is this binary or hex?
-                return new ImageMessage($this->bin2hex($blobId), $this->bin2hex($length), $this->bin2hex($nonce));
+                return new ImageMessage($this->bin2hex($blobId), (int) $this->bin2hex($length), $this->bin2hex($nonce));
 
             case FileMessage::TYPE_CODE:
                 /* Image Message */
                 $decodeResult = json_decode(substr($data, 1), true);
-                if (null === $decodeResult || false === $decodeResult) {
+                if (empty($decodeResult)) {
                     throw new BadMessageException();
                 }
 
                 $values = AssocArray::byJsonString(substr($data, 1), ['b', 't', 'k', 'm', 'n', 's']);
-                if (null === $values) {
-                    throw new BadMessageException();
-                }
-
                 return new FileMessage(
                     $values->getValue('b'),
                     $values->getValue('t'),
@@ -313,8 +308,7 @@ abstract class AbstractEncryptor
      */
     public final function decryptFile($data, $key)
     {
-        $result = $this->openSecretBox($data, self::FILE_NONCE, $key);
-        return false === $result ? null : $result;
+        return $this->openSecretBox($data, self::FILE_NONCE, $key);
     }
 
     /**
@@ -330,8 +324,7 @@ abstract class AbstractEncryptor
 
     public final function decryptFileThumbnail($data, $key)
     {
-        $result = $this->openSecretBox($data, self::FILE_THUMBNAIL_NONCE, $key);
-        return false === $result ? null : $result;
+        return $this->openSecretBox($data, self::FILE_THUMBNAIL_NONCE, $key);
     }
 
     /**
@@ -351,7 +344,7 @@ abstract class AbstractEncryptor
             $publicKey
         );
 
-        return new EncryptResult($box, null, $nonce, strlen($box));
+        return new EncryptResult($box, '', $nonce, strlen($box));
     }
 
     /**
@@ -359,7 +352,7 @@ abstract class AbstractEncryptor
      * @param string $publicKey  as binary
      * @param string $privateKey as binary
      * @param string $nonce      as binary
-     * @return string
+     * @return string|null
      */
     public final function decryptImage($data, $publicKey, $privateKey, $nonce)
     {
@@ -406,7 +399,7 @@ abstract class AbstractEncryptor
         if ($ignore !== null) {
             throw new Exception('$ignore parameter is not supported');
         }
-        return hex2bin($hexString);
+        return hex2bin($hexString) ?: '';
     }
 
     /**
@@ -451,7 +444,7 @@ abstract class AbstractEncryptor
      * @param string $recipientPrivateKey as binary
      * @param string $senderPublicKey     as binary
      * @param string $nonce               as binary
-     * @return string
+     * @return string|null
      */
     abstract protected function openBox($box, $recipientPrivateKey, $senderPublicKey, $nonce);
 

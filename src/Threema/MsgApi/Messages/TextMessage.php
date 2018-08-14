@@ -44,7 +44,7 @@ class TextMessage extends ThreemaMessage
      *
      * @return int message type code
      */
-    public function getTypeCode()
+    public function getTypeCode(): int
     {
         return self::TYPE_CODE;
     }

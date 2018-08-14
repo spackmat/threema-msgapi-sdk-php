@@ -25,7 +25,7 @@ class CreditsCommand extends AbstractNetworkedCommand
     {
         $result = $this->getConnection($input, $output)->credits();
         $this->assertSuccess($result);
-        $output->writeln($result->getCredits());
+        $output->writeln($result->getCredits() . ' remaining');
         return 0;
     }
 }

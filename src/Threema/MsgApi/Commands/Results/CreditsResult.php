@@ -24,7 +24,7 @@ class CreditsResult extends Result
     /**
      * @param string $response
      */
-    protected function processResponse($response)
+    protected function processResponse(string $response)
     {
         $this->credits = intval($response, 10);
     }
@@ -33,7 +33,7 @@ class CreditsResult extends Result
      * @param int $httpCode
      * @return string
      */
-    protected function getErrorMessageByErrorCode($httpCode)
+    protected function getErrorMessageByErrorCode(int $httpCode): string
     {
         switch ($httpCode) {
             case 401:

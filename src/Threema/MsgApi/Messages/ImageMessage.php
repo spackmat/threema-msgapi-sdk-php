@@ -16,12 +16,12 @@ class ImageMessage extends ThreemaMessage
     private $blobId;
 
     /**
-     * @var string
+     * @var int
      */
     private $length;
 
     /**
-     * @var int
+     * @var string
      */
     private $nonce;
 
@@ -30,7 +30,7 @@ class ImageMessage extends ThreemaMessage
      * @param int    $length
      * @param string $nonce
      */
-    public function __construct($blobId, $length, $nonce)
+    public function __construct(string $blobId, int $length, string $nonce)
     {
         $this->blobId = $blobId;
         $this->length = $length;
@@ -46,7 +46,7 @@ class ImageMessage extends ThreemaMessage
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getLength()
     {
@@ -54,7 +54,7 @@ class ImageMessage extends ThreemaMessage
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getNonce()
     {
@@ -74,7 +74,7 @@ class ImageMessage extends ThreemaMessage
      *
      * @return int message type code
      */
-    public final function getTypeCode()
+    public final function getTypeCode(): int
     {
         return self::TYPE_CODE;
     }

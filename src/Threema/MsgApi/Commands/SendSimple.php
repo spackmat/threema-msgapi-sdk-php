@@ -59,11 +59,11 @@ class SendSimple implements CommandInterface
 
     /**
      * @param int    $httpCode
-     * @param object $res
+     * @param string $response
      * @return SendSimpleResult
      */
-    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result
+    public function parseResult(int $httpCode, string $response): \Threema\MsgApi\Commands\Results\Result
     {
-        return new SendSimpleResult($httpCode, $res);
+        return new SendSimpleResult($httpCode, $response);
     }
 }

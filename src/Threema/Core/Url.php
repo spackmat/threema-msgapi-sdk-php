@@ -27,31 +27,31 @@ class Url
      * @param string $path
      * @param string $host
      */
-    public function __construct($path, $host = null)
+    public function __construct(string $path, string $host)
     {
         $this->path = $path;
         $this->host = $host;
     }
 
-    public static function parametersToArray($urlParameter)
-    {
-        $result = [];
-
-        while (strlen($urlParameter) > 0) {
-            // name
-            $keyPosition = strpos($urlParameter, '=');
-            $keyValue    = substr($urlParameter, 0, $keyPosition);
-            // value
-            $valuePosition = strpos($urlParameter, '&') ? strpos($urlParameter, '&') : strlen($urlParameter);
-            $valueValue    = substr($urlParameter, $keyPosition + 1, $valuePosition - $keyPosition - 1);
-
-            // decoding the response
-            $result[$keyValue] = urldecode($valueValue);
-            $urlParameter      = substr($urlParameter, $valuePosition + 1, strlen($urlParameter));
-        }
-
-        return $result;
-    }
+//    public static function parametersToArray($urlParameter)
+//    {
+//        $result = [];
+//
+//        while (strlen($urlParameter) > 0) {
+//            // name
+//            $keyPosition = strpos($urlParameter, '=');
+//            $keyValue    = substr($urlParameter, 0, $keyPosition);
+//            // value
+//            $valuePosition = strpos($urlParameter, '&') ? strpos($urlParameter, '&') : strlen($urlParameter);
+//            $valueValue    = substr($urlParameter, $keyPosition + 1, $valuePosition - $keyPosition - 1);
+//
+//            // decoding the response
+//            $result[$keyValue] = urldecode($valueValue);
+//            $urlParameter      = substr($urlParameter, $valuePosition + 1, strlen($urlParameter));
+//        }
+//
+//        return $result;
+//    }
 
     /**
      * @param string $key

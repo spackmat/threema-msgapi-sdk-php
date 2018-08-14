@@ -34,7 +34,7 @@ class LookupBulkResult extends Result
     /**
      * @param string $response json
      */
-    protected function processResponse($response)
+    protected function processResponse(string $response)
     {
         $matches = json_decode($response, true);
         if (empty($matches)) {
@@ -54,7 +54,7 @@ class LookupBulkResult extends Result
      * @param int $httpCode
      * @return string
      */
-    protected function getErrorMessageByErrorCode($httpCode)
+    protected function getErrorMessageByErrorCode(int $httpCode): string
     {
         switch ($httpCode) {
             case 400:

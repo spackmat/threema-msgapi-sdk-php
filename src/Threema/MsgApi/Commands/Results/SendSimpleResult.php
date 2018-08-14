@@ -24,16 +24,16 @@ class SendSimpleResult extends Result
     /**
      * @param string $response
      */
-    protected function processResponse($response)
+    protected function processResponse(string $response)
     {
-        $this->messageId = (string) $response;
+        $this->messageId = $response;
     }
 
     /**
      * @param int $httpCode
      * @return string
      */
-    protected function getErrorMessageByErrorCode($httpCode)
+    protected function getErrorMessageByErrorCode(int $httpCode): string
     {
         switch ($httpCode) {
             case 400:

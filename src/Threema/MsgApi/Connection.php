@@ -201,16 +201,16 @@ class Connection
     /**
      * Encrypt a file (and thumbnail if given), upload the blob and send it to the given threemaId
      *
-     * @param string      $myPrivateKeyHex
-     * @param string      $toThreemaId
-     * @param string      $toPublicKeyHex
-     * @param string      $filePath
-     * @param null|string $thumbnailPath
+     * @param string $myPrivateKeyHex
+     * @param string $toThreemaId
+     * @param string $toPublicKeyHex
+     * @param string $filePath
+     * @param string $thumbnailPath
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
      * @throws \Threema\Core\Exception
      */
     public final function sendFileMessage(string $myPrivateKeyHex, string $toThreemaId, string $toPublicKeyHex,
-        string $filePath, ?string $thumbnailPath = null)
+        string $filePath, string $thumbnailPath = '')
     {
         return $this->getE2EHelper($myPrivateKeyHex)
                     ->sendFileMessage($toThreemaId, $this->encryptor->hex2bin($toPublicKeyHex), $filePath,

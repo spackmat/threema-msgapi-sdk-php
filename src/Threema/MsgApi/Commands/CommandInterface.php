@@ -24,8 +24,8 @@ interface CommandInterface
 
     /**
      * @param int    $httpCode
-     * @param object $res
+     * @param string $response
      * @return Result
      */
-    public function parseResult($httpCode, $res): \Threema\MsgApi\Commands\Results\Result;
+    public function parseResult(int $httpCode, string $response): Result;
 }

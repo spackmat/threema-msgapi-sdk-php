@@ -24,16 +24,16 @@ class LookupIdResult extends Result
     /**
      * @param string $response
      */
-    protected function processResponse($response)
+    protected function processResponse(string $response)
     {
-        $this->id = (string) $response;
+        $this->id = $response;
     }
 
     /**
      * @param int $httpCode
      * @return string
      */
-    protected function getErrorMessageByErrorCode($httpCode)
+    protected function getErrorMessageByErrorCode(int $httpCode): string
     {
         switch ($httpCode) {
             case 400:

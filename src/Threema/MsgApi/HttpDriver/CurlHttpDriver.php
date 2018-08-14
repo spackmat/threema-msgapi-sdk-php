@@ -196,14 +196,20 @@ class CurlHttpDriver implements HttpDriverInterface
             $fullPath->setValue($key, $value);
         }
         $session = curl_init($fullPath->getFullPath());
+        if (empty($session)) {
+            throw new HttpException('Could not start curl session');
+        }
         curl_setopt_array($session, $curlOptions);
 
         $response = curl_exec($session);
-        if (false === $response) {
-            throw new HttpException($path . ' ' . curl_error($session));
+        if (false === $response || true === $response) {
+            $message = curl_error($session);
+            curl_close($session);
+            throw new HttpException($path . ' ' . $message);
         }
 
-        $httpCode = curl_getinfo($session, CURLINFO_HTTP_CODE);
+        $httpCode = intval(curl_getinfo($session, CURLINFO_HTTP_CODE));
+        curl_close($session);
         return $command->parseResult($httpCode, $response);
     }
 }

@@ -22,11 +22,11 @@ abstract class AbstractLocalCommand extends Command
 {
     private const KEY_FILE = 'default.key';
 
-    /** @var array default option and argument values stored in self::KEY_FILE */
-    private $defaults = [];
-
     /** @var \Threema\MsgApi\ConnectionFactory */
     protected $connectionFactory;
+
+    /** @var array default option and argument values stored in self::KEY_FILE */
+    private $defaults = [];
 
     public function __construct(ConnectionFactory $connectionFactory)
     {
@@ -122,7 +122,11 @@ abstract class AbstractLocalCommand extends Command
     private function readStdInput(): string
     {
         // read console standard input stream. Strip empty / blank lines
-        return join("\n", array_filter(array_map('trim', file('php://stdin'))));
+        $file = file('php://stdin');
+        if (empty($file)) {
+            return '';
+        }
+        return join("\n", array_filter(array_map('trim', $file)));
     }
 
     private function getKey(string $key, string $optionName, string $keyPrefix): string

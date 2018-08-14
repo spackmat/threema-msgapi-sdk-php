@@ -18,24 +18,24 @@ class UploadFileResult extends Result
      *
      * @return string
      */
-    public function getBlobId()
+    public function getBlobId(): string
     {
         return $this->blobId;
     }
 
     /**
-     * @param string $blobId
+     * @param string $response
      */
-    protected function processResponse($blobId)
+    protected function processResponse(string $response)
     {
-        $this->blobId = (string) $blobId;
+        $this->blobId = $response;
     }
 
     /**
      * @param int $httpCode
      * @return string
      */
-    protected function getErrorMessageByErrorCode($httpCode)
+    protected function getErrorMessageByErrorCode(int $httpCode): string
     {
         switch ($httpCode) {
             case 401:
