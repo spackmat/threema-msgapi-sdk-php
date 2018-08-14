@@ -49,14 +49,23 @@ class Connection
         $this->encryptor = $encryptor;
     }
 
-    /**
-     * @param Receiver $receiver
-     * @param string   $text
-     * @return SendSimpleResult
-     */
-    public function sendSimple(Receiver $receiver, string $text): SendSimpleResult
+    public function sendToThreemaID(string $threemaID, string $text): SendSimpleResult
     {
-        $result = $this->driver->postForm(new SendSimple($receiver, $text));
+        $result = $this->driver->postForm(SendSimple::toThreemaID($threemaID, $text));
+        assert($result instanceof SendSimpleResult);
+        return $result;
+    }
+
+    public function sendToEmail(string $email, string $text): SendSimpleResult
+    {
+        $result = $this->driver->postForm(SendSimple::toEmail($email, $text));
+        assert($result instanceof SendSimpleResult);
+        return $result;
+    }
+
+    public function sendToPhoneNo(string $phoneNo, string $text): SendSimpleResult
+    {
+        $result = $this->driver->postForm(SendSimple::toPhoneNo($phoneNo, $text));
         assert($result instanceof SendSimpleResult);
         return $result;
     }

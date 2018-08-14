@@ -9,28 +9,38 @@ declare(strict_types=1);
 namespace Threema\MsgApi\Commands;
 
 use Threema\MsgApi\Commands\Results\SendSimpleResult;
-use Threema\MsgApi\Receiver;
 
 class SendSimple implements CommandInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $text;
 
-    /**
-     * @var \Threema\MsgApi\Receiver
-     */
-    private $receiver;
+    /** @var string */
+    private $to;
 
-    /**
-     * @param \Threema\MsgApi\Receiver $receiver
-     * @param string                   $text
-     */
-    public function __construct(Receiver $receiver, $text)
+    /** @var string */
+    private $address;
+
+    protected function __construct(string $to, string $address, string $text)
     {
-        $this->text     = $text;
-        $this->receiver = $receiver;
+        $this->text    = $text;
+        $this->to      = $to;
+        $this->address = $address;
+    }
+
+    public static function toThreemaID(string $threemaID, string $text): self
+    {
+        return new self('to', strtoupper($threemaID), $text);
+    }
+
+    public static function toEmail(string $email, string $text): self
+    {
+        return new self('email', strtolower(trim($email)), $text);
+    }
+
+    public static function toPhoneNo(string $phoneNo, string $text): self
+    {
+        return new self('phone', preg_replace('/[^0-9]/', '', $phoneNo), $text);
     }
 
     /**
@@ -46,8 +56,8 @@ class SendSimple implements CommandInterface
      */
     public function getParams(): array
     {
-        $p         = $this->receiver->getParams();
-        $p['text'] = $this->getText();
+        $p[$this->to] = $this->address;
+        $p['text']    = $this->text;
         return $p;
     }
 
