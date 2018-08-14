@@ -6,11 +6,11 @@
 
 namespace Threema\MsgApi\Encryptor;
 
-use Threema\Core\AssocArray;
 use Threema\MsgApi\Commands\Results\UploadFileResult;
 use Threema\MsgApi\Exceptions\BadMessageException;
 use Threema\MsgApi\Exceptions\DecryptionFailedException;
 use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
+use Threema\MsgApi\Helpers\AssocArray;
 use Threema\MsgApi\Helpers\EncryptResult;
 use Threema\MsgApi\Helpers\FileAnalysisResult;
 use Threema\MsgApi\Helpers\KeyPair;

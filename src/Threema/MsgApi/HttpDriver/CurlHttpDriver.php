@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\HttpDriver;
 
-use Threema\Core\Url;
 use Threema\MsgApi\Commands\CommandInterface;
 use Threema\MsgApi\Commands\JsonCommandInterface;
 use Threema\MsgApi\Commands\MultiPartCommandInterface;
 use Threema\MsgApi\Commands\Results\Result;
 use Threema\MsgApi\Constants;
 use Threema\MsgApi\Exceptions\HttpException;
+use Threema\MsgApi\Helpers\Url;
 
 /**
  */
