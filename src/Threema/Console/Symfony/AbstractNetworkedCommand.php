@@ -13,9 +13,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Threema\MsgApi\Connection;
-use Threema\MsgApi\Constants;
 use Threema\MsgApi\Exceptions\Exception;
 use Threema\MsgApi\Exceptions\InvalidArgumentException;
+use Threema\MsgApi\Helpers\Constants;
 use Threema\MsgApi\Response\Response;
 
 abstract class AbstractNetworkedCommand extends AbstractLocalCommand

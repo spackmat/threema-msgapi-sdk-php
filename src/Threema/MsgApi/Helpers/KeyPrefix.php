@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Helpers;
 
-use Threema\MsgApi\Constants;
-
 class KeyPrefix
 {
     /**

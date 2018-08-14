@@ -12,7 +12,7 @@ namespace Threema\Console\Symfony;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Threema\MsgApi\ConnectionFactory;
-use Threema\MsgApi\Constants;
+use Threema\MsgApi\Helpers\Constants;
 
 class DerivePublicKeyCommandTest extends TestCase
 {

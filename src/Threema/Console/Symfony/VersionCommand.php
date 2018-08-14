@@ -13,7 +13,7 @@ use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Threema\MsgApi\Constants;
+use Threema\MsgApi\Helpers\Constants;
 
 class VersionCommand extends AbstractLocalCommand
 {

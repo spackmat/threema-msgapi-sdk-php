@@ -14,9 +14,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Threema\MsgApi\ConnectionFactory;
-use Threema\MsgApi\Constants;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 use Threema\MsgApi\Exceptions\InvalidArgumentException;
+use Threema\MsgApi\Helpers\Constants;
 
 abstract class AbstractLocalCommand extends Command
 {

@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi;
+namespace Threema\MsgApi\Helpers;
 
 final class Constants
 {
