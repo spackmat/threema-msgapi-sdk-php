@@ -6,12 +6,13 @@
 
 namespace Threema\MsgApi\Helpers;
 
-use Threema\Core\Exception;
 use Threema\MsgApi\Commands\Results\CapabilityResult;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 use Threema\MsgApi\Exceptions\DecryptionFailedException;
+use Threema\MsgApi\Exceptions\Exception;
 use Threema\MsgApi\Exceptions\HttpException;
+use Threema\MsgApi\Exceptions\InvalidArgumentException;
 use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
 use Threema\MsgApi\Messages\FileMessage;
 use Threema\MsgApi\Messages\ImageMessage;
@@ -56,7 +57,7 @@ class E2EHelper
      * @param string $receiverPublicKey binary format
      * @param string $text
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendTextMessage(string $threemaId, string $receiverPublicKey, string $text)
     {
@@ -80,7 +81,7 @@ class E2EHelper
      * @param string $receiverPublicKey binary format
      * @param string $imagePath
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendImageMessage(string $threemaId, string $receiverPublicKey, string $imagePath)
     {
@@ -90,7 +91,7 @@ class E2EHelper
                 'image/jpg',
                 'image/jpeg',
                 'image/png'])) {
-            throw new Exception('file is not a jpg or png');
+            throw new InvalidArgumentException('file is not a jpg or png');
         }
 
         $this->assertIsCapable($threemaId, CapabilityResult::IMAGE);
@@ -126,7 +127,7 @@ class E2EHelper
      * @param string      $filePath
      * @param string $thumbnailPath
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendFileMessage(string $threemaId, string $receiverPublicKey, string $filePath,
         string $thumbnailPath = '')
@@ -186,7 +187,7 @@ class E2EHelper
      *                                             null=current folder, false=do not download files
      * @param \Closure          $shouldDownload
      * @return ReceiveMessageResult
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\Exception
      * @throws \Threema\MsgApi\Exceptions\BadMessageException
      * @throws \Threema\MsgApi\Exceptions\DecryptionFailedException
      * @throws \Threema\MsgApi\Exceptions\HttpException

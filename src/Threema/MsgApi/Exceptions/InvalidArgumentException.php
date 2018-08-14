@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Exceptions;
 
-use Threema\Core\Exception;
-
 class InvalidArgumentException extends Exception
 {
 }

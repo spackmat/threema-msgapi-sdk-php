@@ -6,8 +6,8 @@
 
 namespace Threema\MsgApi\Encryptor;
 
-use Threema\Core\Exception;
 use Threema\Core\KeyPair;
+use Threema\MsgApi\Exceptions\Exception;
 
 /**
  * Contains static methods to do various Threema cryptography related tasks.
@@ -51,20 +51,6 @@ class SodiumEncryptor extends AbstractEncryptor
         }
         // check any function from new libsodium without namespaces
         return function_exists('sodium_crypto_box');
-    }
-
-    /**
-     * Validate crypt tool
-     *
-     * @return bool
-     * @throws Exception
-     */
-    public function validate()
-    {
-        if (false === $this->isSupported()) {
-            throw new Exception('Sodium implementation not supported');
-        }
-        return true;
     }
 
     /**

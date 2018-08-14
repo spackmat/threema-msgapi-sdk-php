@@ -6,6 +6,8 @@
 
 namespace Threema\Core;
 
+use Threema\MsgApi\Exceptions\Exception;
+
 class AssocArray
 {
     /**

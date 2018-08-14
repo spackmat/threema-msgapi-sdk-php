@@ -6,23 +6,23 @@
 
 namespace Threema\MsgApi\Helpers;
 
-use Threema\Core\Exception;
+use Threema\MsgApi\Exceptions\InvalidArgumentException;
 
 final class FileAnalysisTool
 {
     /**
      * @param string $file
      * @return FileAnalysisResult
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\InvalidArgumentException
      */
     public static function analyseOrDie(string $file): FileAnalysisResult
     {
         if (false === file_exists($file)) {
-            throw new Exception('No such file ' . $file);
+            throw new InvalidArgumentException('No such file ' . $file);
         }
 
         if (false === is_file($file)) {
-            throw new Exception('Not a file: ' . $file);
+            throw new InvalidArgumentException('Not a file: ' . $file);
         }
 
         $mimeType = '';

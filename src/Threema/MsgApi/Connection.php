@@ -172,7 +172,7 @@ class Connection
      * @param string $toPublicKeyHex
      * @param string $text
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public function sendTextMessage(string $myPrivateKeyHex, string $toThreemaId, string $toPublicKeyHex,
         string $text): SendE2EResult
@@ -189,7 +189,7 @@ class Connection
      * @param string $toPublicKeyHex
      * @param string $imagePath
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public function sendImageMessage(string $myPrivateKeyHex, string $toThreemaId, string $toPublicKeyHex,
         string $imagePath): SendE2EResult
@@ -207,7 +207,7 @@ class Connection
      * @param string $filePath
      * @param string $thumbnailPath
      * @return \Threema\MsgApi\Commands\Results\SendE2EResult
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendFileMessage(string $myPrivateKeyHex, string $toThreemaId, string $toPublicKeyHex,
         string $filePath, string $thumbnailPath = '')
@@ -252,7 +252,7 @@ class Connection
      *                                             null=current folder, false=do not download files
      * @param \Closure          $shouldDownload
      * @return \Threema\MsgApi\Helpers\ReceiveMessageResult
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\Exception
      * @throws \Threema\MsgApi\Exceptions\BadMessageException
      * @throws \Threema\MsgApi\Exceptions\DecryptionFailedException
      * @throws \Threema\MsgApi\Exceptions\HttpException

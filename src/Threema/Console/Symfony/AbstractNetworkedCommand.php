@@ -12,10 +12,10 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Threema\Core\Exception;
 use Threema\MsgApi\Commands\Results\Result;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\Constants;
+use Threema\MsgApi\Exceptions\Exception;
 use Threema\MsgApi\Exceptions\InvalidArgumentException;
 
 abstract class AbstractNetworkedCommand extends AbstractLocalCommand

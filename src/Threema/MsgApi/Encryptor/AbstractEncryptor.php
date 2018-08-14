@@ -7,11 +7,11 @@
 namespace Threema\MsgApi\Encryptor;
 
 use Threema\Core\AssocArray;
-use Threema\Core\Exception;
 use Threema\Core\KeyPair;
 use Threema\MsgApi\Commands\Results\UploadFileResult;
 use Threema\MsgApi\Exceptions\BadMessageException;
 use Threema\MsgApi\Exceptions\DecryptionFailedException;
+use Threema\MsgApi\Exceptions\Exception;
 use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
 use Threema\MsgApi\Helpers\EncryptResult;
 use Threema\MsgApi\Helpers\FileAnalysisResult;
@@ -76,7 +76,7 @@ abstract class AbstractEncryptor
      * @param string           $recipientPublicKey the public key of the receiving ID (as binary)
      * @param string           $nonce              the nonce to be used for the encryption (usually 24 random bytes)
      * @return string
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\Exception
      */
     final public function encryptImageMessage(
         UploadFileResult $uploadFileResult,
@@ -140,7 +140,7 @@ abstract class AbstractEncryptor
      * @throws BadMessageException
      * @throws DecryptionFailedException
      * @throws UnsupportedMessageTypeException
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\Exception
      */
     final public function decryptMessage($box, $recipientPrivateKey, $senderPublicKey, $nonce)
     {
@@ -283,14 +283,6 @@ abstract class AbstractEncryptor
     abstract public function isSupported();
 
     /**
-     * Validate crypt tool
-     *
-     * @return bool
-     * @throws Exception
-     */
-    abstract public function validate();
-
-    /**
      * @param string $data
      * @return EncryptResult
      */
@@ -391,14 +383,12 @@ abstract class AbstractEncryptor
      *
      * @param  string      $hexString The hex string to convert
      * @param  string|null $ignore    (optional) Characters to ignore
-     * @throws \Threema\Core\Exception
+     * @throws \Threema\MsgApi\Exceptions\Exception
      * @return string
      */
     public function hex2bin($hexString, $ignore = null)
     {
-        if ($ignore !== null) {
-            throw new Exception('$ignore parameter is not supported');
-        }
+        assert($ignore == null, '$ignore parameter is not supported');
         return hex2bin($hexString) ?: '';
     }
 
