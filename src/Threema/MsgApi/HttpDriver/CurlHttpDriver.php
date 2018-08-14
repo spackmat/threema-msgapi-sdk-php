@@ -112,6 +112,12 @@ class CurlHttpDriver implements HttpDriverInterface
         return $this->call($command, $options, $params);
     }
 
+    public function __debugInfo()
+    {
+        // so the threema secret is not exposed in server logs
+        return [];
+    }
+
     /**
      * @param \Closure $progress
      * @return array
