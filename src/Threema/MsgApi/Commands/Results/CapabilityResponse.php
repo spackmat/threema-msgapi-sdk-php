@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands\Results;
 
-class CapabilityResult extends Result
+class CapabilityResponse extends Response
 {
     const IMAGE = 'image';
     const TEXT  = 'text';

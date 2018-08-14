@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Encryptor;
 
-use Threema\MsgApi\Commands\Results\UploadFileResult;
+use Threema\MsgApi\Commands\Results\UploadFileResponse;
 use Threema\MsgApi\Exceptions\BadMessageException;
 use Threema\MsgApi\Exceptions\DecryptionFailedException;
 use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
@@ -71,16 +71,16 @@ abstract class AbstractEncryptor
     }
 
     /**
-     * @param UploadFileResult $uploadFileResult   the result of the upload
-     * @param EncryptResult    $encryptResult      the result of the image encryption
-     * @param string           $senderPrivateKey   the private key of the sending ID (as binary)
-     * @param string           $recipientPublicKey the public key of the receiving ID (as binary)
-     * @param string           $nonce              the nonce to be used for the encryption (usually 24 random bytes)
+     * @param UploadFileResponse $uploadFileResult   the result of the upload
+     * @param EncryptResult      $encryptResult      the result of the image encryption
+     * @param string             $senderPrivateKey   the private key of the sending ID (as binary)
+     * @param string             $recipientPublicKey the public key of the receiving ID (as binary)
+     * @param string             $nonce              the nonce to be used for the encryption (usually 24 random bytes)
      * @return string
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     final public function encryptImageMessage(
-        UploadFileResult $uploadFileResult,
+        UploadFileResponse $uploadFileResult,
         EncryptResult $encryptResult,
         $senderPrivateKey,
         $recipientPublicKey,
@@ -99,9 +99,9 @@ abstract class AbstractEncryptor
         return $this->makeBox($message, $nonce, $senderPrivateKey, $recipientPublicKey);
     }
 
-    final public function encryptFileMessage(UploadFileResult $uploadFileResult,
+    final public function encryptFileMessage(UploadFileResponse $uploadFileResult,
         EncryptResult $encryptResult,
-        ?UploadFileResult $thumbnailUploadFileResult,
+        ?UploadFileResponse $thumbnailUploadFileResult,
         FileAnalysisResult $fileAnalysisResult,
         $senderPrivateKey,
         $recipientPublicKey,

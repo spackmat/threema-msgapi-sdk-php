@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\CreditsResult;
-use Threema\MsgApi\Commands\Results\Result;
+use Threema\MsgApi\Commands\Results\CreditsResponse;
+use Threema\MsgApi\Commands\Results\Response;
 
 class Credits implements CommandInterface
 {
@@ -29,10 +29,10 @@ class Credits implements CommandInterface
     /**
      * @param int    $httpCode
      * @param string $response
-     * @return CreditsResult
+     * @return CreditsResponse
      */
-    public function parseResult(int $httpCode, string $response): Result
+    public function parseResult(int $httpCode, string $response): Response
     {
-        return new CreditsResult($httpCode, $response);
+        return new CreditsResponse($httpCode, $response);
     }
 }

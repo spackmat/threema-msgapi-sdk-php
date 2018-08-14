@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands\Results;
 
-class SendE2EResult extends Result
+class SendE2EResponse extends Response
 {
     /**
      * @var string hex

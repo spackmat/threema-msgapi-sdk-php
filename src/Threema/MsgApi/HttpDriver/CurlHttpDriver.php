@@ -11,7 +11,7 @@ namespace Threema\MsgApi\HttpDriver;
 use Threema\MsgApi\Commands\CommandInterface;
 use Threema\MsgApi\Commands\JsonCommandInterface;
 use Threema\MsgApi\Commands\MultiPartCommandInterface;
-use Threema\MsgApi\Commands\Results\Result;
+use Threema\MsgApi\Commands\Results\Response;
 use Threema\MsgApi\Constants;
 use Threema\MsgApi\Exceptions\HttpException;
 use Threema\MsgApi\Helpers\Url;
@@ -54,9 +54,9 @@ class CurlHttpDriver implements HttpDriverInterface
     /**
      * @param CommandInterface $command
      * @param \Closure         $progress
-     * @return Result
+     * @return Response
      */
-    public function get(CommandInterface $command, \Closure $progress = null): Result
+    public function get(CommandInterface $command, \Closure $progress = null): Response
     {
         return $this->call($command, $this->createDefaultOptions($progress),
             $this->buildRequestParams($command->getParams()));
@@ -64,9 +64,9 @@ class CurlHttpDriver implements HttpDriverInterface
 
     /**
      * @param CommandInterface $command
-     * @return Result
+     * @return Response
      */
-    public function postForm(CommandInterface $command): Result
+    public function postForm(CommandInterface $command): Response
     {
         $options = $this->createDefaultOptions();
         $params  = $this->buildRequestParams($command->getParams());
@@ -80,9 +80,9 @@ class CurlHttpDriver implements HttpDriverInterface
 
     /**
      * @param MultiPartCommandInterface $command
-     * @return Result
+     * @return Response
      */
-    public function postMultiPart(MultiPartCommandInterface $command): Result
+    public function postMultiPart(MultiPartCommandInterface $command): Response
     {
         $options = $this->createDefaultOptions();
         $params  = $this->buildRequestParams($command->getParams());
@@ -97,9 +97,9 @@ class CurlHttpDriver implements HttpDriverInterface
 
     /**
      * @param JsonCommandInterface $command
-     * @return Result
+     * @return Response
      */
-    public function postJson(JsonCommandInterface $command): Result
+    public function postJson(JsonCommandInterface $command): Response
     {
         $options = $this->createDefaultOptions();
         $params  = $this->buildRequestParams($command->getParams());
@@ -184,10 +184,10 @@ class CurlHttpDriver implements HttpDriverInterface
      * @param CommandInterface $command
      * @param array            $curlOptions
      * @param array            $queryParameters
-     * @return Result
+     * @return Response
      * @throws \Threema\MsgApi\Exceptions\HttpException
      */
-    private function call(CommandInterface $command, array $curlOptions, array $queryParameters): Result
+    private function call(CommandInterface $command, array $curlOptions, array $queryParameters): Response
     {
         $path     = $command->getPath();
         $fullPath = new Url('', $this->host);

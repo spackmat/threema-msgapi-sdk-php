@@ -11,7 +11,7 @@ namespace Threema\MsgApi\Commands\Results;
 use Threema\MsgApi\Commands\LookupBulk;
 use Threema\MsgApi\Helpers\BulkLookupIdentity;
 
-class LookupBulkResult extends Result
+class LookupBulkResponse extends Response
 {
     /** @var \Threema\MsgApi\Commands\LookupBulk */
     private $request;

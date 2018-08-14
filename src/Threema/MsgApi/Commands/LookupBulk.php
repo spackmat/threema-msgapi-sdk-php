@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\LookupBulkResult;
-use Threema\MsgApi\Commands\Results\Result;
+use Threema\MsgApi\Commands\Results\LookupBulkResponse;
+use Threema\MsgApi\Commands\Results\Response;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 /**
@@ -87,10 +87,10 @@ class LookupBulk implements JsonCommandInterface
     /**
      * @param int    $httpCode
      * @param string $response
-     * @return LookupBulkResult
+     * @return LookupBulkResponse
      */
-    public function parseResult(int $httpCode, string $response): Result
+    public function parseResult(int $httpCode, string $response): Response
     {
-        return new LookupBulkResult($httpCode, $response, $this);
+        return new LookupBulkResponse($httpCode, $response, $this);
     }
 }

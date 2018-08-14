@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\DownloadFileResult;
-use Threema\MsgApi\Commands\Results\Result;
+use Threema\MsgApi\Commands\Results\DownloadFileResponse;
+use Threema\MsgApi\Commands\Results\Response;
 
 class DownloadFile implements CommandInterface
 {
@@ -45,10 +45,10 @@ class DownloadFile implements CommandInterface
     /**
      * @param int    $httpCode
      * @param string $response
-     * @return DownloadFileResult
+     * @return DownloadFileResponse
      */
-    public function parseResult(int $httpCode, string $response): Result
+    public function parseResult(int $httpCode, string $response): Response
     {
-        return new DownloadFileResult($httpCode, $response);
+        return new DownloadFileResponse($httpCode, $response);
     }
 }

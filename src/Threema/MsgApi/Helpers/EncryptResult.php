@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace Threema\MsgApi\Helpers;
 
 /**
- * Result of a Data Encryption
+ * Response of a Data Encryption
  *
  * @package Threema\MsgApi\Tool
  */

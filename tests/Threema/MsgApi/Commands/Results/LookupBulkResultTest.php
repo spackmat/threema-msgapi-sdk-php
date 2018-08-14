@@ -33,7 +33,7 @@ class LookupBulkResultTest extends TestCase
                           'emailHash' => $encryptor->hashEmail($emailAddress),
                           'publicKey' => $key2 = 'abcd4567']];
 
-        $subject = new LookupBulkResult(200, json_encode($responseData), $request);
+        $subject = new LookupBulkResponse(200, json_encode($responseData), $request);
         $matches = $subject->getMatches();
 
         self::assertEquals(2, count($matches));

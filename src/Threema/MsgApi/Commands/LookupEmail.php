@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\LookupIdResult;
-use Threema\MsgApi\Commands\Results\Result;
+use Threema\MsgApi\Commands\Results\LookupIdResponse;
+use Threema\MsgApi\Commands\Results\Response;
 
 class LookupEmail implements CommandInterface
 {
@@ -65,10 +65,10 @@ class LookupEmail implements CommandInterface
     /**
      * @param int    $httpCode
      * @param string $response
-     * @return LookupIdResult
+     * @return LookupIdResponse
      */
-    public function parseResult(int $httpCode, string $response): Result
+    public function parseResult(int $httpCode, string $response): Response
     {
-        return new LookupIdResult($httpCode, $response);
+        return new LookupIdResponse($httpCode, $response);
     }
 }

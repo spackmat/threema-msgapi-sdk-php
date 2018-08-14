@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\Result;
+use Threema\MsgApi\Commands\Results\Response;
 
 interface CommandInterface
 {
@@ -25,7 +25,7 @@ interface CommandInterface
     /**
      * @param int    $httpCode
      * @param string $response
-     * @return Result
+     * @return Response
      */
-    public function parseResult(int $httpCode, string $response): Result;
+    public function parseResult(int $httpCode, string $response): Response;
 }

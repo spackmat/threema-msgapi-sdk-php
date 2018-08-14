@@ -8,21 +8,19 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands\Results;
 
-class DownloadFileResult extends Result
+class CreditsResponse extends Response
 {
     /**
-     * @var string
+     * @var int
      */
-    private $data;
+    private $credits;
 
     /**
-     * the generated blob id
-     *
-     * @return string
+     * @return int
      */
-    public function getData(): string
+    public function getCredits(): int
     {
-        return $this->data;
+        return $this->credits;
     }
 
     /**
@@ -30,7 +28,7 @@ class DownloadFileResult extends Result
      */
     protected function processResponse(string $response)
     {
-        $this->data = $response;
+        $this->credits = intval($response, 10);
     }
 
     /**
@@ -42,8 +40,6 @@ class DownloadFileResult extends Result
         switch ($httpCode) {
             case 401:
                 return 'API identity or secret incorrect';
-            case 404:
-                return 'Invalid blob id';
             case 500:
                 return 'A temporary internal server error has occurred';
             default:
@@ -51,4 +47,3 @@ class DownloadFileResult extends Result
         }
     }
 }
-

@@ -8,19 +8,21 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands\Results;
 
-class FetchPublicKeyResult extends Result
+class DownloadFileResponse extends Response
 {
     /**
-     * @var string as hex
+     * @var string
      */
-    private $publicKey;
+    private $data;
 
     /**
+     * the generated blob id
+     *
      * @return string
      */
-    public function getPublicKey(): string
+    public function getData(): string
     {
-        return $this->publicKey;
+        return $this->data;
     }
 
     /**
@@ -28,7 +30,7 @@ class FetchPublicKeyResult extends Result
      */
     protected function processResponse(string $response)
     {
-        $this->publicKey = $response;
+        $this->data = $response;
     }
 
     /**
@@ -41,7 +43,7 @@ class FetchPublicKeyResult extends Result
             case 401:
                 return 'API identity or secret incorrect';
             case 404:
-                return 'No matching ID found';
+                return 'Invalid blob id';
             case 500:
                 return 'A temporary internal server error has occurred';
             default:
@@ -49,3 +51,4 @@ class FetchPublicKeyResult extends Result
         }
     }
 }
+

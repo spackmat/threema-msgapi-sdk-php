@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\Result;
-use Threema\MsgApi\Commands\Results\SendE2EResult;
+use Threema\MsgApi\Commands\Results\Response;
+use Threema\MsgApi\Commands\Results\SendE2EResponse;
 
 class SendE2E implements CommandInterface
 {
@@ -86,10 +86,10 @@ class SendE2E implements CommandInterface
     /**
      * @param int    $httpCode
      * @param string $response
-     * @return SendE2EResult
+     * @return SendE2EResponse
      */
-    public function parseResult(int $httpCode, string $response): Result
+    public function parseResult(int $httpCode, string $response): Response
     {
-        return new SendE2EResult($httpCode, $response);
+        return new SendE2EResponse($httpCode, $response);
     }
 }

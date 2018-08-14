@@ -8,19 +8,21 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands\Results;
 
-class CreditsResult extends Result
+class UploadFileResponse extends Response
 {
     /**
-     * @var int
+     * @var string
      */
-    private $credits;
+    private $blobId;
 
     /**
-     * @return int
+     * the generated blob id
+     *
+     * @return string
      */
-    public function getCredits(): int
+    public function getBlobId(): string
     {
-        return $this->credits;
+        return $this->blobId;
     }
 
     /**
@@ -28,7 +30,7 @@ class CreditsResult extends Result
      */
     protected function processResponse(string $response)
     {
-        $this->credits = intval($response, 10);
+        $this->blobId = $response;
     }
 
     /**
@@ -39,7 +41,11 @@ class CreditsResult extends Result
     {
         switch ($httpCode) {
             case 401:
-                return 'API identity or secret incorrect';
+                return 'API identity or secret incorrect or file is empty';
+            case 402:
+                return 'No credits remain';
+            case 413:
+                return 'File is too long';
             case 500:
                 return 'A temporary internal server error has occurred';
             default:

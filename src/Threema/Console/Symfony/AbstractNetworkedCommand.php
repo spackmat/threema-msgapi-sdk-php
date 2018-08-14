@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Threema\MsgApi\Commands\Results\Result;
+use Threema\MsgApi\Commands\Results\Response;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\Constants;
 use Threema\MsgApi\Exceptions\Exception;
@@ -35,7 +35,7 @@ abstract class AbstractNetworkedCommand extends AbstractLocalCommand
         return $this->connectionFactory->getConnection($this->getSenderID($input), $this->getSecret($input, $output));
     }
 
-    protected function assertSuccess(Result $result)
+    protected function assertSuccess(Response $result)
     {
         if ($result->isSuccess()) {
             return;

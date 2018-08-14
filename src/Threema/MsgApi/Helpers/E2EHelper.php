@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Helpers;
 
-use Threema\MsgApi\Commands\Results\CapabilityResult;
-use Threema\MsgApi\Commands\Results\DownloadFileResult;
-use Threema\MsgApi\Commands\Results\SendE2EResult;
+use Threema\MsgApi\Commands\Results\CapabilityResponse;
+use Threema\MsgApi\Commands\Results\DownloadFileResponse;
+use Threema\MsgApi\Commands\Results\SendE2EResponse;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 use Threema\MsgApi\Exceptions\DecryptionFailedException;
@@ -59,10 +59,10 @@ class E2EHelper
      * @param string $threemaId
      * @param string $receiverPublicKey binary format
      * @param string $text
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResult
+     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
-    public final function sendTextMessage(string $threemaId, string $receiverPublicKey, string $text): SendE2EResult
+    public final function sendTextMessage(string $threemaId, string $receiverPublicKey, string $text): SendE2EResponse
     {
         //random nonce first
         $nonce = $this->encryptor->randomNonce();
@@ -83,11 +83,11 @@ class E2EHelper
      * @param string $threemaId
      * @param string $receiverPublicKey binary format
      * @param string $imagePath
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResult
+     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendImageMessage(string $threemaId, string $receiverPublicKey,
-        string $imagePath): SendE2EResult
+        string $imagePath): SendE2EResponse
     {
         $fileAnalyzeResult = FileAnalysisTool::analyseOrDie($imagePath);
 
@@ -98,7 +98,7 @@ class E2EHelper
             throw new InvalidArgumentException('file is not a jpg or png');
         }
 
-        $this->assertIsCapable($threemaId, CapabilityResult::IMAGE);
+        $this->assertIsCapable($threemaId, CapabilityResponse::IMAGE);
 
         //encrypt the image file
         $encryptionResult = $this->encryptor->encryptImage(
@@ -130,15 +130,15 @@ class E2EHelper
      * @param string $receiverPublicKey binary format
      * @param string $filePath
      * @param string $thumbnailPath
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResult
+     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendFileMessage(string $threemaId, string $receiverPublicKey, string $filePath,
-        string $thumbnailPath = ''): SendE2EResult
+        string $thumbnailPath = ''): SendE2EResponse
     {
         $fileAnalyzeResult = FileAnalysisTool::analyseOrDie($filePath);
 
-        $this->assertIsCapable($threemaId, CapabilityResult::FILE);
+        $this->assertIsCapable($threemaId, CapabilityResponse::FILE);
 
         //encrypt the main file
         $encryptionResult = $this->encryptor->encryptFile(file_get_contents($filePath) ?: '');
@@ -322,10 +322,10 @@ class E2EHelper
      * @param AbstractMessage $message
      * @param string          $blobId blob id as hex
      * @param \Closure        $shouldDownload
-     * @return null|\Threema\MsgApi\Commands\Results\DownloadFileResult
+     * @return null|\Threema\MsgApi\Commands\Results\DownloadFileResponse
      * @throws \Threema\MsgApi\Exceptions\HttpException
      */
-    private function downloadFile(AbstractMessage $message, $blobId, \Closure $shouldDownload): ?DownloadFileResult
+    private function downloadFile(AbstractMessage $message, $blobId, \Closure $shouldDownload): ?DownloadFileResponse
     {
         if ($shouldDownload($message, $blobId)) {
             $result = $this->connection->downloadFile($blobId);

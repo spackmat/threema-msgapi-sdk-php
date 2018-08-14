@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands\Results;
 
-abstract class Result
+abstract class Response
 {
     /**
      * @var int

@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\Result;
-use Threema\MsgApi\Commands\Results\UploadFileResult;
+use Threema\MsgApi\Commands\Results\Response;
+use Threema\MsgApi\Commands\Results\UploadFileResponse;
 
 class UploadFile implements MultiPartCommandInterface
 {
@@ -53,10 +53,10 @@ class UploadFile implements MultiPartCommandInterface
     /**
      * @param int    $httpCode
      * @param string $response
-     * @return UploadFileResult
+     * @return UploadFileResponse
      */
-    public function parseResult(int $httpCode, string $response): Result
+    public function parseResult(int $httpCode, string $response): Response
     {
-        return new UploadFileResult($httpCode, $response);
+        return new UploadFileResponse($httpCode, $response);
     }
 }

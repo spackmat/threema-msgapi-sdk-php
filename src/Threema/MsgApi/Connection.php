@@ -15,15 +15,15 @@ use Threema\MsgApi\Commands\FetchPublicKey;
 use Threema\MsgApi\Commands\LookupBulk;
 use Threema\MsgApi\Commands\LookupEmail;
 use Threema\MsgApi\Commands\LookupPhone;
-use Threema\MsgApi\Commands\Results\CapabilityResult;
-use Threema\MsgApi\Commands\Results\CreditsResult;
-use Threema\MsgApi\Commands\Results\DownloadFileResult;
-use Threema\MsgApi\Commands\Results\FetchPublicKeyResult;
-use Threema\MsgApi\Commands\Results\LookupBulkResult;
-use Threema\MsgApi\Commands\Results\LookupIdResult;
-use Threema\MsgApi\Commands\Results\SendE2EResult;
-use Threema\MsgApi\Commands\Results\SendSimpleResult;
-use Threema\MsgApi\Commands\Results\UploadFileResult;
+use Threema\MsgApi\Commands\Results\CapabilityResponse;
+use Threema\MsgApi\Commands\Results\CreditsResponse;
+use Threema\MsgApi\Commands\Results\DownloadFileResponse;
+use Threema\MsgApi\Commands\Results\FetchPublicKeyResponse;
+use Threema\MsgApi\Commands\Results\LookupBulkResponse;
+use Threema\MsgApi\Commands\Results\LookupIdResponse;
+use Threema\MsgApi\Commands\Results\SendE2EResponse;
+use Threema\MsgApi\Commands\Results\SendSimpleResponse;
+use Threema\MsgApi\Commands\Results\UploadFileResponse;
 use Threema\MsgApi\Commands\SendE2E;
 use Threema\MsgApi\Commands\SendSimple;
 use Threema\MsgApi\Commands\UploadFile;
@@ -49,24 +49,24 @@ class Connection
         $this->encryptor = $encryptor;
     }
 
-    public function sendToThreemaID(string $threemaID, string $text): SendSimpleResult
+    public function sendToThreemaID(string $threemaID, string $text): SendSimpleResponse
     {
         $result = $this->driver->postForm(SendSimple::toThreemaID($threemaID, $text));
-        assert($result instanceof SendSimpleResult);
+        assert($result instanceof SendSimpleResponse);
         return $result;
     }
 
-    public function sendToEmail(string $email, string $text): SendSimpleResult
+    public function sendToEmail(string $email, string $text): SendSimpleResponse
     {
         $result = $this->driver->postForm(SendSimple::toEmail($email, $text));
-        assert($result instanceof SendSimpleResult);
+        assert($result instanceof SendSimpleResponse);
         return $result;
     }
 
-    public function sendToPhoneNo(string $phoneNo, string $text): SendSimpleResult
+    public function sendToPhoneNo(string $phoneNo, string $text): SendSimpleResponse
     {
         $result = $this->driver->postForm(SendSimple::toPhoneNo($phoneNo, $text));
-        assert($result instanceof SendSimpleResult);
+        assert($result instanceof SendSimpleResponse);
         return $result;
     }
 
@@ -74,104 +74,104 @@ class Connection
      * @param string $threemaId
      * @param string $nonce binary
      * @param string $box   binary
-     * @return SendE2EResult
+     * @return SendE2EResponse
      */
-    public function sendE2E(string $threemaId, string $nonce, string $box): SendE2EResult
+    public function sendE2E(string $threemaId, string $nonce, string $box): SendE2EResponse
     {
         $command = new SendE2E($threemaId, $this->encryptor->bin2hex($nonce), $this->encryptor->bin2hex($box));
         $result  = $this->driver->postForm($command);
-        assert($result instanceof SendE2EResult);
+        assert($result instanceof SendE2EResponse);
         return $result;
     }
 
     /**
      * @param string $encryptedFileData (binary string)
-     * @return UploadFileResult
+     * @return UploadFileResponse
      */
-    public function uploadFile($encryptedFileData): UploadFileResult
+    public function uploadFile($encryptedFileData): UploadFileResponse
     {
         $result = $this->driver->postMultiPart(new UploadFile($encryptedFileData));
-        assert($result instanceof UploadFileResult);
+        assert($result instanceof UploadFileResponse);
         return $result;
     }
 
     /**
      * @param string   $blobId
      * @param \Closure $progress
-     * @return DownloadFileResult
+     * @return DownloadFileResponse
      */
-    public function downloadFile($blobId, \Closure $progress = null): DownloadFileResult
+    public function downloadFile($blobId, \Closure $progress = null): DownloadFileResponse
     {
         $result = $this->driver->get(new DownloadFile($blobId), $progress);
-        assert($result instanceof DownloadFileResult);
+        assert($result instanceof DownloadFileResponse);
         return $result;
     }
 
     /**
      * @param string $phoneNumber
-     * @return LookupIdResult
+     * @return LookupIdResponse
      */
-    public function keyLookupByPhoneNumber(string $phoneNumber): LookupIdResult
+    public function keyLookupByPhoneNumber(string $phoneNumber): LookupIdResponse
     {
         $result = $this->driver->get(new LookupPhone($phoneNumber, $this->encryptor->hashPhoneNo($phoneNumber)));
-        assert($result instanceof LookupIdResult);
+        assert($result instanceof LookupIdResponse);
         return $result;
     }
 
     /**
      * @param string $email
-     * @return LookupIdResult
+     * @return LookupIdResponse
      */
-    public function keyLookupByEmail(string $email): LookupIdResult
+    public function keyLookupByEmail(string $email): LookupIdResponse
     {
         $result = $this->driver->get(new LookupEmail($email, $this->encryptor->hashEmail($email)));
-        assert($result instanceof LookupIdResult);
+        assert($result instanceof LookupIdResponse);
         return $result;
     }
 
     /**
      * @param string[] $emailAddresses
      * @param string[] $phoneNumbers
-     * @return LookupBulkResult
+     * @return LookupBulkResponse
      */
-    public function bulkLookup(array $emailAddresses, array $phoneNumbers): LookupBulkResult
+    public function bulkLookup(array $emailAddresses, array $phoneNumbers): LookupBulkResponse
     {
         $command = new LookupBulk($emailAddresses, $phoneNumbers);
         $command->calculateHashes($this->encryptor);
         $result = $this->driver->postJson($command);
-        assert($result instanceof LookupBulkResult);
+        assert($result instanceof LookupBulkResponse);
         return $result;
     }
 
     /**
      * @param string $threemaId valid threema id (8 Chars)
-     * @return CapabilityResult
+     * @return CapabilityResponse
      */
-    public function keyCapability(string $threemaId): CapabilityResult
+    public function keyCapability(string $threemaId): CapabilityResponse
     {
         $result = $this->driver->get(new Capability($threemaId));
-        assert($result instanceof CapabilityResult);
+        assert($result instanceof CapabilityResponse);
         return $result;
     }
 
     /**
-     * @return CreditsResult
+     * @return CreditsResponse
      */
-    public function credits(): CreditsResult
+    public function credits(): CreditsResponse
     {
         $result = $this->driver->get(new Credits());
-        assert($result instanceof CreditsResult);
+        assert($result instanceof CreditsResponse);
         return $result;
     }
 
     /**
      * @param string $threemaId
-     * @return FetchPublicKeyResult
+     * @return FetchPublicKeyResponse
      */
-    public function fetchPublicKey(string $threemaId): FetchPublicKeyResult
+    public function fetchPublicKey(string $threemaId): FetchPublicKeyResponse
     {
         $result = $this->driver->get(new FetchPublicKey($threemaId));
-        assert($result instanceof FetchPublicKeyResult);
+        assert($result instanceof FetchPublicKeyResponse);
         return $result;
     }
 
@@ -182,11 +182,11 @@ class Connection
      * @param string $toThreemaId
      * @param string $toPublicKeyHex
      * @param string $text
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResult
+     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public function sendTextMessage(string $myPrivateKeyHex, string $toThreemaId, string $toPublicKeyHex,
-        string $text): SendE2EResult
+        string $text): SendE2EResponse
     {
         return $this->getE2EHelper($myPrivateKeyHex)
                     ->sendTextMessage($toThreemaId, $this->encryptor->hex2bin($toPublicKeyHex), $text);
@@ -199,11 +199,11 @@ class Connection
      * @param string $toThreemaId
      * @param string $toPublicKeyHex
      * @param string $imagePath
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResult
+     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public function sendImageMessage(string $myPrivateKeyHex, string $toThreemaId, string $toPublicKeyHex,
-        string $imagePath): SendE2EResult
+        string $imagePath): SendE2EResponse
     {
         return $this->getE2EHelper($myPrivateKeyHex)
                     ->sendImageMessage($toThreemaId, $this->encryptor->hex2bin($toPublicKeyHex), $imagePath);
@@ -217,7 +217,7 @@ class Connection
      * @param string $toPublicKeyHex
      * @param string $filePath
      * @param string $thumbnailPath
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResult
+     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendFileMessage(string $myPrivateKeyHex, string $toThreemaId, string $toPublicKeyHex,

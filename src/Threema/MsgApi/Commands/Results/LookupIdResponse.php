@@ -8,19 +8,19 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands\Results;
 
-class SendSimpleResult extends Result
+class LookupIdResponse extends Response
 {
     /**
      * @var string
      */
-    private $messageId;
+    private $id;
 
     /**
      * @return string
      */
-    public function getMessageId(): string
+    public function getId(): string
     {
-        return $this->messageId;
+        return $this->id;
     }
 
     /**
@@ -28,7 +28,7 @@ class SendSimpleResult extends Result
      */
     protected function processResponse(string $response)
     {
-        $this->messageId = $response;
+        $this->id = $response;
     }
 
     /**
@@ -39,19 +39,16 @@ class SendSimpleResult extends Result
     {
         switch ($httpCode) {
             case 400:
-                return 'The recipient identity is invalid or the account is not set up for simple mode';
+                return 'Hash length is wrong';
             case 401:
                 return 'API identity or secret incorrect';
-            case 402:
-                return 'No credits remain';
             case 404:
-                return 'Phone or email could not be found';
-            case 413:
-                return 'Message is too long';
+                return 'No matching ID found';
             case 500:
                 return 'A temporary internal server error has occurred';
             default:
                 return 'Unknown error';
         }
     }
+
 }
