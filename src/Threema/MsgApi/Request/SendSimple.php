@@ -6,11 +6,11 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands;
+namespace Threema\MsgApi\Request;
 
 use Threema\MsgApi\Response\SendSimpleResponse;
 
-class SendSimple implements CommandInterface
+class SendSimple implements RequestInterface
 {
     /** @var string */
     private $text;

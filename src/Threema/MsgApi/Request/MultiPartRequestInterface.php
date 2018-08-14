@@ -6,9 +6,9 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands;
+namespace Threema\MsgApi\Request;
 
-interface MultiPartCommandInterface extends CommandInterface
+interface MultiPartRequestInterface extends RequestInterface
 {
     public function getData(): string;
 }

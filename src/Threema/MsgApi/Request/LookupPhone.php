@@ -6,12 +6,12 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands;
+namespace Threema\MsgApi\Request;
 
 use Threema\MsgApi\Response\LookupIdResponse;
 use Threema\MsgApi\Response\Response;
 
-class LookupPhone implements CommandInterface
+class LookupPhone implements RequestInterface
 {
     /**
      * @var string

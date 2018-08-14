@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\HttpDriver;
 
-use Threema\MsgApi\Commands\CommandInterface;
-use Threema\MsgApi\Commands\JsonCommandInterface;
-use Threema\MsgApi\Commands\MultiPartCommandInterface;
+use Threema\MsgApi\Request\RequestInterface;
+use Threema\MsgApi\Request\JsonRequestInterface;
+use Threema\MsgApi\Request\MultiPartRequestInterface;
 use Threema\MsgApi\Response\Response;
 
 /**
@@ -18,27 +18,27 @@ use Threema\MsgApi\Response\Response;
 interface HttpDriverInterface
 {
     /**
-     * @param CommandInterface $command
+     * @param RequestInterface $command
      * @param \Closure         $progress
      * @return Response
      */
-    public function get(CommandInterface $command, \Closure $progress = null): Response;
+    public function get(RequestInterface $command, \Closure $progress = null): Response;
 
     /**
-     * @param CommandInterface $command
+     * @param RequestInterface $command
      * @return Response
      */
-    public function postForm(CommandInterface $command): Response;
+    public function postForm(RequestInterface $command): Response;
 
     /**
-     * @param MultiPartCommandInterface $command
+     * @param MultiPartRequestInterface $command
      * @return Response
      */
-    public function postMultiPart(MultiPartCommandInterface $command): Response;
+    public function postMultiPart(MultiPartRequestInterface $command): Response;
 
     /**
-     * @param JsonCommandInterface $command
+     * @param JsonRequestInterface $command
      * @return Response
      */
-    public function postJson(JsonCommandInterface $command): Response;
+    public function postJson(JsonRequestInterface $command): Response;
 }

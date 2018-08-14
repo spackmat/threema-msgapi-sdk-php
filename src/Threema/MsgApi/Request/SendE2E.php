@@ -6,12 +6,12 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands;
+namespace Threema\MsgApi\Request;
 
 use Threema\MsgApi\Response\Response;
 use Threema\MsgApi\Response\SendE2EResponse;
 
-class SendE2E implements CommandInterface
+class SendE2E implements RequestInterface
 {
     /**
      * @var string

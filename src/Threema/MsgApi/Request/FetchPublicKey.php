@@ -6,11 +6,11 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands;
+namespace Threema\MsgApi\Request;
 
 use Threema\MsgApi\Response\FetchPublicKeyResponse;
 
-class FetchPublicKey implements CommandInterface
+class FetchPublicKey implements RequestInterface
 {
     /**
      * @var string

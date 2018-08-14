@@ -6,9 +6,9 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands;
+namespace Threema\MsgApi\Request;
 
-interface JsonCommandInterface extends CommandInterface
+interface JsonRequestInterface extends RequestInterface
 {
     public function getJson(): string;
 }

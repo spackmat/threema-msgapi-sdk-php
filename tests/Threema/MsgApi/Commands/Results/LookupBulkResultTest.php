@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Threema\MsgApi\Response;
 
 use PHPUnit\Framework\TestCase;
-use Threema\MsgApi\Commands\LookupBulk;
+use Threema\MsgApi\Request\LookupBulk;
 use Threema\MsgApi\ConnectionFactory;
 
 class LookupBulkResultTest extends TestCase

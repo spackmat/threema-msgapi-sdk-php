@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands;
+namespace Threema\MsgApi\Request;
 
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 use Threema\MsgApi\Response\LookupBulkResponse;
@@ -22,7 +22,7 @@ use Threema\MsgApi\Response\Response;
  * BulkLookupIdentity helper class. The original key of the email or phone is returned to you in the match result, which
  * is helpful if it is linked to a user.id or person.id for example.
  */
-class LookupBulk implements JsonCommandInterface
+class LookupBulk implements JsonRequestInterface
 {
     /** @var string[] */
     private $email = [];

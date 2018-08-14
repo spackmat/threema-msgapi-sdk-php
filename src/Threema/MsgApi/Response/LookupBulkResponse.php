@@ -8,12 +8,12 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Response;
 
-use Threema\MsgApi\Commands\LookupBulk;
+use Threema\MsgApi\Request\LookupBulk;
 use Threema\MsgApi\Helpers\BulkLookupIdentity;
 
 class LookupBulkResponse extends Response
 {
-    /** @var \Threema\MsgApi\Commands\LookupBulk */
+    /** @var \Threema\MsgApi\Request\LookupBulk */
     private $request;
 
     /** @var BulkLookupIdentity[] */

@@ -8,16 +8,16 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi;
 
-use Threema\MsgApi\Commands\Capability;
-use Threema\MsgApi\Commands\Credits;
-use Threema\MsgApi\Commands\DownloadFile;
-use Threema\MsgApi\Commands\FetchPublicKey;
-use Threema\MsgApi\Commands\LookupBulk;
-use Threema\MsgApi\Commands\LookupEmail;
-use Threema\MsgApi\Commands\LookupPhone;
-use Threema\MsgApi\Commands\SendE2E;
-use Threema\MsgApi\Commands\SendSimple;
-use Threema\MsgApi\Commands\UploadFile;
+use Threema\MsgApi\Request\Capability;
+use Threema\MsgApi\Request\Credits;
+use Threema\MsgApi\Request\DownloadFile;
+use Threema\MsgApi\Request\FetchPublicKey;
+use Threema\MsgApi\Request\LookupBulk;
+use Threema\MsgApi\Request\LookupEmail;
+use Threema\MsgApi\Request\LookupPhone;
+use Threema\MsgApi\Request\SendE2E;
+use Threema\MsgApi\Request\SendSimple;
+use Threema\MsgApi\Request\UploadFile;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 use Threema\MsgApi\Helpers\E2EHelper;
 use Threema\MsgApi\Helpers\ReceiveMessageResult;

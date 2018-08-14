@@ -6,12 +6,12 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands;
+namespace Threema\MsgApi\Request;
 
 use Threema\MsgApi\Response\CreditsResponse;
 use Threema\MsgApi\Response\Response;
 
-class Credits implements CommandInterface
+class Credits implements RequestInterface
 {
     /**
      * @return array
