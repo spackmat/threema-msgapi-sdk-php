@@ -17,9 +17,9 @@ use Threema\MsgApi\Exceptions\DecryptionFailedException;
 use Threema\MsgApi\Exceptions\HttpException;
 use Threema\MsgApi\Exceptions\InvalidArgumentException;
 use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
-use Threema\MsgApi\Messages\FileMessage;
-use Threema\MsgApi\Messages\ImageMessage;
-use Threema\MsgApi\Messages\AbstractMessage;
+use Threema\MsgApi\Message\FileMessage;
+use Threema\MsgApi\Message\ImageMessage;
+use Threema\MsgApi\Message\AbstractMessage;
 
 /**
  * Splits some of the bulky code out of the Connection class to keep the Connection small / clean

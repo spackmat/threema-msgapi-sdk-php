@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
-namespace Threema\MsgApi\Messages;
+namespace Threema\MsgApi\Message;
 
 /**
  * Abstract base class of messages that can be sent with end-to-end encryption via Threema.

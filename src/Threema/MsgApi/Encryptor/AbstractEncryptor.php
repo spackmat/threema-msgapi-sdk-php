@@ -16,11 +16,11 @@ use Threema\MsgApi\Helpers\AssocArray;
 use Threema\MsgApi\Helpers\EncryptResult;
 use Threema\MsgApi\Helpers\FileAnalysisResult;
 use Threema\MsgApi\Helpers\KeyPair;
-use Threema\MsgApi\Messages\DeliveryReceipt;
-use Threema\MsgApi\Messages\FileMessage;
-use Threema\MsgApi\Messages\ImageMessage;
-use Threema\MsgApi\Messages\TextMessage;
-use Threema\MsgApi\Messages\AbstractMessage;
+use Threema\MsgApi\Message\DeliveryReceipt;
+use Threema\MsgApi\Message\FileMessage;
+use Threema\MsgApi\Message\ImageMessage;
+use Threema\MsgApi\Message\TextMessage;
+use Threema\MsgApi\Message\AbstractMessage;
 
 /**
  * Contains static methods to do various Threema cryptography related tasks.

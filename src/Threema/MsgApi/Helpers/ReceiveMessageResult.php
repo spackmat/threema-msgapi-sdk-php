@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Helpers;
 
-use Threema\MsgApi\Messages\AbstractMessage;
+use Threema\MsgApi\Message\AbstractMessage;
 
 class ReceiveMessageResult
 {

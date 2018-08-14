@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 use Threema\MsgApi\Encryptor\SodiumEncryptor;
 use Threema\MsgApi\Helpers\KeyPrefix;
-use Threema\MsgApi\Messages\TextMessage;
+use Threema\MsgApi\Message\TextMessage;
 
 class EncryptorTest extends TestCase
 {

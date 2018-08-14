@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Messages;
+namespace Threema\MsgApi\Message;
 
 class ImageMessage extends AbstractMessage
 {
