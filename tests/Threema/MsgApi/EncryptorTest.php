@@ -22,8 +22,8 @@ class EncryptorTest extends TestCase
         $this->assertNotNull($encryptor, $prefix . ' could not instance crypto tool');
         $keyPair = $encryptor->generateKeyPair();
         $this->assertNotNull($keyPair, $prefix . ': invalid key pair');
-        $this->assertNotNull($keyPair->privateKey, $prefix . ': private key is null');
-        $this->assertNotNull($keyPair->publicKey, $prefix . ': public key is null');
+        $this->assertNotNull($keyPair->getPrivateKey(), $prefix . ': private key is null');
+        $this->assertNotNull($keyPair->getPublicKey(), $prefix . ': public key is null');
     }
 
     /**

@@ -6,8 +6,7 @@
 
 namespace Threema\MsgApi\Encryptor;
 
-use Threema\Core\KeyPair;
-use Threema\MsgApi\Exceptions\Exception;
+use Threema\MsgApi\Helpers\KeyPair;
 
 /**
  * Contains static methods to do various Threema cryptography related tasks.

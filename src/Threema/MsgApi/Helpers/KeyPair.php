@@ -4,15 +4,15 @@
  * @copyright Copyright (c) 2015-2016 Threema GmbH
  */
 
-namespace Threema\Core;
+namespace Threema\MsgApi\Helpers;
 
 class KeyPair
 {
     /** @var string */
-    public $privateKey;
+    private $privateKey;
 
     /** @var string */
-    public $publicKey;
+    private $publicKey;
 
     public function __construct(string $privateKey, string $publicKey)
     {

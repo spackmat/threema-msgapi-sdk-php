@@ -11,9 +11,9 @@ namespace Threema\Console\Symfony;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use Threema\Core\KeyPair;
 use Threema\MsgApi\ConnectionFactory;
 use Threema\MsgApi\Constants;
+use Threema\MsgApi\Helpers\KeyPair;
 
 class EncryptDecryptTest extends TestCase
 {
