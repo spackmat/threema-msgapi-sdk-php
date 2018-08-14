@@ -8,18 +8,18 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Helpers;
 
-use Threema\MsgApi\Commands\Results\CapabilityResponse;
-use Threema\MsgApi\Commands\Results\DownloadFileResponse;
-use Threema\MsgApi\Commands\Results\SendE2EResponse;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 use Threema\MsgApi\Exceptions\DecryptionFailedException;
 use Threema\MsgApi\Exceptions\HttpException;
 use Threema\MsgApi\Exceptions\InvalidArgumentException;
 use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
+use Threema\MsgApi\Message\AbstractMessage;
 use Threema\MsgApi\Message\FileMessage;
 use Threema\MsgApi\Message\ImageMessage;
-use Threema\MsgApi\Message\AbstractMessage;
+use Threema\MsgApi\Response\CapabilityResponse;
+use Threema\MsgApi\Response\DownloadFileResponse;
+use Threema\MsgApi\Response\SendE2EResponse;
 
 /**
  * Splits some of the bulky code out of the Connection class to keep the Connection small / clean
@@ -59,7 +59,7 @@ class E2EHelper
      * @param string $threemaId
      * @param string $receiverPublicKey binary format
      * @param string $text
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
+     * @return \Threema\MsgApi\Response\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendTextMessage(string $threemaId, string $receiverPublicKey, string $text): SendE2EResponse
@@ -83,7 +83,7 @@ class E2EHelper
      * @param string $threemaId
      * @param string $receiverPublicKey binary format
      * @param string $imagePath
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
+     * @return \Threema\MsgApi\Response\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendImageMessage(string $threemaId, string $receiverPublicKey,
@@ -130,7 +130,7 @@ class E2EHelper
      * @param string $receiverPublicKey binary format
      * @param string $filePath
      * @param string $thumbnailPath
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
+     * @return \Threema\MsgApi\Response\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendFileMessage(string $threemaId, string $receiverPublicKey, string $filePath,
@@ -322,7 +322,7 @@ class E2EHelper
      * @param AbstractMessage $message
      * @param string          $blobId blob id as hex
      * @param \Closure        $shouldDownload
-     * @return null|\Threema\MsgApi\Commands\Results\DownloadFileResponse
+     * @return null|\Threema\MsgApi\Response\DownloadFileResponse
      * @throws \Threema\MsgApi\Exceptions\HttpException
      */
     private function downloadFile(AbstractMessage $message, $blobId, \Closure $shouldDownload): ?DownloadFileResponse

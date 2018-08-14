@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\CapabilityResponse;
-use Threema\MsgApi\Commands\Results\Response;
+use Threema\MsgApi\Response\CapabilityResponse;
+use Threema\MsgApi\Response\Response;
 
 class Capability implements CommandInterface
 {

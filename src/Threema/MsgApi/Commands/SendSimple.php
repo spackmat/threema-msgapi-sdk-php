@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\SendSimpleResponse;
+use Threema\MsgApi\Response\SendSimpleResponse;
 
 class SendSimple implements CommandInterface
 {
@@ -74,7 +74,7 @@ class SendSimple implements CommandInterface
      * @param string $response
      * @return SendSimpleResponse
      */
-    public function parseResult(int $httpCode, string $response): \Threema\MsgApi\Commands\Results\Response
+    public function parseResult(int $httpCode, string $response): \Threema\MsgApi\Response\Response
     {
         return new SendSimpleResponse($httpCode, $response);
     }

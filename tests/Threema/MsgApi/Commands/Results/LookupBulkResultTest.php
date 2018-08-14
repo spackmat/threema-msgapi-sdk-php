@@ -7,12 +7,11 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands\Results;
+namespace Threema\MsgApi\Response;
 
 use PHPUnit\Framework\TestCase;
 use Threema\MsgApi\Commands\LookupBulk;
 use Threema\MsgApi\ConnectionFactory;
-use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class LookupBulkResultTest extends TestCase
 {

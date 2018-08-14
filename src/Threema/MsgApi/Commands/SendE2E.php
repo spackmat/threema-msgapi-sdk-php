@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\Response;
-use Threema\MsgApi\Commands\Results\SendE2EResponse;
+use Threema\MsgApi\Response\Response;
+use Threema\MsgApi\Response\SendE2EResponse;
 
 class SendE2E implements CommandInterface
 {

@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\FetchPublicKeyResponse;
+use Threema\MsgApi\Response\FetchPublicKeyResponse;
 
 class FetchPublicKey implements CommandInterface
 {
@@ -46,7 +46,7 @@ class FetchPublicKey implements CommandInterface
      * @param string $response
      * @return FetchPublicKeyResponse
      */
-    public function parseResult(int $httpCode, string $response): \Threema\MsgApi\Commands\Results\Response
+    public function parseResult(int $httpCode, string $response): \Threema\MsgApi\Response\Response
     {
         return new FetchPublicKeyResponse($httpCode, $response);
     }

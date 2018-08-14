@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands\Results;
+namespace Threema\MsgApi\Response;
 
 use Threema\MsgApi\Commands\LookupBulk;
 use Threema\MsgApi\Helpers\BulkLookupIdentity;

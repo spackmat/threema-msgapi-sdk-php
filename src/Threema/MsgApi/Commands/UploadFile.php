@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\Response;
-use Threema\MsgApi\Commands\Results\UploadFileResponse;
+use Threema\MsgApi\Response\Response;
+use Threema\MsgApi\Response\UploadFileResponse;
 
 class UploadFile implements MultiPartCommandInterface
 {

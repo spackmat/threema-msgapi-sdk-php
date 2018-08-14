@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands\Results;
+namespace Threema\MsgApi\Response;
 
 class LookupIdResponse extends Response
 {

@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\DownloadFileResponse;
-use Threema\MsgApi\Commands\Results\Response;
+use Threema\MsgApi\Response\DownloadFileResponse;
+use Threema\MsgApi\Response\Response;
 
 class DownloadFile implements CommandInterface
 {

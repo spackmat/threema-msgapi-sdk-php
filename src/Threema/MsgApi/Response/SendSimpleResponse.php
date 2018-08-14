@@ -6,23 +6,21 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands\Results;
+namespace Threema\MsgApi\Response;
 
-class DownloadFileResponse extends Response
+class SendSimpleResponse extends Response
 {
     /**
      * @var string
      */
-    private $data;
+    private $messageId;
 
     /**
-     * the generated blob id
-     *
      * @return string
      */
-    public function getData(): string
+    public function getMessageId(): string
     {
-        return $this->data;
+        return $this->messageId;
     }
 
     /**
@@ -30,7 +28,7 @@ class DownloadFileResponse extends Response
      */
     protected function processResponse(string $response)
     {
-        $this->data = $response;
+        $this->messageId = $response;
     }
 
     /**
@@ -40,10 +38,16 @@ class DownloadFileResponse extends Response
     protected function getErrorMessageByErrorCode(int $httpCode): string
     {
         switch ($httpCode) {
+            case 400:
+                return 'The recipient identity is invalid or the account is not set up for simple mode';
             case 401:
                 return 'API identity or secret incorrect';
+            case 402:
+                return 'No credits remain';
             case 404:
-                return 'Invalid blob id';
+                return 'Phone or email could not be found';
+            case 413:
+                return 'Message is too long';
             case 500:
                 return 'A temporary internal server error has occurred';
             default:
@@ -51,4 +55,3 @@ class DownloadFileResponse extends Response
         }
     }
 }
-

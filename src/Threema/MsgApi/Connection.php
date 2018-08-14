@@ -15,15 +15,6 @@ use Threema\MsgApi\Commands\FetchPublicKey;
 use Threema\MsgApi\Commands\LookupBulk;
 use Threema\MsgApi\Commands\LookupEmail;
 use Threema\MsgApi\Commands\LookupPhone;
-use Threema\MsgApi\Commands\Results\CapabilityResponse;
-use Threema\MsgApi\Commands\Results\CreditsResponse;
-use Threema\MsgApi\Commands\Results\DownloadFileResponse;
-use Threema\MsgApi\Commands\Results\FetchPublicKeyResponse;
-use Threema\MsgApi\Commands\Results\LookupBulkResponse;
-use Threema\MsgApi\Commands\Results\LookupIdResponse;
-use Threema\MsgApi\Commands\Results\SendE2EResponse;
-use Threema\MsgApi\Commands\Results\SendSimpleResponse;
-use Threema\MsgApi\Commands\Results\UploadFileResponse;
 use Threema\MsgApi\Commands\SendE2E;
 use Threema\MsgApi\Commands\SendSimple;
 use Threema\MsgApi\Commands\UploadFile;
@@ -31,6 +22,15 @@ use Threema\MsgApi\Encryptor\AbstractEncryptor;
 use Threema\MsgApi\Helpers\E2EHelper;
 use Threema\MsgApi\Helpers\ReceiveMessageResult;
 use Threema\MsgApi\HttpDriver\HttpDriverInterface;
+use Threema\MsgApi\Response\CapabilityResponse;
+use Threema\MsgApi\Response\CreditsResponse;
+use Threema\MsgApi\Response\DownloadFileResponse;
+use Threema\MsgApi\Response\FetchPublicKeyResponse;
+use Threema\MsgApi\Response\LookupBulkResponse;
+use Threema\MsgApi\Response\LookupIdResponse;
+use Threema\MsgApi\Response\SendE2EResponse;
+use Threema\MsgApi\Response\SendSimpleResponse;
+use Threema\MsgApi\Response\UploadFileResponse;
 
 /**
  * talk to the Threema Gateway server via the HttpDriverInterface
@@ -182,7 +182,7 @@ class Connection
      * @param string $toThreemaId
      * @param string $toPublicKeyHex
      * @param string $text
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
+     * @return \Threema\MsgApi\Response\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public function sendTextMessage(string $myPrivateKeyHex, string $toThreemaId, string $toPublicKeyHex,
@@ -199,7 +199,7 @@ class Connection
      * @param string $toThreemaId
      * @param string $toPublicKeyHex
      * @param string $imagePath
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
+     * @return \Threema\MsgApi\Response\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public function sendImageMessage(string $myPrivateKeyHex, string $toThreemaId, string $toPublicKeyHex,
@@ -217,7 +217,7 @@ class Connection
      * @param string $toPublicKeyHex
      * @param string $filePath
      * @param string $thumbnailPath
-     * @return \Threema\MsgApi\Commands\Results\SendE2EResponse
+     * @return \Threema\MsgApi\Response\SendE2EResponse
      * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendFileMessage(string $myPrivateKeyHex, string $toThreemaId, string $toPublicKeyHex,

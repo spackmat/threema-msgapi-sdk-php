@@ -6,21 +6,18 @@
 
 declare(strict_types=1);
 
-namespace Threema\MsgApi\Commands\Results;
+namespace Threema\MsgApi\Response;
 
-class FetchPublicKeyResponse extends Response
+class SendE2EResponse extends Response
 {
     /**
-     * @var string as hex
+     * @var string hex
      */
-    private $publicKey;
+    private $messageId;
 
-    /**
-     * @return string
-     */
-    public function getPublicKey(): string
+    public function getMessageId(): string
     {
-        return $this->publicKey;
+        return $this->messageId;
     }
 
     /**
@@ -28,7 +25,7 @@ class FetchPublicKeyResponse extends Response
      */
     protected function processResponse(string $response)
     {
-        $this->publicKey = $response;
+        $this->messageId = $response;
     }
 
     /**
@@ -38,10 +35,14 @@ class FetchPublicKeyResponse extends Response
     protected function getErrorMessageByErrorCode(int $httpCode): string
     {
         switch ($httpCode) {
+            case 400:
+                return 'The recipient identity is invalid or the account is not set up for E2E mode';
             case 401:
                 return 'API identity or secret incorrect';
-            case 404:
-                return 'No matching ID found';
+            case 402:
+                return 'No credits remain';
+            case 413:
+                return 'Message is too long';
             case 500:
                 return 'A temporary internal server error has occurred';
             default:

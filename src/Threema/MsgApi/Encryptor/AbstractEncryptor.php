@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Encryptor;
 
-use Threema\MsgApi\Commands\Results\UploadFileResponse;
 use Threema\MsgApi\Exceptions\BadMessageException;
 use Threema\MsgApi\Exceptions\DecryptionFailedException;
 use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
@@ -16,11 +15,12 @@ use Threema\MsgApi\Helpers\AssocArray;
 use Threema\MsgApi\Helpers\EncryptResult;
 use Threema\MsgApi\Helpers\FileAnalysisResult;
 use Threema\MsgApi\Helpers\KeyPair;
+use Threema\MsgApi\Message\AbstractMessage;
 use Threema\MsgApi\Message\DeliveryReceipt;
 use Threema\MsgApi\Message\FileMessage;
 use Threema\MsgApi\Message\ImageMessage;
 use Threema\MsgApi\Message\TextMessage;
-use Threema\MsgApi\Message\AbstractMessage;
+use Threema\MsgApi\Response\UploadFileResponse;
 
 /**
  * Contains static methods to do various Threema cryptography related tasks.

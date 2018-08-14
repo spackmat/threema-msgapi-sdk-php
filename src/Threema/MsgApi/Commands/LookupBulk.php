@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Commands;
 
-use Threema\MsgApi\Commands\Results\LookupBulkResponse;
-use Threema\MsgApi\Commands\Results\Response;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
+use Threema\MsgApi\Response\LookupBulkResponse;
+use Threema\MsgApi\Response\Response;
 
 /**
  * It is possible (though very unlikely) that two different phone numbers or emails will hash to the same value.

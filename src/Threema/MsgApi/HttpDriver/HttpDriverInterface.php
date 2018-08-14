@@ -11,7 +11,7 @@ namespace Threema\MsgApi\HttpDriver;
 use Threema\MsgApi\Commands\CommandInterface;
 use Threema\MsgApi\Commands\JsonCommandInterface;
 use Threema\MsgApi\Commands\MultiPartCommandInterface;
-use Threema\MsgApi\Commands\Results\Response;
+use Threema\MsgApi\Response\Response;
 
 /**
  */
