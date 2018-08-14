@@ -8,16 +8,16 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi;
 
-use Threema\MsgApi\Request\Capability;
-use Threema\MsgApi\Request\Credits;
-use Threema\MsgApi\Request\DownloadFile;
-use Threema\MsgApi\Request\FetchPublicKey;
-use Threema\MsgApi\Request\LookupBulk;
-use Threema\MsgApi\Request\LookupEmail;
-use Threema\MsgApi\Request\LookupPhone;
-use Threema\MsgApi\Request\SendE2E;
-use Threema\MsgApi\Request\SendSimple;
-use Threema\MsgApi\Request\UploadFile;
+use Threema\MsgApi\Request\CapabilityRequest;
+use Threema\MsgApi\Request\CreditsRequest;
+use Threema\MsgApi\Request\DownloadFileRequest;
+use Threema\MsgApi\Request\FetchPublicKeyRequest;
+use Threema\MsgApi\Request\LookupBulkRequest;
+use Threema\MsgApi\Request\LookupEmailRequest;
+use Threema\MsgApi\Request\LookupPhoneRequest;
+use Threema\MsgApi\Request\SendE2ERequest;
+use Threema\MsgApi\Request\SendSimpleRequest;
+use Threema\MsgApi\Request\UploadFileRequest;
 use Threema\MsgApi\Encryptor\AbstractEncryptor;
 use Threema\MsgApi\Helpers\E2EHelper;
 use Threema\MsgApi\Helpers\ReceiveMessageResult;
@@ -51,21 +51,21 @@ class Connection
 
     public function sendToThreemaID(string $threemaID, string $text): SendSimpleResponse
     {
-        $result = $this->driver->postForm(SendSimple::toThreemaID($threemaID, $text));
+        $result = $this->driver->postForm(SendSimpleRequest::toThreemaID($threemaID, $text));
         assert($result instanceof SendSimpleResponse);
         return $result;
     }
 
     public function sendToEmail(string $email, string $text): SendSimpleResponse
     {
-        $result = $this->driver->postForm(SendSimple::toEmail($email, $text));
+        $result = $this->driver->postForm(SendSimpleRequest::toEmail($email, $text));
         assert($result instanceof SendSimpleResponse);
         return $result;
     }
 
     public function sendToPhoneNo(string $phoneNo, string $text): SendSimpleResponse
     {
-        $result = $this->driver->postForm(SendSimple::toPhoneNo($phoneNo, $text));
+        $result = $this->driver->postForm(SendSimpleRequest::toPhoneNo($phoneNo, $text));
         assert($result instanceof SendSimpleResponse);
         return $result;
     }
@@ -78,7 +78,7 @@ class Connection
      */
     public function sendE2E(string $threemaId, string $nonce, string $box): SendE2EResponse
     {
-        $command = new SendE2E($threemaId, $this->encryptor->bin2hex($nonce), $this->encryptor->bin2hex($box));
+        $command = new SendE2ERequest($threemaId, $this->encryptor->bin2hex($nonce), $this->encryptor->bin2hex($box));
         $result  = $this->driver->postForm($command);
         assert($result instanceof SendE2EResponse);
         return $result;
@@ -88,9 +88,9 @@ class Connection
      * @param string $encryptedFileData (binary string)
      * @return UploadFileResponse
      */
-    public function uploadFile($encryptedFileData): UploadFileResponse
+    public function uploadFile(string $encryptedFileData): UploadFileResponse
     {
-        $result = $this->driver->postMultiPart(new UploadFile($encryptedFileData));
+        $result = $this->driver->postMultiPart(new UploadFileRequest($encryptedFileData));
         assert($result instanceof UploadFileResponse);
         return $result;
     }
@@ -100,9 +100,9 @@ class Connection
      * @param \Closure $progress
      * @return DownloadFileResponse
      */
-    public function downloadFile($blobId, \Closure $progress = null): DownloadFileResponse
+    public function downloadFile(string $blobId, \Closure $progress = null): DownloadFileResponse
     {
-        $result = $this->driver->get(new DownloadFile($blobId), $progress);
+        $result = $this->driver->get(new DownloadFileRequest($blobId), $progress);
         assert($result instanceof DownloadFileResponse);
         return $result;
     }
@@ -113,7 +113,7 @@ class Connection
      */
     public function keyLookupByPhoneNumber(string $phoneNumber): LookupIdResponse
     {
-        $result = $this->driver->get(new LookupPhone($phoneNumber, $this->encryptor->hashPhoneNo($phoneNumber)));
+        $result = $this->driver->get(new LookupPhoneRequest($phoneNumber, $this->encryptor->hashPhoneNo($phoneNumber)));
         assert($result instanceof LookupIdResponse);
         return $result;
     }
@@ -124,7 +124,7 @@ class Connection
      */
     public function keyLookupByEmail(string $email): LookupIdResponse
     {
-        $result = $this->driver->get(new LookupEmail($email, $this->encryptor->hashEmail($email)));
+        $result = $this->driver->get(new LookupEmailRequest($email, $this->encryptor->hashEmail($email)));
         assert($result instanceof LookupIdResponse);
         return $result;
     }
@@ -136,7 +136,7 @@ class Connection
      */
     public function bulkLookup(array $emailAddresses, array $phoneNumbers): LookupBulkResponse
     {
-        $command = new LookupBulk($emailAddresses, $phoneNumbers);
+        $command = new LookupBulkRequest($emailAddresses, $phoneNumbers);
         $command->calculateHashes($this->encryptor);
         $result = $this->driver->postJson($command);
         assert($result instanceof LookupBulkResponse);
@@ -149,7 +149,7 @@ class Connection
      */
     public function keyCapability(string $threemaId): CapabilityResponse
     {
-        $result = $this->driver->get(new Capability($threemaId));
+        $result = $this->driver->get(new CapabilityRequest($threemaId));
         assert($result instanceof CapabilityResponse);
         return $result;
     }
@@ -159,7 +159,7 @@ class Connection
      */
     public function credits(): CreditsResponse
     {
-        $result = $this->driver->get(new Credits());
+        $result = $this->driver->get(new CreditsRequest());
         assert($result instanceof CreditsResponse);
         return $result;
     }
@@ -170,7 +170,7 @@ class Connection
      */
     public function fetchPublicKey(string $threemaId): FetchPublicKeyResponse
     {
-        $result = $this->driver->get(new FetchPublicKey($threemaId));
+        $result = $this->driver->get(new FetchPublicKeyRequest($threemaId));
         assert($result instanceof FetchPublicKeyResponse);
         return $result;
     }

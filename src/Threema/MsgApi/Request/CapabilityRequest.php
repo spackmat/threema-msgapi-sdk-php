@@ -11,7 +11,7 @@ namespace Threema\MsgApi\Request;
 use Threema\MsgApi\Response\CapabilityResponse;
 use Threema\MsgApi\Response\Response;
 
-class Capability implements RequestInterface
+class CapabilityRequest implements RequestInterface
 {
     /**
      * @var string

@@ -11,7 +11,7 @@ namespace Threema\MsgApi\Request;
 use Threema\MsgApi\Response\Response;
 use Threema\MsgApi\Response\SendE2EResponse;
 
-class SendE2E implements RequestInterface
+class SendE2ERequest implements RequestInterface
 {
     /**
      * @var string

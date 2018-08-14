@@ -10,7 +10,7 @@ namespace Threema\MsgApi\Request;
 
 use Threema\MsgApi\Response\SendSimpleResponse;
 
-class SendSimple implements RequestInterface
+class SendSimpleRequest implements RequestInterface
 {
     /** @var string */
     private $text;

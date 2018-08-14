@@ -11,39 +11,36 @@ namespace Threema\MsgApi\Request;
 use Threema\MsgApi\Response\LookupIdResponse;
 use Threema\MsgApi\Response\Response;
 
-class LookupEmail implements RequestInterface
+class LookupPhoneRequest implements RequestInterface
 {
     /**
      * @var string
      */
-    private $emailAddress;
+    private $phoneNumber;
 
     /** @var string */
-    private $hashedEmail;
+    private $hashedPhone;
 
-    /**
-     * @param string $emailAddress
-     */
-    public function __construct(string $emailAddress, string $hashedEmail)
+    public function __construct(string $phoneNumber, string $hashedPhone)
     {
-        $this->emailAddress = $emailAddress;
-        $this->hashedEmail  = $hashedEmail;
+        $this->phoneNumber = $phoneNumber;
+        $this->hashedPhone = $hashedPhone;
     }
 
     /**
      * @return string
      */
-    public function getEmailAddress(): string
+    public function getPhoneNumber(): string
     {
-        return $this->emailAddress;
+        return $this->phoneNumber;
     }
 
     /**
      * @return string
      */
-    public function getHashedEmail(): string
+    public function getHashedPhone(): string
     {
-        return $this->hashedEmail;
+        return $this->hashedPhone;
     }
 
     /**
@@ -59,7 +56,7 @@ class LookupEmail implements RequestInterface
      */
     public function getPath(): string
     {
-        return 'lookup/email_hash/' . $this->hashedEmail;
+        return 'lookup/phone_hash/' . $this->hashedPhone;
     }
 
     /**

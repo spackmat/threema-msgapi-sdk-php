@@ -11,7 +11,7 @@ namespace Threema\MsgApi\Request;
 use Threema\MsgApi\Response\Response;
 use Threema\MsgApi\Response\UploadFileResponse;
 
-class UploadFile implements MultiPartRequestInterface
+class UploadFileRequest implements MultiPartRequestInterface
 {
     /**
      * @var string

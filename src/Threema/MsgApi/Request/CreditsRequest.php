@@ -8,24 +8,11 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Request;
 
-use Threema\MsgApi\Response\DownloadFileResponse;
+use Threema\MsgApi\Response\CreditsResponse;
 use Threema\MsgApi\Response\Response;
 
-class DownloadFile implements RequestInterface
+class CreditsRequest implements RequestInterface
 {
-    /**
-     * @var string
-     */
-    private $blobId;
-
-    /**
-     * @param string $blobId
-     */
-    public function __construct(string $blobId)
-    {
-        $this->blobId = $blobId;
-    }
-
     /**
      * @return array
      */
@@ -34,21 +21,18 @@ class DownloadFile implements RequestInterface
         return [];
     }
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
-        return 'blobs/' . $this->blobId;
+        return 'credits';
     }
 
     /**
      * @param int    $httpCode
      * @param string $response
-     * @return DownloadFileResponse
+     * @return CreditsResponse
      */
     public function parseResult(int $httpCode, string $response): Response
     {
-        return new DownloadFileResponse($httpCode, $response);
+        return new CreditsResponse($httpCode, $response);
     }
 }

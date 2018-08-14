@@ -37,7 +37,7 @@ class VersionCommand extends AbstractLocalCommand
         $table = new Table($output);
         $table->getStyle()->setPadType(STR_PAD_LEFT);
         $table->setRows([
-            ['', 'Level', 'Text', 'Capabilities', 'Image', 'File', 'Credits'],
+            ['', 'Level', 'Text', 'Capabilities', 'Image', 'File', 'CreditsRequest'],
             new TableSeparator(),
             [$left(1), '1', 'Y'],
             [$left(2), '2', 'Y', 'Y', 'Y', 'Y', new TableCell()],

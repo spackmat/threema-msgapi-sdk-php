@@ -10,7 +10,7 @@ namespace Threema\MsgApi\Request;
 
 use Threema\MsgApi\Response\FetchPublicKeyResponse;
 
-class FetchPublicKey implements RequestInterface
+class FetchPublicKeyRequest implements RequestInterface
 {
     /**
      * @var string

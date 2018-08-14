@@ -8,18 +8,18 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Response;
 
-use Threema\MsgApi\Request\LookupBulk;
+use Threema\MsgApi\Request\LookupBulkRequest;
 use Threema\MsgApi\Helpers\BulkLookupIdentity;
 
 class LookupBulkResponse extends Response
 {
-    /** @var \Threema\MsgApi\Request\LookupBulk */
+    /** @var \Threema\MsgApi\Request\LookupBulkRequest */
     private $request;
 
     /** @var BulkLookupIdentity[] */
     private $matches = [];
 
-    public function __construct(int $httpCode, $response, LookupBulk $request)
+    public function __construct(int $httpCode, $response, LookupBulkRequest $request)
     {
         $this->request = $request;
         parent::__construct($httpCode, $response);

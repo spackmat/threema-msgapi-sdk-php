@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Threema\MsgApi\Response;
 
 use PHPUnit\Framework\TestCase;
-use Threema\MsgApi\Request\LookupBulk;
+use Threema\MsgApi\Request\LookupBulkRequest;
 use Threema\MsgApi\ConnectionFactory;
 
 class LookupBulkResultTest extends TestCase
@@ -19,7 +19,7 @@ class LookupBulkResultTest extends TestCase
     {
         $factory = new ConnectionFactory();
         $encryptor = $factory->getEncryptor();
-        $request   = new LookupBulk(
+        $request   = new LookupBulkRequest(
             [$emailKey = 99 => $emailAddress = 'foo@example.com'],
             [$phoneKey = 17 => $phoneNumber = '641234567']);
         $request->calculateHashes($encryptor);
