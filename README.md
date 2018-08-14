@@ -52,11 +52,11 @@ or provide alternate drivers or mock for testing, pass them in to the Connection
 
 ### Sending a text message to a Threema ID (Simple Mode)
 
-```php
-$receiver = new Receiver('ABCD1234', Receiver::TYPE_ID);
+The message is encrypted on the Threema Gateway server.
 
-$result = $connection->sendSimple($receiver, "This is a Test Message");
-if($result->isSuccess()) {
+```php
+$result = $connection->sendToThreemaID('TEST1234', "This is a Test Message");
+if ($result->isSuccess()) {
     echo 'new id created '.$result->getMessageId();
 }
 else {
@@ -66,10 +66,12 @@ else {
 
 ### Sending a text message to a Threema ID (E2E Mode)
 
+The message is encrypted locally before sending to Threema Gateway. 
+
 ```php
 $result = $connection->sendTextMessage($myPrivateKeyHex, "TEST1234", "thePublicKeyAsHex", "This is an end-to-end encrypted message");
 
-if(true === $result->isSuccess()) {
+if ($result->isSuccess()) {
     echo 'Message ID: '.$result->getMessageId() . "\n";
 }
 else {
@@ -80,11 +82,9 @@ else {
 ### Sending a file message to a Threema ID (E2E Mode)
 
 ```php
-$filePath = "/path/to/my/file.pdf";
+$result = $connection->sendFileMessage($myPrivateKeyHex, "TEST1234", "thePublicKeyAsHex", "/path/to/my/file.pdf");
 
-$result = $connection->sendFileMessage($myPrivateKeyHex, "TEST1234", "thePublicKeyAsHex", $filePath);
-
-if(true === $result->isSuccess()) {
+if ($result->isSuccess()) {
     echo 'File Message ID: '.$result->getMessageId() . "\n";
 }
 else {
@@ -95,10 +95,10 @@ else {
 ### Technical notes
 
 Much of the communication with the Threema Gateway server is in binary. But not all of it. Sometimes you get a hex version of the binary value back.
-The PHP wrapper attempts to hide all this from you: pass all values to `$connection` as hex encoded binary (`$encryptor->bin2hex()`).
-All values coming back are hex encoded binary.
+The PHP wrapper attempts to hide all this from you: pass all values to `$connection` as hex encoded binary strings (use `$encryptor->bin2hex()`).
+All values coming back are hex encoded binary strings.
 
-The encryptor mostly requires and returns binary strings as parameters, but for normal use of the api you will not need the 
+The `$encryptor` mostly requires and returns binary strings as parameters, but for normal use of the api you will not need the 
 encryptor so will not need to worry about it. See the console commands for examples if unsure. Most parameters now have
 phpDoc comments to tell you if they are binary strings or hex strings.
 
@@ -148,9 +148,7 @@ composer phpstan
 
 ## To Do
 
-* Replace Receiver class with 3 methods on Connection
 * ReceiveMessageResult assumes you want to store file attachments on the local filesystem. This may not be true eg if using Amazon infrastructure. Refactor to allow for FileAcceptors(?) which can be overloaded to use Flysystem, local file system, or a null object pattern that ignores the file
-* There are some useful Exception classes defined but they are not used in some places.
 * Url class is probably not needed
 * AssocArray class is probably not needed 
 
