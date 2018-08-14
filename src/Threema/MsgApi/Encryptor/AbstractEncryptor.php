@@ -20,7 +20,7 @@ use Threema\MsgApi\Messages\DeliveryReceipt;
 use Threema\MsgApi\Messages\FileMessage;
 use Threema\MsgApi\Messages\ImageMessage;
 use Threema\MsgApi\Messages\TextMessage;
-use Threema\MsgApi\Messages\ThreemaMessage;
+use Threema\MsgApi\Messages\AbstractMessage;
 
 /**
  * Contains static methods to do various Threema cryptography related tasks.
@@ -137,7 +137,7 @@ abstract class AbstractEncryptor
      * @param string $recipientPrivateKey
      * @param string $senderPublicKey
      * @param string $nonce
-     * @return ThreemaMessage the decrypted message
+     * @return AbstractMessage the decrypted message
      * @throws BadMessageException
      * @throws DecryptionFailedException
      * @throws UnsupportedMessageTypeException

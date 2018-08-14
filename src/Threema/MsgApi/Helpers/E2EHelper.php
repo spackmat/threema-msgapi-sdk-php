@@ -19,7 +19,7 @@ use Threema\MsgApi\Exceptions\InvalidArgumentException;
 use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
 use Threema\MsgApi\Messages\FileMessage;
 use Threema\MsgApi\Messages\ImageMessage;
-use Threema\MsgApi\Messages\ThreemaMessage;
+use Threema\MsgApi\Messages\AbstractMessage;
 
 /**
  * Splits some of the bulky code out of the Connection class to keep the Connection small / clean
@@ -319,13 +319,13 @@ class E2EHelper
     }
 
     /**
-     * @param ThreemaMessage $message
-     * @param string         $blobId blob id as hex
-     * @param \Closure       $shouldDownload
+     * @param AbstractMessage $message
+     * @param string          $blobId blob id as hex
+     * @param \Closure        $shouldDownload
      * @return null|\Threema\MsgApi\Commands\Results\DownloadFileResult
      * @throws \Threema\MsgApi\Exceptions\HttpException
      */
-    private function downloadFile(ThreemaMessage $message, $blobId, \Closure $shouldDownload): ?DownloadFileResult
+    private function downloadFile(AbstractMessage $message, $blobId, \Closure $shouldDownload): ?DownloadFileResult
     {
         if ($shouldDownload($message, $blobId)) {
             $result = $this->connection->downloadFile($blobId);

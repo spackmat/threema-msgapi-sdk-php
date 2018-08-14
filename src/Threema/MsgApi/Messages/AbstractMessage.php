@@ -10,7 +10,7 @@ namespace Threema\MsgApi\Messages;
  * Abstract base class of messages that can be sent with end-to-end encryption via Threema.
  * @todo should be an interface
  */
-abstract class ThreemaMessage
+abstract class AbstractMessage
 {
     /**
      * Get the message type code of this message.

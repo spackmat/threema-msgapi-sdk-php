@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Messages;
 
-class FileMessage extends ThreemaMessage
+class FileMessage extends AbstractMessage
 {
     const TYPE_CODE = 0x17;
 

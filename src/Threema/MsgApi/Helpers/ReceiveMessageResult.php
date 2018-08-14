@@ -8,12 +8,12 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Helpers;
 
-use Threema\MsgApi\Messages\ThreemaMessage;
+use Threema\MsgApi\Messages\AbstractMessage;
 
 class ReceiveMessageResult
 {
     /**
-     * @var ThreemaMessage
+     * @var AbstractMessage
      */
     private $threemaMessage;
 
@@ -33,10 +33,10 @@ class ReceiveMessageResult
     private $messageId;
 
     /**
-     * @param string         $messageId
-     * @param ThreemaMessage $threemaMessage
+     * @param string          $messageId
+     * @param AbstractMessage $threemaMessage
      */
-    public function __construct(string $messageId, ThreemaMessage $threemaMessage)
+    public function __construct(string $messageId, AbstractMessage $threemaMessage)
     {
         $this->threemaMessage = $threemaMessage;
         $this->messageId      = $messageId;
@@ -88,9 +88,9 @@ class ReceiveMessageResult
     }
 
     /**
-     * @return ThreemaMessage
+     * @return AbstractMessage
      */
-    public function getThreemaMessage(): ThreemaMessage
+    public function getThreemaMessage(): AbstractMessage
     {
         return $this->threemaMessage;
     }

@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi\Messages;
 
-class DeliveryReceipt extends ThreemaMessage
+class DeliveryReceipt extends AbstractMessage
 {
     const TYPE_CODE = 0x80;
 
