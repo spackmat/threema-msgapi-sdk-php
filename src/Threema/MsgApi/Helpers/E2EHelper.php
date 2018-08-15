@@ -60,7 +60,6 @@ class E2EHelper
      * @param string $receiverPublicKey binary format
      * @param string $text
      * @return \Threema\MsgApi\Response\SendE2EResponse
-     * @throws \Threema\MsgApi\Exceptions\Exception
      */
     public final function sendTextMessage(string $threemaId, string $receiverPublicKey, string $text): SendE2EResponse
     {
@@ -288,26 +287,6 @@ class E2EHelper
         }
 
         return $receiveResult;
-    }
-
-    /**
-     * Check the HMAC of an ingoing Threema request. Always do this before decrypting the message.
-     *
-     * @param string $threemaId
-     * @param string $gatewayId
-     * @param string $messageId
-     * @param string $date
-     * @param string $nonce  nonce as hex encoded string
-     * @param string $box    box as hex encoded string
-     * @param string $mac    the original one send by the server
-     * @param string $secret hex
-     * @return bool true if check was successful, false if not
-     */
-    public final function checkMac(string $threemaId, string $gatewayId, string $messageId, string $date, string $nonce,
-        string $box, string $mac, string $secret): bool
-    {
-        $calculatedMac = hash_hmac('sha256', $threemaId . $gatewayId . $messageId . $date . $nonce . $box, $secret);
-        return hash_equals($calculatedMac, $mac);
     }
 
     private function assertIsCapable(string $threemaId, string $wantedCapability)

@@ -8,6 +8,10 @@ declare(strict_types=1);
 
 namespace Threema\MsgApi;
 
+use Threema\MsgApi\Encryptor\AbstractEncryptor;
+use Threema\MsgApi\Helpers\E2EHelper;
+use Threema\MsgApi\Helpers\ReceiveMessageResult;
+use Threema\MsgApi\HttpDriver\HttpDriverInterface;
 use Threema\MsgApi\Request\CapabilityRequest;
 use Threema\MsgApi\Request\CreditsRequest;
 use Threema\MsgApi\Request\DownloadFileRequest;
@@ -18,10 +22,6 @@ use Threema\MsgApi\Request\LookupPhoneRequest;
 use Threema\MsgApi\Request\SendE2ERequest;
 use Threema\MsgApi\Request\SendSimpleRequest;
 use Threema\MsgApi\Request\UploadFileRequest;
-use Threema\MsgApi\Encryptor\AbstractEncryptor;
-use Threema\MsgApi\Helpers\E2EHelper;
-use Threema\MsgApi\Helpers\ReceiveMessageResult;
-use Threema\MsgApi\HttpDriver\HttpDriverInterface;
 use Threema\MsgApi\Response\CapabilityResponse;
 use Threema\MsgApi\Response\CreditsResponse;
 use Threema\MsgApi\Response\DownloadFileResponse;
@@ -229,7 +229,7 @@ class Connection
     }
 
     /**
-     * Check the HMAC of an ingoing Threema request. Always do this before decrypting the message.
+     * Check the HMAC of an incoming Threema request. Always do this before decrypting the message.
      *
      * @param string $threemaId
      * @param string $gatewayId
@@ -244,8 +244,8 @@ class Connection
     public final function macIsValid(string $threemaId, string $gatewayId, string $messageId, string $date,
         string $nonce, string $box, string $mac, string $secret): bool
     {
-        $calculatedMac = hash_hmac('sha256', $threemaId . $gatewayId . $messageId . $date . $nonce . $box, $secret);
-        return hash_equals($calculatedMac, $mac);
+        return hash_equals($this->encryptor->calculateMac($threemaId, $gatewayId, $messageId, $date, $nonce, $box,
+            $secret), $mac);
     }
 
     /**
