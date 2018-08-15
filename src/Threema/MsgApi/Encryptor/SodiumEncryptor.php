@@ -81,7 +81,7 @@ class SodiumEncryptor extends AbstractEncryptor
      */
     public function bin2hex($binaryString)
     {
-        return sodium_bin2hex($binaryString);
+        return \sodium_bin2hex($binaryString);
     }
 
     /**
@@ -96,7 +96,7 @@ class SodiumEncryptor extends AbstractEncryptor
      */
     public function hex2bin($hexString, $ignore = null)
     {
-        return sodium_hex2bin($hexString);
+        return \sodium_hex2bin($hexString);
     }
 
     /**
