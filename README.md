@@ -151,6 +151,7 @@ composer phpstan
 * ReceiveMessageResult assumes you want to store file attachments on the local filesystem. This may not be true eg if using Amazon infrastructure. Refactor to allow for FileAcceptors(?) which can be overloaded to use Flysystem, local file system, or a null object pattern that ignores the file
 * Url class is probably not needed
 * AssocArray class is probably not needed 
+* Wait for PSR-18 to be approved, then migrate HttpDriver to use it (then we can drop direct cUrl support ourselves and rely on third parties to do a better job)
 
 ## Other platforms (Java and Python)
 

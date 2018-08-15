@@ -2,7 +2,11 @@
 
 See README.md for info about version numbering. Follows https://keepachangelog.com/en/1.0.0/
 
-## 2.2.0 - 2018-08-10
+## 2.2.1 - 2018-08-15
+### Changed
+- Moved internal Constants class
+
+## 2.2.0 - 2018-08-14
 - Temporarily ignoring semver because no one else is using this library at the moment. Will add a note to the changelog when we follow semver again
 ### Changed
 - Coding style fixes
