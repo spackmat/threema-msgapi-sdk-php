@@ -4,7 +4,11 @@
     "description": "Send end-to-end-encrypted messages to Threema users using the Threema Gateway.",
     "keywords": [
         "threema",
-        "gateway"
+        "gateway",
+        "threema-wrapper",
+        "api-gateway",
+        "api-wrapper",
+        "message"
     ],
     "homepage": "https://github.com/pavarnos/threema-msgapi-sdk-php",
     "license": "MIT",

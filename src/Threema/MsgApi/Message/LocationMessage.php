@@ -16,12 +16,28 @@ class LocationMessage extends AbstractMessage
     private $latitude;
 
     /** @var string */
-    private $longitute;
+    private $longitude;
 
-    public function __construct(string $latitude, string $longitute)
+    public function __construct(string $latitude, string $longitude)
     {
-        $this->latitude = $latitude;
-        $this->longitute = $longitute;
+        $this->latitude  = $latitude;
+        $this->longitude = $longitude;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLatitude(): string
+    {
+        return $this->latitude;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLongitude(): string
+    {
+        return $this->longitude;
     }
 
     /**
@@ -29,7 +45,7 @@ class LocationMessage extends AbstractMessage
      */
     public function __toString()
     {
-        return 'Location: ' . $this->latitude . ',' . $this->longitute;
+        return 'Location: ' . $this->latitude . ',' . $this->longitude;
     }
 
     /**
