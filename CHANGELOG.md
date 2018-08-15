@@ -2,10 +2,15 @@
 
 See README.md for info about version numbering. Follows https://keepachangelog.com/en/1.0.0/
 
+## 2.2.3 - 2018-08-15
+### Added
+- unofficial support for LocationMessage: reverse engineered from the message format. Not documented by Threema
+
 ## 2.2.2 - 2018-08-15
 ### Changed
 - Split calculateMac out of connection class to remove duplication
 - phpstan fixes
+- namespace fixes on sodium functions
 
 ## 2.2.1 - 2018-08-15
 ### Changed

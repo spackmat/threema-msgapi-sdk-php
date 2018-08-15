@@ -18,6 +18,7 @@ use Threema\MsgApi\Message\AbstractMessage;
 use Threema\MsgApi\Message\DeliveryReceipt;
 use Threema\MsgApi\Message\FileMessage;
 use Threema\MsgApi\Message\ImageMessage;
+use Threema\MsgApi\Message\LocationMessage;
 use Threema\MsgApi\Message\TextMessage;
 use Threema\MsgApi\Response\UploadFileResponse;
 
@@ -172,7 +173,7 @@ abstract class AbstractEncryptor
             case TextMessage::TYPE_CODE:
                 /* Text message */
                 if ($realDataLength < 2) {
-                    throw new BadMessageException();
+                    throw new BadMessageException('text message is too short');
                 }
                 return new TextMessage(substr($data, 1));
 
@@ -202,7 +203,7 @@ abstract class AbstractEncryptor
                 /* Image Message */
                 $values = json_decode(substr($data, 1), true);
                 if (empty($values)) {
-                    throw new BadMessageException();
+                    throw new BadMessageException('json badly formatted');
                 }
 
                 return new FileMessage(
@@ -212,6 +213,14 @@ abstract class AbstractEncryptor
                     $values['m'],
                     $values['n'],
                     $values['s']);
+
+            case LocationMessage::TYPE_CODE:
+                $points = explode(',',$this->bin2hex($data));
+                if (count($points) !== 3) {
+                    throw new BadMessageException('invalid latitude and longitude');
+                }
+                return new LocationMessage($points[0], $points[1]);
+
             default:
                 throw new UnsupportedMessageTypeException();
         }
