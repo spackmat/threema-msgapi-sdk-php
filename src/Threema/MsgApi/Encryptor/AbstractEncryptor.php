@@ -11,7 +11,6 @@ namespace Threema\MsgApi\Encryptor;
 use Threema\MsgApi\Exceptions\BadMessageException;
 use Threema\MsgApi\Exceptions\DecryptionFailedException;
 use Threema\MsgApi\Exceptions\UnsupportedMessageTypeException;
-use Threema\MsgApi\Helpers\AssocArray;
 use Threema\MsgApi\Helpers\EncryptResult;
 use Threema\MsgApi\Helpers\FileAnalysisResult;
 use Threema\MsgApi\Helpers\KeyPair;
@@ -183,9 +182,9 @@ abstract class AbstractEncryptor
                     throw new BadMessageException();
                 }
 
-                $receiptType = ord($data[1]);
-                $messageIds  = str_split(substr($data, 2), self::MESSAGE_ID_LEN);
-                $messageIdHex = array_map([$this,'bin2hex'], $messageIds);
+                $receiptType  = ord($data[1]);
+                $messageIds   = str_split(substr($data, 2), self::MESSAGE_ID_LEN);
+                $messageIdHex = array_map([$this, 'bin2hex'], $messageIds);
                 return new DeliveryReceipt($receiptType, $messageIdHex);
 
             case ImageMessage::TYPE_CODE:
@@ -201,19 +200,18 @@ abstract class AbstractEncryptor
 
             case FileMessage::TYPE_CODE:
                 /* Image Message */
-                $decodeResult = json_decode(substr($data, 1), true);
-                if (empty($decodeResult)) {
+                $values = json_decode(substr($data, 1), true);
+                if (empty($values)) {
                     throw new BadMessageException();
                 }
 
-                $values = AssocArray::byJsonString(substr($data, 1), ['b', 't', 'k', 'm', 'n', 's']);
                 return new FileMessage(
-                    $values->getValue('b'),
-                    $values->getValue('t'),
-                    $values->getValue('k'),
-                    $values->getValue('m'),
-                    $values->getValue('n'),
-                    $values->getValue('s'));
+                    $values['b'],
+                    $values['t'],
+                    $values['k'],
+                    $values['m'],
+                    $values['n'],
+                    $values['s']);
             default:
                 throw new UnsupportedMessageTypeException();
         }
@@ -248,6 +246,24 @@ abstract class AbstractEncryptor
     {
         $phoneNoClean = preg_replace("/[^0-9]/", "", $phoneNo);
         return hash_hmac('sha256', $phoneNoClean, self::PHONENO_HMAC_KEY);
+    }
+
+    /**
+     * Check the HMAC of an incoming Threema message request. Always do this before decrypting the message.
+     *
+     * @param string $threemaId
+     * @param string $gatewayId
+     * @param string $messageId
+     * @param string $date
+     * @param string $nonce  nonce as hex encoded string
+     * @param string $box    box as hex encoded string
+     * @param string $secret hex
+     * @return string the message mac
+     */
+    public final function calculateMac(string $threemaId, string $gatewayId, string $messageId, string $date,
+        string $nonce, string $box, string $secret): string
+    {
+        return hash_hmac('sha256', $threemaId . $gatewayId . $messageId . $date . $nonce . $box, $secret);
     }
 
     /**
@@ -384,7 +400,6 @@ abstract class AbstractEncryptor
      *
      * @param  string      $hexString The hex string to convert
      * @param  string|null $ignore    (optional) Characters to ignore
-     * @throws \Threema\MsgApi\Exceptions\Exception
      * @return string
      */
     public function hex2bin($hexString, $ignore = null)

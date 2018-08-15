@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Threema\MsgApi\Helpers\KeyPrefix;
-use Threema\MsgApi\Encryptor\AbstractEncryptor;
 
 class GenerateKeyPairCommand extends AbstractLocalCommand
 {

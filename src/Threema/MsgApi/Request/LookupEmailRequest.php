@@ -21,9 +21,6 @@ class LookupEmailRequest implements RequestInterface
     /** @var string */
     private $hashedEmail;
 
-    /**
-     * @param string $emailAddress
-     */
     public function __construct(string $emailAddress, string $hashedEmail)
     {
         $this->emailAddress = $emailAddress;
