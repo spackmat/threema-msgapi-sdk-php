@@ -44,7 +44,7 @@ class LocationMessage extends AbstractMessage
         $this->latitude  = $latitude;
         $this->longitude = $longitude;
         $this->accuracy  = $accuracy;
-        $this->address   = $address;
+        $this->address   = array_filter($address);
     }
 
     /**

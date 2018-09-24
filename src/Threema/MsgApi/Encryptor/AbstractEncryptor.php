@@ -221,7 +221,7 @@ abstract class AbstractEncryptor
                     throw new BadMessageException('invalid latitude and longitude');
                 }
                 array_shift($lines); // to get the address parts
-                return new LocationMessage($points[0], $points[1], intval($points[3] ?? 0), $lines);
+                return new LocationMessage($points[0], $points[1], intval($points[2] ?? 0), $lines);
 
             default:
                 throw new UnsupportedMessageTypeException();
