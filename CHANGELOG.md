@@ -2,9 +2,14 @@
 
 See README.md for info about version numbering. Follows https://keepachangelog.com/en/1.0.0/
 
+## 2.2.4 - 2018-09-24
+### Added
+- bug fixes for LocationMessage: after conversations with Threema support staff
+- improved README.md
+
 ## 2.2.3 - 2018-08-15
 ### Added
-- unofficial support for LocationMessage: reverse engineered from the message format. Not documented by Threema
+- unofficial support for receiving LocationMessage: reverse engineered from the message format. Not documented by Threema
 
 ## 2.2.2 - 2018-08-15
 ### Changed
