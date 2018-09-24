@@ -200,7 +200,7 @@ abstract class AbstractEncryptor
                 return new ImageMessage($this->bin2hex($blobId), (int) $this->bin2hex($length), $this->bin2hex($nonce));
 
             case FileMessage::TYPE_CODE:
-                /* Image Message */
+                /* File Message */
                 $values = json_decode(substr($data, 1), true);
                 if (empty($values)) {
                     throw new BadMessageException('json badly formatted');
@@ -215,11 +215,13 @@ abstract class AbstractEncryptor
                     $values['s']);
 
             case LocationMessage::TYPE_CODE:
-                $points = explode(',',$this->bin2hex($data));
-                if (count($points) !== 3) {
+                $lines = explode("\n", substr($data,1));
+                $points = explode(',',$lines[0] ?? '');
+                if (count($points) < 2) {
                     throw new BadMessageException('invalid latitude and longitude');
                 }
-                return new LocationMessage($points[0], $points[1]);
+                array_shift($lines); // to get the address parts
+                return new LocationMessage($points[0], $points[1], intval($points[3] ?? 0), $lines);
 
             default:
                 throw new UnsupportedMessageTypeException();
