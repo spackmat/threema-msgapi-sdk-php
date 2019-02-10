@@ -4,3 +4,5 @@ privatekey.txt
 
 # no, composer
 vendor/
+.phpunit.result.cache
+composer.lock
