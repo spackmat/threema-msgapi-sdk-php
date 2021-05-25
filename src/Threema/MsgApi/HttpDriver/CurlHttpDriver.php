@@ -168,7 +168,7 @@ class CurlHttpDriver implements HttpDriverInterface
         }
 
         $pinnedKey = $this->tlsOptions[self::tlsOptionPinnedKey];
-        if (!empty($pinnedKey)) {
+        if (defined('CURLOPT_PINNEDPUBLICKEY') && !empty($pinnedKey)) {
             $options[CURLOPT_PINNEDPUBLICKEY] = $pinnedKey;
         }
 
